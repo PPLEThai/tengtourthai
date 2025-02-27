@@ -1,0 +1,20 @@
+  @font-face {
+    font-family: 'Anakotmai';
+    src: url('/fonts/Anakotmai-Light.ttf') format('ttf');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Anakotmai';
+    src: url('/fonts/Anakotmai-Medium.ttf') format('ttf');
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Anakotmai';
+    src: url('/fonts/Anakotmai-Bold.ttf') format('ttf');
+    font-weight: 700;
+    font-style: normal;
+  }
