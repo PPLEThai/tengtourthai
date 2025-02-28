@@ -124,8 +124,12 @@ const updateMarkers = () => {
                 const match = item.geom.match(/POINT\(([^)]+)\)/);
                 if (match) {
                     const [lng, lat] = match[1].split(' ').map(Number);
+                    // const popupContent = `
+                    //     ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
+                    //     <h3>${item.name}</h3>
+                    //     <p>${item.detail}</p>
+                    // `;
                     const popupContent = `
-                        ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
                         <h3>${item.name}</h3>
                         <p>${item.detail}</p>
                     `;
@@ -166,8 +170,12 @@ const updateMarkers = () => {
 
                     // ปักหมุดที่จุดแรกของ LINESTRING
                     const [lng, lat] = coordinates[0];
+                    // const popupContent = `
+                    //     ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
+                    //     <h3>${item.name}</h3>
+                    //     <p>${item.detail}</p>
+                    // `;
                     const popupContent = `
-                        ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
                         <h3>${item.name}</h3>
                         <p>${item.detail}</p>
                     `;
@@ -208,8 +216,12 @@ const updateMarkers = () => {
 
                     // ปักหมุดที่จุดแรกของ POLYGON
                     const [lng, lat] = coordinates[0];
+                    // const popupContent = `
+                    //     ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
+                    //     <h3>${item.name}</h3>
+                    //     <p>${item.detail}</p>
+                    // `;
                     const popupContent = `
-                        ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
                         <h3>${item.name}</h3>
                         <p>${item.detail}</p>
                     `;
@@ -390,7 +402,7 @@ onMounted(() => {
             });
 
             // Add markers for each hack city data point
-            updateMarkers();
+            // updateMarkers();
         });
     }
 });
