@@ -57,7 +57,7 @@
   </div>
 
   <!-- Show all provinces -->
-  <div v-else class="mt-4 border border-gray-200 rounded-lg p-4 shadow-sm overflow-y-auto">
+  <div v-else class="mt-4 rounded-lg overflow-y-auto">
     <div v-for="(details, name) in allProvinces" :key="name"
       class="border border-gray-200 rounded-lg p-4 shadow-sm mb-4">
       <div class="flex flex-row gap-2">
@@ -71,7 +71,7 @@
             <p class="text-sm text-gray-500 font-light">ล่าสุด {{ details.lastVisit }}</p>
           </div>
           <div v-else class="text-sm text-gray-500 font-light">
-            อยู่ในแผนการเดินทาง แต่หากมีมีเรื่องไหนที่อยากส่งถึงผมก่อน ส่งมาได้เลยที่
+            อยู่ในแผนการเดินทาง แต่หากมีเรื่องไหนที่อยากส่งถึงผม ส่งมาได้เลยที่
             <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" class="text-blue-500 underline">
               ณัฐพงษ์ เรืองปัญญาวุฒิ - Natthaphong Ruengpanyawut
             </a>
@@ -109,6 +109,7 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script setup lang="ts">

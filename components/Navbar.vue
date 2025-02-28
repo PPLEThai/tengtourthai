@@ -61,14 +61,20 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useMockupData } from "@/composables/mockupService";
 
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-// จำนวนจังหวัดที่ไปมาแล้ว
-const visitedProvinces = ref(45);
+// Use useMockupData to get groupedData
+const { groupedData } = useMockupData();
+
+// Compute the number of visited provinces
+const visitedProvinces = computed(() => {
+  return Object.keys(groupedData.value).length;
+});
 
 // แยกตัวเลขเป็น Array เพื่อให้แต่ละหลักเป็นกล่องแยก
 const visitedDigits = computed(() => visitedProvinces.value.toString().split(""));
