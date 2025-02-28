@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   plugins: [require('daisyui')],
   theme: {
@@ -9,7 +10,7 @@ module.exports = {
         third: '#001A2C'
       },
       fontFamily: {
-        sans: ['Anakotmai', 'sans-serif'],
+        anakotmai: ['Anakotmai', 'sans-serif'],
       },
     }
   },

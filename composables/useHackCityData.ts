@@ -14,7 +14,6 @@ export const useHackCityData = () => {
     const fetchHackCityData = async () => {
         try {
             const response = await fetch('/data/hackcity.json');
-            console.log(response);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }

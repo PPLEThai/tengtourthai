@@ -1,14 +1,13 @@
 <template>
-    <div class="card bg-base-100 h-full w-full shadow-xl rounded-md px-4 py-6" @click.self="showDropdown = false">
-
+    <div class="card bg-base-100 md:h-full w-full shadow-xl rounded-md px-4 py-6 overflow-y-auto" @click.self="showDropdown = false">
         <!-- header -->
         <div class="flex flex-row gap-2">
             <div class="flex flex-col gap-2">
                 <img src="@/assets/images/teng-logo.png" alt="logo" class="w-10">
             </div>
             <div class="flex flex-col">
-                <h1 class="text-2xl font-bold">ค้นหาผลงาน เท้งทั่วไทย</h1>
-                <h4 class="text-gray-500">พร้อมเดินทางไปพบปะพี่น้องประชาชนทั่วประเทศ</h4>
+                <h1 class="text-xl md:text-2xl font-bold">ค้นหากิจกรรม เท้งทั่วไทย</h1>
+                <h4 class="text-gray-500 text-sm">พร้อมเดินทางไปพบปะพี่น้องประชาชนทั่วประเทศ</h4>
             </div>
         </div>
 
@@ -134,6 +133,5 @@ watch(selectedProvince, (newProvince) => {
 });
 
 onMounted(() => {
-    console.log(groupedData.value);
 });
 </script>

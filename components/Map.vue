@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full">
+    <div class="h-full relative">
         <div ref="mapContainer" class="map-container"></div>
         <div class="map-controls flex">
             <button @click="zoomIn" class="text-primary">+</button>
@@ -7,9 +7,10 @@
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
         </div>
         <div class="timeline-slider">
-            <button @click="playTimeline" class="text-primary">Play</button>
-            <input type="range" min="0" max="60" v-model="timelineValue" @input="updateTimeline">
-            <span class="text-white">{{ formattedDate }}</span>
+            <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
+            <button @click="pauseTimeline" class="text-primary">Pause</button> 
+            <span class="text-white"> | {{ formattedDate }}</span>
+            <input type="range" min="0" max="30" v-model.number="timelineValue" @input="updateTimeline">
         </div>
     </div>
 </template>
@@ -31,6 +32,8 @@ const { hackCityData } = useHackCityData(); // Get hackCityData
 
 let map: maplibregl.Map;
 const markers: maplibregl.Marker[] = []; // เก็บ markers ทั้งหมด
+let interval: ReturnType<typeof setInterval> | null = null; // Correctly type the interval
+const isPlaying = ref(false); // เพิ่มตัวแปร isPlaying
 
 const zoomIn = () => {
     if (map) {
@@ -51,34 +54,50 @@ const resetZoom = () => {
     }
 };
 
-const timelineValue = ref(30);
+const today = new Date(); // วันที่ปัจจุบัน
+const timelineValue = ref(30); // เริ่มต้นที่ 30 วันก่อนหน้า
 const formattedDate = computed(() => {
-    const startDate = new Date("2024-01-28");
-    const endDate = new Date("2025-02-28");
-    console.log(startDate)
-    startDate.setDate(startDate.getDate() + timelineValue.value);
-    if (startDate > endDate) {
-        startDate.setTime(endDate.getTime());
-    }
-    console.log(startDate)
-    return startDate.toISOString().split('T')[0];
+    const startDate = new Date(); // วันที่ปัจจุบัน
+    startDate.setDate(startDate.getDate() - (30 - timelineValue.value)); // ย้อนหลังจาก 30 วันไปจนถึงวันนี้
+    return startDate.toISOString().split('T')[0]; // แปลงเป็น YYYY-MM-DD
 });
 
 const updateTimeline = () => {
-    // Update the map based on the timeline value
-    console.log(`Timeline updated to: ${formattedDate.value}`);
-    // Add logic to filter and update the map based on the selected date
-    updateMarkers();
+    // console.log(`Timeline updated to: ${formattedDate.value}`);
+    updateMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
 };
 
 const playTimeline = () => {
-    const interval = setInterval(() => {
-        if (timelineValue.value < 60) {
+    if (isPlaying.value) return; // ถ้า isPlaying เป็น true ให้ return ออกไป
+    isPlaying.value = true; // ตั้งค่า isPlaying เป็น true
+
+    if (timelineValue.value >= 30) {
+        timelineValue.value = 0;
+    } else {
+        timelineValue.value += 1;
+    }
+
+    interval = setInterval(() => {
+        console.log(timelineValue.value)
+        if (timelineValue.value < 30) {
             timelineValue.value += 1;
         } else {
-            clearInterval(interval);
+            if (interval !== null) {
+                clearInterval(interval);
+            }
+            interval = null;
+            isPlaying.value = false; // ตั้งค่า isPlaying เป็น false เมื่อหยุดเล่น
         }
-    }, 1000); // ปรับความเร็วในการเล่น timeline ได้ตามต้องการ
+        updateTimeline();
+    }, 500); // Adjust the speed of the timeline as needed
+};
+
+const pauseTimeline = () => {
+    if (interval) {
+        clearInterval(interval);
+        interval = null;
+        isPlaying.value = false; // ตั้งค่า isPlaying เป็น false เมื่อหยุดเล่น
+    }
 };
 
 const updateMarkers = () => {
@@ -100,18 +119,19 @@ const updateMarkers = () => {
 
     // เพิ่ม markers ใหม่ตามวันที่ที่เลือก
     hackCityData.value.forEach((item: HackCityItem, index: number) => {
-        if (new Date(item.created) < new Date(formattedDate.value + "T00:00:00")) {
+        if (new Date(item.created) <= new Date(formattedDate.value + "T00:00:00")) {
             if (item.geom.startsWith("POINT")) {
                 const match = item.geom.match(/POINT\(([^)]+)\)/);
                 if (match) {
                     const [lng, lat] = match[1].split(' ').map(Number);
+                    const popupContent = `
+                        ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
+                        <h3>${item.name}</h3>
+                        <p>${item.detail}</p>
+                    `;
                     const marker = new maplibregl.Marker()
                         .setLngLat([lng, lat])
-                        .setPopup(new maplibregl.Popup().setHTML(`
-                            <img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">
-                            <h3>${item.name}</h3>
-                            <p>${item.detail}</p>
-                        `))
+                        .setPopup(new maplibregl.Popup().setHTML(popupContent))
                         .addTo(map);
                     markers.push(marker);
                 }
@@ -146,13 +166,14 @@ const updateMarkers = () => {
 
                     // ปักหมุดที่จุดแรกของ LINESTRING
                     const [lng, lat] = coordinates[0];
+                    const popupContent = `
+                        ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
+                        <h3>${item.name}</h3>
+                        <p>${item.detail}</p>
+                    `;
                     const marker = new maplibregl.Marker()
                         .setLngLat([lng, lat])
-                        .setPopup(new maplibregl.Popup().setHTML(`
-                            <img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">
-                            <h3>${item.name}</h3>
-                            <p>${item.detail}</p>
-                        `))
+                        .setPopup(new maplibregl.Popup().setHTML(popupContent))
                         .addTo(map);
                     markers.push(marker);
                 }
@@ -187,13 +208,14 @@ const updateMarkers = () => {
 
                     // ปักหมุดที่จุดแรกของ POLYGON
                     const [lng, lat] = coordinates[0];
+                    const popupContent = `
+                        ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
+                        <h3>${item.name}</h3>
+                        <p>${item.detail}</p>
+                    `;
                     const marker = new maplibregl.Marker()
                         .setLngLat([lng, lat])
-                        .setPopup(new maplibregl.Popup().setHTML(`
-                            <img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">
-                            <h3>${item.name}</h3>
-                            <p>${item.detail}</p>
-                        `))
+                        .setPopup(new maplibregl.Popup().setHTML(popupContent))
                         .addTo(map);
                     markers.push(marker);
                 }
@@ -302,7 +324,6 @@ onMounted(() => {
             });
 
             const fillColorExpression: any[] = ["case"];
-            console.log(groupedData.value)
             for (const provinceName in groupedData.value) {
                 const province = groupedData.value[provinceName as keyof typeof groupedData.value];
                 fillColorExpression.push(
@@ -383,7 +404,7 @@ onMounted(() => {
 
 .map-controls {
     position: absolute;
-    top: 100px;
+    top: 10px;
     left: 10px;
     display: flex;
     flex-direction: column;
@@ -407,14 +428,21 @@ onMounted(() => {
 .timeline-slider {
     position: absolute;
     bottom: 20px;
-    /* left: 50%;
-    transform: translateX(-50%); */
+    left: 40px;
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap; /* เพิ่ม flex-wrap เพื่อให้รองรับ responsive */
 }
 
 .timeline-slider input[type="range"] {
-    width: 300px;
+    width: 100%; /* เปลี่ยนเป็น 100% เพื่อให้รองรับ responsive */
+    max-width: 300px; /* กำหนด max-width เพื่อไม่ให้กว้างเกินไป */
+}
+
+@media (max-width: 768px) {
+    .timeline-slider {
+        max-width: 250px;
+    }
 }
 </style>
