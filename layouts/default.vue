@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col bg-secondary">
+  <div class="h-screen flex flex-col bg-secondary font-anakotmai">
     <Navbar />
     <div class="flex-1 overflow-hidden">
       <div class="flex h-full">
@@ -14,3 +14,9 @@
 <script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
 </script>
+
+<style scoped>
+body {
+  font-family: 'Anakotmai', sans-serif !important;
+}
+</style>
