@@ -402,7 +402,7 @@ onMounted(() => {
             });
 
             // Add markers for each hack city data point
-            // updateMarkers();
+            updateMarkers();
         });
     }
 });
