@@ -10,7 +10,8 @@
     "@nuxtjs/tailwindcss": "^6",
     "daisyui": "^3",
     "maplibre-gl": "^5.1.1",
-    "nuxt": "^3"
+    "nuxt": "^3",
+    "pinia": "^3.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",

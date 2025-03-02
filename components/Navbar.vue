@@ -14,7 +14,8 @@
         <div class="hidden md:flex items-center space-x-2">
           <span class="text-white text-lg">ไปมาแล้ว</span>
           <div class="flex space-x-1">
-            <span v-for="digit in visitedDigits" :key="digit" class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+            <span v-for="digit in visitedDigits" :key="digit"
+              class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
               {{ digit }}
             </span>
           </div>
@@ -30,20 +31,9 @@
         <div class="md:hidden flex items-center">
           <button @click="toggleMenu" class="text-white hover:text-primary">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                v-if="!isMenuOpen"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-              <path
-                v-else
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path v-if="!isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -61,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useMockupData } from "@/composables/mockupService";
+import { useMockupStore } from "@/stores/mockupStore";
 
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
@@ -69,7 +59,8 @@ const toggleMenu = () => {
 };
 
 // Use useMockupData to get groupedData
-const { groupedData } = useMockupData();
+const mockupStore = useMockupStore();
+const groupedData = computed(() => mockupStore.groupedData);
 
 // Compute the number of visited provinces
 const visitedProvinces = computed(() => {

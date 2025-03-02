@@ -6,12 +6,12 @@
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
         </div>
-        <div class="timeline-slider">
+        <!-- <div class="timeline-slider">
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
             <button @click="pauseTimeline" class="text-primary">Pause</button> 
             <span class="text-white"> | {{ formattedDate }}</span>
             <input type="range" min="0" max="30" v-model.number="timelineValue" @input="updateTimeline">
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -19,15 +19,16 @@
 import { onMounted, ref, watch, computed } from "vue";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-// import { provinces } from "@/composables/provinces";
-import { useMockupData } from "@/composables/mockupService";
+
+import { useMockupStore } from "@/stores/mockupStore";
 import { useHackCityData } from "@/composables/useHackCityData"; // Import useHackCityData
 import type { HackCityItem } from "@/composables/useHackCityData"; // Import HackCityItem interface
 import { selectedProvince } from "@/composables/eventBus"; // Import the event bus
 import type { Feature, LineString, Polygon } from "geojson"; // Import GeoJSON types
 
 const mapContainer = ref<HTMLElement | null>(null);
-const { groupedData } = useMockupData();
+const mockupStore = useMockupStore();
+const groupedData = computed(() => mockupStore.groupedData);
 const { hackCityData } = useHackCityData(); // Get hackCityData
 
 let map: maplibregl.Map;
@@ -63,7 +64,6 @@ const formattedDate = computed(() => {
 });
 
 const updateTimeline = () => {
-    // console.log(`Timeline updated to: ${formattedDate.value}`);
     updateMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
 };
 
@@ -78,7 +78,6 @@ const playTimeline = () => {
     }
 
     interval = setInterval(() => {
-        console.log(timelineValue.value)
         if (timelineValue.value < 30) {
             timelineValue.value += 1;
         } else {
@@ -237,7 +236,6 @@ const updateMarkers = () => {
 };
 
 watch(selectedProvince, (newProvince) => {
-    console.log(newProvince)
     if (map) {
         if (newProvince === "ทั้งหมด") {
             if (map.getLayer("highlighted-province")) {
@@ -253,7 +251,7 @@ watch(selectedProvince, (newProvince) => {
             layers: ["province-layer"],
             filter: ["==", ["get", "ADM1_TH"], newProvince || ""]
         })[0];
-        console.log(feature)
+
         // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
         if (map.getLayer("highlighted-province")) {
             map.removeLayer("highlighted-province");
@@ -285,8 +283,7 @@ watch(selectedProvince, (newProvince) => {
         if (feature) {
             const bounds = new maplibregl.LngLatBounds();
             const geometry = feature.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon;
-            console.log(geometry)
-            console.log(bounds)
+
             // if (geometry.type === "Polygon") {
             //     geometry.coordinates[0].forEach((coord) => {
             //         bounds.extend(coord as [number, number]);
@@ -335,74 +332,77 @@ onMounted(() => {
                 data: geojsonData,
             });
 
-            const fillColorExpression: any[] = ["case"];
-            for (const provinceName in groupedData.value) {
-                const province = groupedData.value[provinceName as keyof typeof groupedData.value];
-                fillColorExpression.push(
-                    (["==", ["get", "ADM1_TH"], provinceName] as unknown) as string,
-                    province.visits > 0 ? "#FF6A13" : "#B9B9B9"
-                );
-            }
-
-            fillColorExpression.push(("#B9B9B9" as unknown) as string); // สีเริ่มต้น
-
-            map.addLayer({
-                id: "province-layer",
-                type: "fill",
-                source: "provinces",
-                paint: {
-                    "fill-color": (fillColorExpression as unknown) as string,
-                    "fill-opacity": 1,
-                },
-            });
-
-            map.addLayer({
-                id: "states-layer-outline",
-                type: "line",
-                source: "provinces",
-                paint: {
-                    "line-color": "rgba(0, 0, 0, 1)",
-                    "line-width": 0.5,
-                },
-            });
-
-            map.on("click", "province-layer", (e) => {
-                console.log(e.features)
-                if (e.features && e.features.length > 0) {
-                    const provinceName = e.features[0].properties.ADM1_TH;
-                    selectedProvince.value = provinceName; // Set the selected province
-
-                    // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
-                    if (map.getLayer("highlighted-province")) {
-                        map.removeLayer("highlighted-province");
-                    }
-                    if (map.getSource("highlighted-province")) {
-                        map.removeSource("highlighted-province");
+            watch(groupedData, (newGroupedData) => {
+                if (Object.keys(newGroupedData).length > 0) {
+                    const fillColorExpression: any[] = ["case"];
+                    for (const provinceName in newGroupedData) {
+                        const province = newGroupedData[provinceName as keyof typeof newGroupedData];
+                        fillColorExpression.push(
+                            (["==", ["get", "ADM1_TH"], provinceName] as unknown) as string,
+                            province.visits > 0 ? "#FF6A13" : "#B9B9B9"
+                        );
                     }
 
-                    // เพิ่มไฮไลท์ใหม่
-                    map.addSource("highlighted-province", {
-                        type: "geojson",
-                        data: {
-                            type: "FeatureCollection",
-                            features: e.features,
+                    fillColorExpression.push(("#B9B9B9" as unknown) as string); // สีเริ่มต้น
+
+                    map.addLayer({
+                        id: "province-layer",
+                        type: "fill",
+                        source: "provinces",
+                        paint: {
+                            "fill-color": (fillColorExpression as unknown) as string,
+                            "fill-opacity": 1,
                         },
                     });
 
                     map.addLayer({
-                        id: "highlighted-province",
+                        id: "states-layer-outline",
                         type: "line",
-                        source: "highlighted-province",
+                        source: "provinces",
                         paint: {
-                            "line-color": "#FFFFFF",
-                            "line-width": 2,
+                            "line-color": "rgba(0, 0, 0, 1)",
+                            "line-width": 0.5,
                         },
                     });
-                }
-            });
 
-            // Add markers for each hack city data point
-            updateMarkers();
+                    map.on("click", "province-layer", (e) => {
+                        if (e.features && e.features.length > 0) {
+                            const provinceName = e.features[0].properties.ADM1_TH;
+                            selectedProvince.value = provinceName; // Set the selected province
+
+                            // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
+                            if (map.getLayer("highlighted-province")) {
+                                map.removeLayer("highlighted-province");
+                            }
+                            if (map.getSource("highlighted-province")) {
+                                map.removeSource("highlighted-province");
+                            }
+
+                            // เพิ่มไฮไลท์ใหม่
+                            map.addSource("highlighted-province", {
+                                type: "geojson",
+                                data: {
+                                    type: "FeatureCollection",
+                                    features: e.features,
+                                },
+                            });
+
+                            map.addLayer({
+                                id: "highlighted-province",
+                                type: "line",
+                                source: "highlighted-province",
+                                paint: {
+                                    "line-color": "#FFFFFF",
+                                    "line-width": 2,
+                                },
+                            });
+                        }
+                    });
+
+                    // Add markers for each hack city data point
+                    // updateMarkers();
+                }
+            }, { immediate: true });
         });
     }
 });

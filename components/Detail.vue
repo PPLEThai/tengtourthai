@@ -1,5 +1,6 @@
 <template>
-    <div class="card bg-base-100 md:h-full w-full shadow-xl rounded-md px-4 py-6 overflow-y-auto" @click.self="showDropdown = false">
+    <div class="card bg-base-100 md:h-full w-full shadow-xl rounded-md px-4 py-6 overflow-y-auto"
+        @click.self="showDropdown = false">
         <!-- header -->
         <div class="flex flex-row gap-2">
             <div class="flex flex-col gap-2">
@@ -11,24 +12,9 @@
             </div>
         </div>
 
-        <!-- btn group -->
-        <div>
-            <div class="join w-full mt-4 border border-gray-300 rounded-lg">
-                <button class="join-item btn w-1/2"
-                    :class="activeTab === 'fieldwork' ? 'bg-orange-500 text-white' : 'btn-ghost'"
-                    @click="activeTab = 'fieldwork'">
-                    การเข้าพื้นที่
-                </button>
-                <button class="join-item btn w-1/2"
-                    :class="activeTab === 'schedule' ? 'bg-orange-500 text-white' : 'btn-ghost'"
-                    @click="activeTab = 'schedule'">
-                    กำหนดการ
-                </button>
-            </div>
-        </div>
-
+        <!-- legend -->
         <div class="mt-4 text-sm">
-            <div class="flex flex-row gap-2">
+            <div v-if="activeTab === 'fieldwork'" class="flex flex-row gap-2">
                 <div>
                     จังหวัด |
                 </div>
@@ -39,6 +25,19 @@
                 <div class="flex items-center">
                     <div class="w-4 h-4 bg-gray-500 rounded-full mr-2"></div>
                     <span>ยังไม่ได้ไป</span>
+                </div>
+            </div>
+            <div v-if="activeTab === 'schedule'" class="flex flex-row gap-2">
+                <div>
+                    จังหวัด |
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
+                    <span>อยู่ในกำหนดการ</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-gray-500 rounded-full mr-2"></div>
+                    <span>ยังไม่มีกำหนดการ</span>
                 </div>
             </div>
         </div>
@@ -65,16 +64,34 @@
             </div>
         </div>
 
+        <!-- btn group -->
+        <div>
+            <div class="join w-full mt-4 border border-gray-300 rounded-lg">
+                <button class="join-item btn w-1/2"
+                    :class="activeTab === 'fieldwork' ? 'bg-orange-500 text-white' : 'btn-ghost'"
+                    @click="activeTab = 'fieldwork'">
+                    การเข้าพื้นที่
+                </button>
+                <button class="join-item btn w-1/2"
+                    :class="activeTab === 'schedule' ? 'bg-orange-500 text-white' : 'btn-ghost'"
+                    @click="activeTab = 'schedule'">
+                    กำหนดการ
+                </button>
+            </div>
+        </div>
+
         <!-- card selected province detail -->
-        <ProvinceDetail :province="selectedProvinceData" :allProvinces="groupedData" />
+        <ProvinceDetail v-if="activeTab === 'fieldwork'" :province="selectedProvinceData" :allProvinces="groupedData" />
+        <ScheduleDetail v-if="activeTab === 'schedule'" :province="selectedProvinceData" :scheduleData="scheduleData" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import ProvinceDetail from "@/components/ProvinceDetail.vue";
+import ScheduleDetail from "@/components/ScheduleDetail.vue";
 import { provinces } from "@/composables/provinces";
-import { useMockupData } from "@/composables/mockupService";
+import { useMockupStore } from "@/stores/mockupStore";
 import { selectedProvince } from "@/composables/eventBus"; // Import the event bus
 
 const selectedProvinceId = ref<string | null>(null);
@@ -82,7 +99,9 @@ const searchQuery = ref("");
 const showDropdown = ref(false);
 const activeTab = ref('fieldwork');
 
-const { mockupData, groupedData } = useMockupData();
+const mockupStore = useMockupStore();
+const groupedData = computed(() => mockupStore.groupedData);
+const scheduleData = computed(() => mockupStore.scheduleData);
 
 const filteredProvinces = computed(() => {
     if (!searchQuery.value || searchQuery.value === 'ทั้งหมด') return provinces;
@@ -115,7 +134,7 @@ const selectProvince = (name: string) => {
         selectedProvinceId.value = provinces.find((province: { name: string; }) => province.name === name)?.id || null;
     }
     searchQuery.value = name;
-    selectedProvince.value = name; // Set the selected province
+    selectedProvince.value = name; 
     showDropdown.value = false;
 };
 
@@ -125,7 +144,6 @@ const clearSearch = () => {
     showDropdown.value = false;
 };
 
-// Watch for changes in selectedProvince
 watch(selectedProvince, (newProvince) => {
     if (newProvince) {
         selectProvince(newProvince);

@@ -41,4 +41,9 @@ export default defineNuxtConfig({
       ],
     },
   },
+  runtimeConfig: {
+    public: {
+      apiTengData: process.env.API_TENG_DATA || '',
+    }
+  },
 });
