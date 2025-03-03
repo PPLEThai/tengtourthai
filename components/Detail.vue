@@ -69,12 +69,12 @@
             <div class="join w-full mt-4 border border-gray-300 rounded-lg">
                 <button class="join-item btn w-1/2"
                     :class="activeTab === 'fieldwork' ? 'bg-orange-500 text-white' : 'btn-ghost'"
-                    @click="activeTab = 'fieldwork'">
+                    @click="setActiveTab('fieldwork')">
                     การเข้าพื้นที่
                 </button>
                 <button class="join-item btn w-1/2"
                     :class="activeTab === 'schedule' ? 'bg-orange-500 text-white' : 'btn-ghost'"
-                    @click="activeTab = 'schedule'">
+                    @click="setActiveTab('schedule')">
                     กำหนดการ
                 </button>
             </div>
@@ -82,7 +82,7 @@
 
         <!-- card selected province detail -->
         <ProvinceDetail v-if="activeTab === 'fieldwork'" :province="selectedProvinceData" :allProvinces="groupedData" />
-        <ScheduleDetail v-if="activeTab === 'schedule'" :province="selectedProvinceData" :scheduleData="scheduleData" />
+        <ScheduleDetail v-if="activeTab === 'schedule'" :province="selectedProvinceData" :scheduleData="scheduleData" :selectedProvince="selectedProvince" />
     </div>
 </template>
 
@@ -92,12 +92,11 @@ import ProvinceDetail from "@/components/ProvinceDetail.vue";
 import ScheduleDetail from "@/components/ScheduleDetail.vue";
 import { provinces } from "@/composables/provinces";
 import { useMockupStore } from "@/stores/mockupStore";
-import { selectedProvince } from "@/composables/eventBus"; // Import the event bus
+import { selectedProvince, activeTab } from "@/composables/eventBus"; // Import the event bus
 
 const selectedProvinceId = ref<string | null>(null);
 const searchQuery = ref("");
 const showDropdown = ref(false);
-const activeTab = ref('fieldwork');
 
 const mockupStore = useMockupStore();
 const groupedData = computed(() => mockupStore.groupedData);
@@ -141,7 +140,12 @@ const selectProvince = (name: string) => {
 const clearSearch = () => {
     searchQuery.value = '';
     selectedProvinceId.value = null;
+    selectedProvince.value = 'ทั้งหมด'; // Set to 'ทั้งหมด' to show all data
     showDropdown.value = false;
+};
+
+const setActiveTab = (tab: string) => {
+    activeTab.value = tab;
 };
 
 watch(selectedProvince, (newProvince) => {

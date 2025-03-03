@@ -25,10 +25,13 @@ import { useHackCityData } from "@/composables/useHackCityData"; // Import useHa
 import type { HackCityItem } from "@/composables/useHackCityData"; // Import HackCityItem interface
 import { selectedProvince } from "@/composables/eventBus"; // Import the event bus
 import type { Feature, LineString, Polygon } from "geojson"; // Import GeoJSON types
+import { activeTab } from "@/composables/eventBus"; // Import activeTab from event bus
 
 const mapContainer = ref<HTMLElement | null>(null);
 const mockupStore = useMockupStore();
 const groupedData = computed(() => mockupStore.groupedData);
+const scheduleData = computed(() => mockupStore.scheduleData);
+
 const { hackCityData } = useHackCityData(); // Get hackCityData
 
 let map: maplibregl.Map;
@@ -235,6 +238,125 @@ const updateMarkers = () => {
     });
 };
 
+const drawGroupedDataLayer = (newGroupedData: any) => {
+    console.log(newGroupedData);
+    if (Object.keys(newGroupedData).length > 0) {
+        if (map.getLayer("province-layer")) {
+            map.removeLayer("province-layer");
+        }
+        if (map.getLayer("states-layer-outline")) {
+            map.removeLayer("states-layer-outline");
+        }
+        const fillColorExpression: any[] = ["case"];
+        for (const provinceName in newGroupedData) {
+            const province = newGroupedData[provinceName as keyof typeof newGroupedData];
+            fillColorExpression.push(
+                (["==", ["get", "ADM1_TH"], provinceName] as unknown) as string,
+                province.visits > 0 ? "#FF6A13" : "#B9B9B9"
+            );
+        }
+
+        fillColorExpression.push(("#B9B9B9" as unknown) as string); // สีเริ่มต้น
+
+        map.addLayer({
+            id: "province-layer",
+            type: "fill",
+            source: "provinces",
+            paint: {
+                "fill-color": (fillColorExpression as unknown) as string,
+                "fill-opacity": 1,
+            },
+        });
+
+        map.addLayer({
+            id: "states-layer-outline",
+            type: "line",
+            source: "provinces",
+            paint: {
+                "line-color": "rgba(0, 0, 0, 1)",
+                "line-width": 0.5,
+            },
+        });
+
+        map.on("click", "province-layer", (e: any) => {
+            if (e.features && e.features.length > 0) {
+                const provinceName = e.features[0].properties.ADM1_TH;
+                selectedProvince.value = provinceName; // Set the selected province
+
+                // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
+                if (map.getLayer("highlighted-province")) {
+                    map.removeLayer("highlighted-province");
+                }
+                if (map.getSource("highlighted-province")) {
+                    map.removeSource("highlighted-province");
+                }
+
+                // เพิ่มไฮไลท์ใหม่
+                map.addSource("highlighted-province", {
+                    type: "geojson",
+                    data: {
+                        type: "FeatureCollection",
+                        features: e.features,
+                    },
+                });
+
+                map.addLayer({
+                    id: "highlighted-province",
+                    type: "line",
+                    source: "highlighted-province",
+                    paint: {
+                        "line-color": "#FFFFFF",
+                        "line-width": 2,
+                    },
+                });
+            }
+        });
+
+        // Add markers for each hack city data point
+        // updateMarkers();
+    }
+}
+
+const drawScheduleLayer = (newScheduleData: any) => {
+    console.log(newScheduleData);
+    if (map.getLayer("province-layer")) {
+        map.removeLayer("province-layer");
+    }
+    if (map.getLayer("states-layer-outline")) {
+        map.removeLayer("states-layer-outline");
+    }
+
+    const fillColorExpression: any[] = ["case"];
+    newScheduleData.forEach((item: any) => {
+        fillColorExpression.push(
+            (["==", ["get", "ADM1_TH"], item.province] as unknown) as string,
+            item.status === "plan" ? "#3b82f6" : "#B9B9B9"
+        );
+    });
+
+    fillColorExpression.push(("#B9B9B9" as unknown) as string); // สีเริ่มต้น
+
+    map.addLayer({
+        id: "province-layer",
+        type: "fill",
+        source: "provinces",
+        paint: {
+            "fill-color": (fillColorExpression as unknown) as string,
+            "fill-opacity": 1,
+        },
+    });
+
+    map.addLayer({
+        id: "states-layer-outline",
+        type: "line",
+        source: "provinces",
+        paint: {
+            "line-color": "rgba(0, 0, 0, 1)",
+            "line-width": 0.5,
+        },
+    });
+}
+
 watch(selectedProvince, (newProvince) => {
     if (map) {
         if (newProvince === "ทั้งหมด") {
@@ -300,6 +422,16 @@ watch(selectedProvince, (newProvince) => {
     }
 })
 
+watch(activeTab, (newTab) => {
+    if (newTab === 'fieldwork') {
+        // ทำสิ่งที่ต้องการเมื่อ activeTab เป็น 'fieldwork'
+        drawGroupedDataLayer(groupedData.value);
+    } else if (newTab === 'schedule') {
+        // ทำสิ่งที่ต้องการเมื่อ activeTab เป็น 'schedule'
+        drawScheduleLayer(scheduleData.value);
+    }
+});
+
 onMounted(() => {
     if (mapContainer.value) {
         map = new maplibregl.Map({
@@ -331,77 +463,8 @@ onMounted(() => {
                 type: "geojson",
                 data: geojsonData,
             });
-
-            watch(groupedData, (newGroupedData) => {
-                if (Object.keys(newGroupedData).length > 0) {
-                    const fillColorExpression: any[] = ["case"];
-                    for (const provinceName in newGroupedData) {
-                        const province = newGroupedData[provinceName as keyof typeof newGroupedData];
-                        fillColorExpression.push(
-                            (["==", ["get", "ADM1_TH"], provinceName] as unknown) as string,
-                            province.visits > 0 ? "#FF6A13" : "#B9B9B9"
-                        );
-                    }
-
-                    fillColorExpression.push(("#B9B9B9" as unknown) as string); // สีเริ่มต้น
-
-                    map.addLayer({
-                        id: "province-layer",
-                        type: "fill",
-                        source: "provinces",
-                        paint: {
-                            "fill-color": (fillColorExpression as unknown) as string,
-                            "fill-opacity": 1,
-                        },
-                    });
-
-                    map.addLayer({
-                        id: "states-layer-outline",
-                        type: "line",
-                        source: "provinces",
-                        paint: {
-                            "line-color": "rgba(0, 0, 0, 1)",
-                            "line-width": 0.5,
-                        },
-                    });
-
-                    map.on("click", "province-layer", (e) => {
-                        if (e.features && e.features.length > 0) {
-                            const provinceName = e.features[0].properties.ADM1_TH;
-                            selectedProvince.value = provinceName; // Set the selected province
-
-                            // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
-                            if (map.getLayer("highlighted-province")) {
-                                map.removeLayer("highlighted-province");
-                            }
-                            if (map.getSource("highlighted-province")) {
-                                map.removeSource("highlighted-province");
-                            }
-
-                            // เพิ่มไฮไลท์ใหม่
-                            map.addSource("highlighted-province", {
-                                type: "geojson",
-                                data: {
-                                    type: "FeatureCollection",
-                                    features: e.features,
-                                },
-                            });
-
-                            map.addLayer({
-                                id: "highlighted-province",
-                                type: "line",
-                                source: "highlighted-province",
-                                paint: {
-                                    "line-color": "#FFFFFF",
-                                    "line-width": 2,
-                                },
-                            });
-                        }
-                    });
-
-                    // Add markers for each hack city data point
-                    // updateMarkers();
-                }
+            watch(groupedData, (newGroupedData: object) => {
+                drawGroupedDataLayer(newGroupedData);
             }, { immediate: true });
         });
     }
@@ -444,12 +507,15 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap; /* เพิ่ม flex-wrap เพื่อให้รองรับ responsive */
+    flex-wrap: wrap;
+    /* เพิ่ม flex-wrap เพื่อให้รองรับ responsive */
 }
 
 .timeline-slider input[type="range"] {
-    width: 100%; /* เปลี่ยนเป็น 100% เพื่อให้รองรับ responsive */
-    max-width: 300px; /* กำหนด max-width เพื่อไม่ให้กว้างเกินไป */
+    width: 100%;
+    /* เปลี่ยนเป็น 100% เพื่อให้รองรับ responsive */
+    max-width: 300px;
+    /* กำหนด max-width เพื่อไม่ให้กว้างเกินไป */
 }
 
 @media (max-width: 768px) {
