@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-interface MockupItem {
+interface FieldworkItem {
     no: string;
     date: string;
     province: string;
@@ -27,7 +27,7 @@ interface GroupedProvinceData {
 
 export const useMockupStore = defineStore('mockup', {
     state: () => ({
-        mockupData: [] as MockupItem[],
+        fieldworkData: [] as FieldworkItem[],
         scheduleData: [] as ScheduleItem[],
     }),
     actions: {
@@ -36,7 +36,7 @@ export const useMockupStore = defineStore('mockup', {
             try {
                 const response = await fetch(apiUrl as string);
                 const data = await response.json();
-                this.mockupData = data.fieldwork;
+                this.fieldworkData = data.fieldwork;
                 this.scheduleData = data.schedule;
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -45,9 +45,9 @@ export const useMockupStore = defineStore('mockup', {
     },
     getters: {
         groupedData: (state) => {
-            if (!state.mockupData) return {};
+            if (!state.fieldworkData) return {};
 
-            const sortedData = [...state.mockupData].sort((a, b) => {
+                const sortedData = [...state.fieldworkData].sort((a, b) => {
                 const [dayA, monthA, yearA] = (a.date || "01/01/1970").split("/").map(Number);
                 const [dayB, monthB, yearB] = (b.date || "01/01/1970").split("/").map(Number);
                 const dateA = new Date(yearA, monthA - 1, dayA);

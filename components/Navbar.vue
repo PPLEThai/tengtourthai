@@ -58,7 +58,6 @@ const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-// Use useMockupData to get groupedData
 const mockupStore = useMockupStore();
 const groupedData = computed(() => mockupStore.groupedData);
 
