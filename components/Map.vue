@@ -1,17 +1,17 @@
 <template>
     <div class="h-full relative">
         <div ref="mapContainer" class="map-container"></div>
-        <div class="map-controls flex">
+        <div class="map-controls flex flex-row gap-2">
             <button @click="zoomIn" class="text-primary">+</button>
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
         </div>
-        <!-- <div class="timeline-slider">
+        <div class="timeline-slider">
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
             <button @click="pauseTimeline" class="text-primary">Pause</button> 
             <span class="text-white"> | {{ formattedDate }}</span>
             <input type="range" min="0" max="30" v-model.number="timelineValue" @input="updateTimeline">
-        </div> -->
+        </div>
     </div>
 </template>
 
@@ -239,7 +239,6 @@ const updateMarkers = () => {
 };
 
 const drawGroupedDataLayer = (newGroupedData: any) => {
-    console.log(newGroupedData);
     if (Object.keys(newGroupedData).length > 0) {
         if (map.getLayer("province-layer")) {
             map.removeLayer("province-layer");
@@ -290,35 +289,16 @@ const drawGroupedDataLayer = (newGroupedData: any) => {
                 if (map.getSource("highlighted-province")) {
                     map.removeSource("highlighted-province");
                 }
-
-                // เพิ่มไฮไลท์ใหม่
-                map.addSource("highlighted-province", {
-                    type: "geojson",
-                    data: {
-                        type: "FeatureCollection",
-                        features: e.features,
-                    },
-                });
-
-                map.addLayer({
-                    id: "highlighted-province",
-                    type: "line",
-                    source: "highlighted-province",
-                    paint: {
-                        "line-color": "#FFFFFF",
-                        "line-width": 2,
-                    },
-                });
             }
         });
 
         // Add markers for each hack city data point
-        // updateMarkers();
+        updateMarkers();
     }
 }
 
 const drawScheduleLayer = (newScheduleData: any) => {
-    console.log(newScheduleData);
+
     if (map.getLayer("province-layer")) {
         map.removeLayer("province-layer");
     }
@@ -355,6 +335,43 @@ const drawScheduleLayer = (newScheduleData: any) => {
             "line-width": 0.5,
         },
     });
+
+    // เพิ่มไฮไลท์ใหม่หลังจากวาด layer ใหม่
+    if (selectedProvince.value && selectedProvince.value !== "ทั้งหมด") {
+        const feature = map.queryRenderedFeatures({
+            layers: ["province-layer"],
+            filter: ["==", ["get", "ADM1_TH"], selectedProvince.value || ""]
+        })[0];
+
+        if (feature) {
+            // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
+            if (map.getLayer("highlighted-province")) {
+                map.removeLayer("highlighted-province");
+            }
+            if (map.getSource("highlighted-province")) {
+                map.removeSource("highlighted-province");
+            }
+
+            // เพิ่มไฮไลท์ใหม่
+            map.addSource("highlighted-province", {
+                type: "geojson",
+                data: {
+                    type: "FeatureCollection",
+                    features: [feature],
+                },
+            });
+
+            map.addLayer({
+                id: "highlighted-province",
+                type: "line",
+                source: "highlighted-province",
+                paint: {
+                    "line-color": "#FFFFFF",
+                    "line-width": 2,
+                },
+            });
+        }
+    }
 }
 
 watch(selectedProvince, (newProvince) => {
@@ -430,6 +447,43 @@ watch(activeTab, (newTab) => {
         // ทำสิ่งที่ต้องการเมื่อ activeTab เป็น 'schedule'
         drawScheduleLayer(scheduleData.value);
     }
+
+    // เพิ่มไฮไลท์ใหม่หลังจากเปลี่ยนแท็บ
+    if (selectedProvince.value && selectedProvince.value !== "ทั้งหมด") {
+        const feature = map.queryRenderedFeatures({
+            layers: ["province-layer"],
+            filter: ["==", ["get", "ADM1_TH"], selectedProvince.value || ""]
+        })[0];
+
+        if (feature) {
+            // ลบไฮไลท์ที่มีอยู่ก่อนหน้านี้
+            if (map.getLayer("highlighted-province")) {
+                map.removeLayer("highlighted-province");
+            }
+            if (map.getSource("highlighted-province")) {
+                map.removeSource("highlighted-province");
+            }
+
+            // เพิ่มไฮไลท์ใหม่
+            map.addSource("highlighted-province", {
+                type: "geojson",
+                data: {
+                    type: "FeatureCollection",
+                    features: [feature],
+                },
+            });
+
+            map.addLayer({
+                id: "highlighted-province",
+                type: "line",
+                source: "highlighted-province",
+                paint: {
+                    "line-color": "#FFFFFF",
+                    "line-width": 2,
+                },
+            });
+        }
+    }
 });
 
 onMounted(() => {
@@ -453,6 +507,10 @@ onMounted(() => {
             zoom: 5,
             minZoom: 5, // กำหนดการซูมต่ำสุด
             maxZoom: 11, // กำหนดการซูมสูงสุด
+            maxBounds: [
+                [93.0, 3.0], // พิกัดมุมซ้ายล่าง
+                [108.0, 22.0]  // พิกัดมุมขวาบน
+            ] // กำหนดขอบเขตการเลื่อนแผนที่
         });
 
         map.on("load", async () => {
@@ -482,7 +540,7 @@ onMounted(() => {
     top: 10px;
     left: 10px;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 5px;
 }
 
@@ -494,6 +552,7 @@ onMounted(() => {
     font-size: 16px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-width: 40px;
 }
 
 .map-controls button:hover {

@@ -7,9 +7,9 @@
         <h2 class="text-lg md:text-xl font-bold mb-2">{{ province.name }}</h2>
         <div class="flex flex-col md:flex-row gap-1">
           <p class="text-sm text-gray-500 font-light">
-            เข้าพื้นที่ทั้งหมด {{ province.visits }} ครั้ง |
+            เข้าพื้นที่ทั้งหมด {{ province.visits }} ครั้ง
           </p>
-          <p class="text-sm text-gray-500 font-light">ล่าสุด {{ province.lastVisit }}</p>
+          <p v-if="province.lastVisit" class="text-sm text-gray-500 font-light"> | ล่าสุด {{ formatDate(province.lastVisit) }}</p>
         </div>
 
         <div v-if="province.actions && province.actions.length" class="flex flex-wrap space-x-2 mt-2">
@@ -22,7 +22,7 @@
       <div class="flex flex-col ml-auto mt-2 md:mt-0">
         <button class="btn btn-sm btn-outline btn-primary flex items-center" @click="showModal = true">
           ดูรายละเอียด
-          <span class="text-primary">></span>
+          <!-- <span class="text-primary">></span> -->
         </button>
 
         <Modal v-if="showModal" @close="showModal = false">
@@ -47,7 +47,7 @@
       <img src="@/assets/images/teng-detail.png" alt="" class="w-20" />
       <div class="text-center">
         ตอนนี้ยังอยู่ในแผนการเดินทางครับ<br />
-        แต่หากมีมีเรื่องไหนที่อยากส่งถึงผมก่อน ส่งมาได้เลยที่ <br />
+        แต่หากมีเรื่องไหนที่อยากส่งถึงผมก่อน ส่งมาได้เลยที่ <br />
         เพจ
         <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" target="_blank" class="text-blue-500 underline">
           ณัฐพงษ์ เรืองปัญญาวุฒิ - Natthaphong Ruengpanyawut
@@ -67,9 +67,10 @@
           <h2 class="text-lg md:text-xl font-bold mb-2">{{ name }}</h2>
           <div v-if="details.visits > 0" class="flex flex-col md:flex-row gap-1">
             <p class="text-sm text-gray-500 font-light">
-              เข้าพื้นที่ทั้งหมด {{ details.visits }} ครั้ง |
+              เข้าพื้นที่ทั้งหมด {{ details.visits }} ครั้ง
             </p>
-            <p class="text-sm text-gray-500 font-light">ล่าสุด {{ details.lastVisit }}</p>
+            <p v-if="details.lastVisit" class="text-sm text-gray-500 font-light"> | ล่าสุด {{ formatDate(details.lastVisit) }}</p>
+
           </div>
           <div v-else class="text-sm text-gray-500 font-light">
             อยู่ในแผนการเดินทาง แต่หากมีเรื่องไหนที่อยากส่งถึงผม ส่งมาได้เลยที่
@@ -86,9 +87,9 @@
         </div>
 
         <div class="flex flex-col ml-auto mt-2 md:mt-0">
-          <button class="btn btn-sm btn-outline btn-primary flex items-center" @click="showModalAll = name">
+          <button class="btn btn-sm btn-outline btn-primary hover:text-white flex items-center" @click="showModalAll = name">
             ดูรายละเอียด
-            <span class="text-primary">></span>
+            <!-- <span class="text-primary"></span> -->
           </button>
 
           <Modal v-if="showModalAll === name" @close="showModalAll = ''">
@@ -97,7 +98,7 @@
             </template>
             <template v-slot:body>
               <div v-for="(post, index) in allProvinces[name].posts" :key="index" class="mb-2">
-                <!-- <a :href="post" target="_blank" class="text-blue-500 underline">{{ post }}</a> -->
+                <a :href="post" target="_blank" class="text-blue-500 underline">{{ post }}</a>
               </div>
             </template>
             <template v-slot:footer>
@@ -155,6 +156,20 @@ function getActionClass(action: string) {
       return '';
   }
 }
+
+function formatDate(date: string): string {
+  const [year, month, day] = date.split('-');
+  const thaiYear = parseInt(year) + 543;
+  const monthNames = [
+    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+  ];
+  return `${parseInt(day)} ${monthNames[parseInt(month) - 1]} ${thaiYear}`;
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+.btn-primary:hover {
+  color: #ffffff;
+}
+</style>

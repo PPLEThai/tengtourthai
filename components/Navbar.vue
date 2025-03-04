@@ -11,20 +11,20 @@
         </div>
 
         <!-- จังหวัดที่ไปมาแล้ว -->
-        <div class="hidden md:flex items-center space-x-2">
-          <span class="text-white text-lg">ไปมาแล้ว</span>
+        <div class="flex items-center space-x-2">
+          <span class="text-white hidden md:block md:text-lg">ไปมาแล้ว</span>
           <div class="flex space-x-1">
             <span v-for="digit in visitedDigits" :key="digit"
               class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
               {{ digit }}
             </span>
           </div>
-          <span class="text-white text-lg">จังหวัด</span>
+          <span class="text-white text-sm md:text-lg">จังหวัด</span>
         </div>
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center space-x-4">
-          <a href="/contact" class="text-white hover:text-primary px-3 py-2 rounded-md">ติดตามเรา</a>
+          <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" target="_blank" class="text-white hover:text-primary px-3 py-2 rounded-md">ติดตามเรา</a>
         </div>
 
         <!-- Mobile menu button -->
@@ -43,7 +43,7 @@
     <!-- Mobile Menu -->
     <div v-if="isMenuOpen" class="md:hidden">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <a href="/contact" class="block text-white hover:text-primary px-3 py-2 rounded-md">ติดต่อเรา</a>
+        <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" target="_blank" class="block text-white hover:text-primary px-3 py-2 rounded-md">ติดต่อเรา</a>
       </div>
     </div>
   </nav>

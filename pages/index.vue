@@ -1,15 +1,22 @@
 <template>
   <div class="flex flex-col md:flex-row h-[calc(100vh-64px)]">
-    <!-- Map Section -->
+
     <div class="w-full md:w-1/2 h-1/2 md:h-full">
       <Map :provinces="provinces" @select-province="handleSelectProvince" />
     </div>
 
-    <!-- Province Cards Section -->
     <div class="w-full md:w-1/2 p-2 md:p-4 overflow-y-auto h-1/2 md:h-full">
       <Detail :provinces="provinces" />
-      <!-- <ProvinceList :selectedProvinceId="selectedProvinceId" :provinces="provinces" /> -->
     </div>
+
+    <!-- <div class="w-full md:w-1/2 h-full">
+      <Map :provinces="provinces" @select-province="handleSelectProvince" />
+    </div>
+
+    <div class="w-full md:w-1/2 p-2 md:p-4 overflow-y-auto h-1/2 md:h-full">
+      <Detail :provinces="provinces" />
+    </div> -->
+
   </div>
 </template>
 

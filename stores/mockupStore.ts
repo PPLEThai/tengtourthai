@@ -38,7 +38,11 @@ export const useMockupStore = defineStore('mockup', {
                 const response = await fetch(apiUrl as string);
                 const data = await response.json();
                 this.fieldworkData = data.fieldwork;
-                this.scheduleData = data.schedule;
+                this.scheduleData = data.schedule.sort((a: ScheduleItem, b: ScheduleItem) => {
+                    const dateA = new Date(a.date || "1970-01-01");
+                    const dateB = new Date(b.date || "1970-01-01");
+                    return dateA.getTime() - dateB.getTime();
+                });
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -48,11 +52,9 @@ export const useMockupStore = defineStore('mockup', {
         groupedData: (state) => {
             if (!state.fieldworkData) return {};
 
-                const sortedData = [...state.fieldworkData].sort((a, b) => {
-                const [dayA, monthA, yearA] = (a.date || "01/01/1970").split("/").map(Number);
-                const [dayB, monthB, yearB] = (b.date || "01/01/1970").split("/").map(Number);
-                const dateA = new Date(yearA, monthA - 1, dayA);
-                const dateB = new Date(yearB, monthB - 1, dayB);
+            const sortedData = [...state.fieldworkData].sort((a, b) => {
+                const dateA = new Date(a.date || "1970-01-01");
+                const dateB = new Date(b.date || "1970-01-01");
                 return dateB.getTime() - dateA.getTime();
             });
 

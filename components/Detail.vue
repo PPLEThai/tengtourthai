@@ -68,12 +68,12 @@
         <div>
             <div class="join w-full mt-4 border border-gray-300 rounded-lg">
                 <button class="join-item btn w-1/2"
-                    :class="activeTab === 'fieldwork' ? 'bg-orange-500 text-white' : 'btn-ghost'"
+                    :class="activeTab === 'fieldwork' ? 'bg-orange-500 text-white hover:bg-orange-500' : 'btn-ghost'"
                     @click="setActiveTab('fieldwork')">
                     การเข้าพื้นที่
                 </button>
                 <button class="join-item btn w-1/2"
-                    :class="activeTab === 'schedule' ? 'bg-orange-500 text-white' : 'btn-ghost'"
+                    :class="activeTab === 'schedule' ? 'bg-orange-500 text-white hover:bg-orange-500' : 'btn-ghost'"
                     @click="setActiveTab('schedule')">
                     กำหนดการ
                 </button>
