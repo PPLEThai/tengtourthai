@@ -32,7 +32,8 @@ export const useMockupStore = defineStore('mockup', {
     }),
     actions: {
         async fetchData() {
-            const apiUrl = useRuntimeConfig().public.apiTengData;
+            const timestamp = Math.floor(+(new Date()) / 1000 / 3600);
+            const apiUrl = useRuntimeConfig().public.apiTengData + `?timestamp=${timestamp}`;
             try {
                 const response = await fetch(apiUrl as string);
                 const data = await response.json();

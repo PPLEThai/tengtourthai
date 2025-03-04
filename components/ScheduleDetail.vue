@@ -6,14 +6,22 @@
       <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" target="_blank"
         class="text-primary underline">ณัฐพงษ์ เรืองปัญญาวุฒิ - Natthaphong Ruengpanyawut</a>
     </div>
+    <div class="text-sm font-light mb-2">
+      ทั้งหมด {{ filteredScheduleData.length }} จังหวัด
+    </div>
+    
     <div v-if="filteredScheduleData.length > 0">
       <div v-for="(item, index) in filteredScheduleData" :key="index" class="mb-4 p-4 border rounded-lg shadow-sm">
+        <!-- <p class="text-sm font-light">{{ isValidDate(item.date) ? formatDate(item.date) : 'ไม่มีข้อมูล' }}</p> -->
+         <p class="text-sm font-light">{{ item.date || 'ไม่มีข้อมูล' }}</p>
         <h2 class="text-lg font-semibold">{{ item.province }}</h2>
+        
+        <!-- <h2 class="text-lg font-semibold">{{ item.province }}</h2>
         <p class="text-sm text-gray-500">Date: {{ item.date || 'รอระบุวัน' }}</p>
         <p class="text-sm text-gray-500">Place: {{ item.place || 'รอระบุสถานที่' }}</p>
         <p class="text-sm" :class="getStatusClass(item.status)">
           Status: {{ item.status === 'plan' ? 'Planned' : 'Confirmed' }}
-        </p>
+        </p> -->
       </div>
     </div>
     <div v-else class="mt-4 border border-gray-200 rounded-lg p-4 shadow-sm overflow-y-auto">
@@ -54,6 +62,19 @@ const filteredScheduleData = computed(() => {
 
 function getStatusClass(status: string) {
   return status === 'plan' ? 'text-blue-500' : 'text-green-500';
+}
+
+function formatDate(date: string): string {
+  const [day, month, year] = date.split('/');
+  const formattedDate = new Date(`${year}-${month}-${day}`);
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  return formattedDate.toLocaleDateString('th-TH', options);
+}
+
+function isValidDate(date: string): boolean {
+  const [day, month, year] = date.split('/');
+  const formattedDate = new Date(`${year}-${month}-${day}`);
+  return !isNaN(formattedDate.getTime());
 }
 </script>
 
