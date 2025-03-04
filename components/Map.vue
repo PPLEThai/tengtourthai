@@ -8,9 +8,9 @@
         </div>
         <div class="timeline-slider">
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
-            <button @click="pauseTimeline" class="text-primary">Pause</button> 
+            <button @click="pauseTimeline" class="text-primary">Pause</button>
             <span class="text-white"> | {{ formattedDate }}</span>
-            <input type="range" min="0" max="30" v-model.number="timelineValue" @input="updateTimeline">
+            <input type="range" min="0" max="7" v-model.number="timelineValue" @input="updateKaitomTimeline">
         </div>
     </div>
 </template>
@@ -21,67 +21,92 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import { useMockupStore } from "@/stores/mockupStore";
-import { useHackCityData } from "@/composables/useHackCityData"; // Import useHackCityData
-import type { HackCityItem } from "@/composables/useHackCityData"; // Import HackCityItem interface
-import { selectedProvince } from "@/composables/eventBus"; // Import the event bus
-import type { Feature, LineString, Polygon } from "geojson"; // Import GeoJSON types
-import { activeTab } from "@/composables/eventBus"; // Import activeTab from event bus
+import { useHackCityData } from "@/composables/useHackCityData";
+import { useKaitomData } from "@/composables/useKaitomData";
+import type { HackCityItem } from "@/composables/useHackCityData";
+import type { KaitomItem } from "@/composables/useKaitomData";
+import { selectedProvince, activeTab } from "@/composables/eventBus";
+import type { Feature, LineString, Polygon } from "geojson";
 
 const mapContainer = ref<HTMLElement | null>(null);
 const mockupStore = useMockupStore();
 const groupedData = computed(() => mockupStore.groupedData);
 const scheduleData = computed(() => mockupStore.scheduleData);
 
-const { hackCityData } = useHackCityData(); // Get hackCityData
+const { hackCityData } = useHackCityData();
+const { kaitomData } = useKaitomData();
 
 let map: maplibregl.Map;
-const markers: maplibregl.Marker[] = []; // เก็บ markers ทั้งหมด
-let interval: ReturnType<typeof setInterval> | null = null; // Correctly type the interval
-const isPlaying = ref(false); // เพิ่มตัวแปร isPlaying
+const markers: maplibregl.Marker[] = [];
+let interval: ReturnType<typeof setInterval> | null = null;
+const isPlaying = ref(false);
 
-const zoomIn = () => {
-    if (map) {
-        map.zoomIn();
-    }
-};
+const zoomIn = () => map?.zoomIn();
+const zoomOut = () => map?.zoomOut();
+const resetZoom = () => map?.setZoom(5).setCenter([100.523186, 13.736717]);
 
-const zoomOut = () => {
-    if (map) {
-        map.zoomOut();
-    }
-};
-
-const resetZoom = () => {
-    if (map) {
-        map.setZoom(5);
-        map.setCenter([100.523186, 13.736717]);
-    }
-};
-
-const today = new Date(); // วันที่ปัจจุบัน
-const timelineValue = ref(30); // เริ่มต้นที่ 30 วันก่อนหน้า
+const today = new Date();
+const timelineValue = ref(7);
 const formattedDate = computed(() => {
-    const startDate = new Date(); // วันที่ปัจจุบัน
-    startDate.setDate(startDate.getDate() - (30 - timelineValue.value)); // ย้อนหลังจาก 30 วันไปจนถึงวันนี้
-    return startDate.toISOString().split('T')[0]; // แปลงเป็น YYYY-MM-DD
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - (7 - timelineValue.value));
+    return startDate.toISOString().split('T')[0];
+});
+
+const updateKaitomMarkers = () => {
+    markers.forEach(marker => marker.remove());
+    markers.length = 0;
+
+    map.getStyle().layers.forEach((layer) => {
+        if (layer.id.startsWith("line-") || layer.id.startsWith("polygon-")) {
+            map.getLayer(layer.id) && map.removeLayer(layer.id);
+            map.getSource(layer.id) && map.removeSource(layer.id);
+        }
+    });
+
+    kaitomData.value.forEach((item: KaitomItem) => {
+        if (new Date(item.date) <= new Date(formattedDate.value + "T00:00:00")) {
+            const marker = new maplibregl.Marker()
+                .setLngLat([item.longitude, item.latitude])
+                .setPopup(new maplibregl.Popup().setHTML(`
+                    <h3>${item.location_name}</h3>
+                    <p>${item.description}</p>
+                    <p><strong>โดย:</strong> ${item.full_name}</p>
+                    <p><strong>วันที่:</strong> ${new Date(item.date).toLocaleDateString()}</p>
+                `))
+                .addTo(map);
+            markers.push(marker);
+        }
+    });
+};
+
+watch(kaitomData, (newData) => {
+    if (newData.length > 0) {
+        // ข้อมูลถูกโหลดสำเร็จแล้ว ทำงานที่ต้องการที่นี่
+        updateKaitomMarkers();
+    }
 });
 
 const updateTimeline = () => {
-    updateMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
+    // updateMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
+};
+
+const updateKaitomTimeline = () => {
+    updateKaitomMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
 };
 
 const playTimeline = () => {
     if (isPlaying.value) return; // ถ้า isPlaying เป็น true ให้ return ออกไป
     isPlaying.value = true; // ตั้งค่า isPlaying เป็น true
 
-    if (timelineValue.value >= 30) {
+    if (timelineValue.value >= 7) {
         timelineValue.value = 0;
     } else {
         timelineValue.value += 1;
     }
 
     interval = setInterval(() => {
-        if (timelineValue.value < 30) {
+        if (timelineValue.value < 7) {
             timelineValue.value += 1;
         } else {
             if (interval !== null) {
@@ -90,7 +115,7 @@ const playTimeline = () => {
             interval = null;
             isPlaying.value = false; // ตั้งค่า isPlaying เป็น false เมื่อหยุดเล่น
         }
-        updateTimeline();
+        updateKaitomTimeline();
     }, 500); // Adjust the speed of the timeline as needed
 };
 
@@ -293,7 +318,7 @@ const drawGroupedDataLayer = (newGroupedData: any) => {
         });
 
         // Add markers for each hack city data point
-        updateMarkers();
+        updateKaitomMarkers();
     }
 }
 
