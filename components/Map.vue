@@ -6,12 +6,12 @@
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
         </div>
-        <div class="timeline-slider">
+        <!-- <div class="timeline-slider">
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
             <button @click="pauseTimeline" class="text-primary">Pause</button>
             <span class="text-white"> | {{ formattedDate }}</span>
             <input type="range" min="0" max="7" v-model.number="timelineValue" @input="updateKaitomTimeline">
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -318,7 +318,7 @@ const drawGroupedDataLayer = (newGroupedData: any) => {
         });
 
         // Add markers for each hack city data point
-        updateKaitomMarkers();
+        // updateKaitomMarkers();
     }
 }
 
