@@ -1,6 +1,6 @@
 <template>
     <div class="h-full relative">
-        <div v-if="!isDataReady" class="loading-overlay">Loading...</div>
+        <!-- <div v-if="!isDataReady" class="loading-overlay">Loading...</div> -->
         <div ref="mapContainer" class="map-container"></div>
         <div class="map-controls flex flex-row gap-2">
             <button @click="zoomIn" class="text-primary">+</button>
@@ -116,7 +116,7 @@ onMounted(() => {
     if (mapContainer.value) {
         map = new maplibregl.Map({
             container: mapContainer.value,
-            style: "https://api.maptiler.com/maps/basic-v2/style.json?key=SPy8tbXAIMMPKadG7FvD", // เพิ่ม style URL เพื่อให้แผนที่แสดงผล
+            style: "https://api.maptiler.com/maps/streets/style.json?key=SPy8tbXAIMMPKadG7FvD",
             center: [100.523186, 13.736717], // ศูนย์กลางประเทศไทย
             zoom: 5,
             minZoom: 5, // กำหนดการซูมต่ำสุด

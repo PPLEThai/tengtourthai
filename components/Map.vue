@@ -6,12 +6,6 @@
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
         </div>
-        <!-- <div class="timeline-slider">
-            <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
-            <button @click="pauseTimeline" class="text-primary">Pause</button>
-            <span class="text-white"> | {{ formattedDate }}</span>
-            <input type="range" min="0" max="7" v-model.number="timelineValue" @input="updateKaitomTimeline">
-        </div> -->
     </div>
 </template>
 
@@ -21,10 +15,8 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import { useMockupStore } from "@/stores/mockupStore";
-import { useHackCityData } from "@/composables/useHackCityData";
-import { useKaitomData } from "@/composables/useKaitomData";
-import type { HackCityItem } from "@/composables/useHackCityData";
-import type { KaitomItem } from "@/composables/useKaitomData";
+// import { useHackCityData } from "@/composables/useHackCityData";
+// import type { HackCityItem } from "@/composables/useHackCityData";
 import { selectedProvince, activeTab } from "@/composables/eventBus";
 import type { Feature, LineString, Polygon } from "geojson";
 
@@ -33,235 +25,12 @@ const mockupStore = useMockupStore();
 const groupedData = computed(() => mockupStore.groupedData);
 const scheduleData = computed(() => mockupStore.scheduleData);
 
-const { hackCityData } = useHackCityData();
-const { kaitomData } = useKaitomData();
+// const { hackCityData } = useHackCityData();
 
 let map: maplibregl.Map;
-const markers: maplibregl.Marker[] = [];
-let interval: ReturnType<typeof setInterval> | null = null;
-const isPlaying = ref(false);
-
 const zoomIn = () => map?.zoomIn();
 const zoomOut = () => map?.zoomOut();
 const resetZoom = () => map?.setZoom(5).setCenter([100.523186, 13.736717]);
-
-const today = new Date();
-const timelineValue = ref(7);
-const formattedDate = computed(() => {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - (7 - timelineValue.value));
-    return startDate.toISOString().split('T')[0];
-});
-
-const updateKaitomMarkers = () => {
-    markers.forEach(marker => marker.remove());
-    markers.length = 0;
-
-    map.getStyle().layers.forEach((layer) => {
-        if (layer.id.startsWith("line-") || layer.id.startsWith("polygon-")) {
-            map.getLayer(layer.id) && map.removeLayer(layer.id);
-            map.getSource(layer.id) && map.removeSource(layer.id);
-        }
-    });
-
-    kaitomData.value.forEach((item: KaitomItem) => {
-        if (new Date(item.date) <= new Date(formattedDate.value + "T00:00:00")) {
-            const marker = new maplibregl.Marker()
-                .setLngLat([item.longitude, item.latitude])
-                .setPopup(new maplibregl.Popup().setHTML(`
-                    <h3>${item.location_name}</h3>
-                    <p>${item.description}</p>
-                    <p><strong>โดย:</strong> ${item.full_name}</p>
-                    <p><strong>วันที่:</strong> ${new Date(item.date).toLocaleDateString()}</p>
-                `))
-                .addTo(map);
-            markers.push(marker);
-        }
-    });
-};
-
-watch(kaitomData, (newData) => {
-    if (newData.length > 0) {
-        // ข้อมูลถูกโหลดสำเร็จแล้ว ทำงานที่ต้องการที่นี่
-        updateKaitomMarkers();
-    }
-});
-
-const updateTimeline = () => {
-    // updateMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
-};
-
-const updateKaitomTimeline = () => {
-    updateKaitomMarkers(); // ฟังก์ชันอัปเดตข้อมูลแผนที่
-};
-
-const playTimeline = () => {
-    if (isPlaying.value) return; // ถ้า isPlaying เป็น true ให้ return ออกไป
-    isPlaying.value = true; // ตั้งค่า isPlaying เป็น true
-
-    if (timelineValue.value >= 7) {
-        timelineValue.value = 0;
-    } else {
-        timelineValue.value += 1;
-    }
-
-    interval = setInterval(() => {
-        if (timelineValue.value < 7) {
-            timelineValue.value += 1;
-        } else {
-            if (interval !== null) {
-                clearInterval(interval);
-            }
-            interval = null;
-            isPlaying.value = false; // ตั้งค่า isPlaying เป็น false เมื่อหยุดเล่น
-        }
-        updateKaitomTimeline();
-    }, 500); // Adjust the speed of the timeline as needed
-};
-
-const pauseTimeline = () => {
-    if (interval) {
-        clearInterval(interval);
-        interval = null;
-        isPlaying.value = false; // ตั้งค่า isPlaying เป็น false เมื่อหยุดเล่น
-    }
-};
-
-const updateMarkers = () => {
-    // ลบ markers ที่มีอยู่ทั้งหมด
-    markers.forEach(marker => marker.remove());
-    markers.length = 0;
-
-    // ลบ sources และ layers ที่มีอยู่ทั้งหมด
-    map.getStyle().layers.forEach((layer) => {
-        if (layer.id.startsWith("line-") || layer.id.startsWith("polygon-")) {
-            if (map.getLayer(layer.id)) {
-                map.removeLayer(layer.id);
-            }
-            if (map.getSource(layer.id)) {
-                map.removeSource(layer.id);
-            }
-        }
-    });
-
-    // เพิ่ม markers ใหม่ตามวันที่ที่เลือก
-    hackCityData.value.forEach((item: HackCityItem, index: number) => {
-        if (new Date(item.created) <= new Date(formattedDate.value + "T00:00:00")) {
-            if (item.geom.startsWith("POINT")) {
-                const match = item.geom.match(/POINT\(([^)]+)\)/);
-                if (match) {
-                    const [lng, lat] = match[1].split(' ').map(Number);
-                    // const popupContent = `
-                    //     ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
-                    //     <h3>${item.name}</h3>
-                    //     <p>${item.detail}</p>
-                    // `;
-                    const popupContent = `
-                        <h3>${item.name}</h3>
-                        <p>${item.detail}</p>
-                    `;
-                    const marker = new maplibregl.Marker()
-                        .setLngLat([lng, lat])
-                        .setPopup(new maplibregl.Popup().setHTML(popupContent))
-                        .addTo(map);
-                    markers.push(marker);
-                }
-            } else if (item.geom.startsWith("LINESTRING")) {
-                const match = item.geom.match(/LINESTRING\(([^)]+)\)/);
-                if (match) {
-                    const coordinates = match[1].split(',').map((coord: string) => coord.trim().split(' ').map(Number));
-                    const lineString: Feature<LineString> = {
-                        type: "Feature",
-                        geometry: {
-                            type: "LineString",
-                            coordinates: coordinates
-                        },
-                        properties: {
-                            name: item.name,
-                            detail: item.detail
-                        }
-                    };
-                    map.addSource(`line-${index}`, {
-                        type: "geojson",
-                        data: lineString
-                    });
-                    map.addLayer({
-                        id: `line-${index}`,
-                        type: "line",
-                        source: `line-${index}`,
-                        paint: {
-                            "line-color": "#FF0000",
-                            "line-width": 2
-                        }
-                    });
-
-                    // ปักหมุดที่จุดแรกของ LINESTRING
-                    const [lng, lat] = coordinates[0];
-                    // const popupContent = `
-                    //     ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
-                    //     <h3>${item.name}</h3>
-                    //     <p>${item.detail}</p>
-                    // `;
-                    const popupContent = `
-                        <h3>${item.name}</h3>
-                        <p>${item.detail}</p>
-                    `;
-                    const marker = new maplibregl.Marker()
-                        .setLngLat([lng, lat])
-                        .setPopup(new maplibregl.Popup().setHTML(popupContent))
-                        .addTo(map);
-                    markers.push(marker);
-                }
-            } else if (item.geom.startsWith("POLYGON")) {
-                const match = item.geom.match(/POLYGON\(\(([^)]+)\)\)/);
-                if (match) {
-                    const coordinates = match[1].split(',').map((coord: string) => coord.trim().split(' ').map(Number));
-                    const polygon: Feature<Polygon> = {
-                        type: "Feature",
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: [coordinates]
-                        },
-                        properties: {
-                            name: item.name,
-                            detail: item.detail
-                        }
-                    };
-                    map.addSource(`polygon-${index}`, {
-                        type: "geojson",
-                        data: polygon
-                    });
-                    map.addLayer({
-                        id: `polygon-${index}`,
-                        type: "fill",
-                        source: `polygon-${index}`,
-                        paint: {
-                            "fill-color": "#00FF00",
-                            "fill-opacity": 0.5
-                        }
-                    });
-
-                    // ปักหมุดที่จุดแรกของ POLYGON
-                    const [lng, lat] = coordinates[0];
-                    // const popupContent = `
-                    //     ${item.images.length > 0 ? `<img src="${item.images[0]}" alt="${item.name}" style="width:400px;height:auto;">` : ''}
-                    //     <h3>${item.name}</h3>
-                    //     <p>${item.detail}</p>
-                    // `;
-                    const popupContent = `
-                        <h3>${item.name}</h3>
-                        <p>${item.detail}</p>
-                    `;
-                    const marker = new maplibregl.Marker()
-                        .setLngLat([lng, lat])
-                        .setPopup(new maplibregl.Popup().setHTML(popupContent))
-                        .addTo(map);
-                    markers.push(marker);
-                }
-            }
-        }
-    });
-};
 
 const drawGroupedDataLayer = (newGroupedData: any) => {
     if (Object.keys(newGroupedData).length > 0) {
@@ -316,9 +85,6 @@ const drawGroupedDataLayer = (newGroupedData: any) => {
                 }
             }
         });
-
-        // Add markers for each hack city data point
-        // updateKaitomMarkers();
     }
 }
 
