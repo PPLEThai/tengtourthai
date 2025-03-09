@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col md:flex-row h-[calc(100vh-64px)]">
+    <div class="flex flex-col md:flex-row" style="height: calc(100vh - 64px);">
 
         <div class="w-full md:w-1/2 h-1/2 md:h-full">
             <SomMap :kaitom-data="kaitomData" />
