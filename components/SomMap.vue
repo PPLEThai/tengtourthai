@@ -139,3 +139,58 @@ onMounted(() => {
     }
 });
 </script>
+
+<style>
+.map-container {
+    width: 100%;
+    height: 100%;
+}
+
+.map-controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    /* flex-direction: column; */
+    gap: 5px;
+}
+
+.map-controls button {
+    background-color: #fff;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-width: 40px;
+}
+
+.map-controls button:hover {
+    background-color: #f0f0f0;
+}
+
+.timeline-slider {
+    position: absolute;
+    bottom: 20px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    /* เพิ่ม flex-wrap เพื่อให้รองรับ responsive */
+}
+
+.timeline-slider input[type="range"] {
+    width: 100%;
+    /* เปลี่ยนเป็น 100% เพื่อให้รองรับ responsive */
+    max-width: 300px;
+    /* กำหนด max-width เพื่อไม่ให้กว้างเกินไป */
+}
+
+@media (max-width: 768px) {
+    .timeline-slider {
+        max-width: 250px;
+    }
+}
+</style>

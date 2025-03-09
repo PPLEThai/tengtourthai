@@ -350,24 +350,6 @@ onMounted(() => {
     background-color: #f0f0f0;
 }
 
-.timeline-slider {
-    position: absolute;
-    bottom: 20px;
-    left: 40px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    /* เพิ่ม flex-wrap เพื่อให้รองรับ responsive */
-}
-
-.timeline-slider input[type="range"] {
-    width: 100%;
-    /* เปลี่ยนเป็น 100% เพื่อให้รองรับ responsive */
-    max-width: 300px;
-    /* กำหนด max-width เพื่อไม่ให้กว้างเกินไป */
-}
-
 @media (max-width: 768px) {
     .timeline-slider {
         max-width: 250px;
