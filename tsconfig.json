@@ -3,6 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
     "types": [
       "node"
     ],
