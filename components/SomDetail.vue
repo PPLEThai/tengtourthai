@@ -12,7 +12,7 @@
         
         <div class="divider text-primary">ข้อมูลกิจกรรมใน  7 วันที่ผ่านมา</div>
         <div class="h-[calc(100%-140px)]">
-            <div v-for="(item, index) in props.kaitomData.slice(-20)" :key="index" class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
+            <div v-for="(item, index) in props.kaitomData.slice().reverse().slice(0, 20)" :key="index" class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
                 <div v-if="item.images && item.images.length > 0" class="w-1/4">
                     <img :src="item.images[0]" alt="activity image" class="w-full h-auto rounded-md">
                 </div>

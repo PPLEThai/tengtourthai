@@ -10,7 +10,7 @@
         <div class="timeline-slider">
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
             <button @click="pauseTimeline" class="text-primary">Pause</button>
-            <span class="text-white"> | {{ formattedDate }}</span>
+            <span class="text-black"> | {{ formattedDate }}</span>
             <input type="range" min="0" max="7" v-model.number="timelineValue" @input="updateKaitomTimeline">
         </div>
     </div>
@@ -51,27 +51,22 @@ const updateKaitomMarkers = () => {
     markers.forEach(marker => marker.remove());
     markers.length = 0;
 
-    map.getStyle().layers.forEach((layer) => {
-        if (layer.id.startsWith("line-") || layer.id.startsWith("polygon-")) {
-            map.getLayer(layer.id) && map.removeLayer(layer.id);
-            map.getSource(layer.id) && map.removeSource(layer.id);
-        }
-    });
-    // console.log(props.kaitomData);
-    props.kaitomData.forEach((item: KaitomItem) => {
-        if (new Date(item.date) <= new Date(formattedDate.value + "T00:00:00")) {
-            const marker = new maplibregl.Marker()
-                .setLngLat([item.longitude, item.latitude])
-                .setPopup(new maplibregl.Popup().setHTML(`
-                    <h3>${item.location_name}</h3>
-                    <p>${item.description}</p>
-                    <p><strong>โดย:</strong> ${item.full_name}</p>
-                    <p><strong>วันที่:</strong> ${new Date(item.date).toLocaleDateString()}</p>
-                `))
-                .addTo(map);
-            markers.push(marker);
-        }
-    });
+    if (props.kaitomData.length > 0) {
+        props.kaitomData.forEach((item: KaitomItem) => {
+            if (new Date(item.date) <= new Date(formattedDate.value + "T00:00:00")) {
+                const marker = new maplibregl.Marker()
+                    .setLngLat([item.longitude, item.latitude])
+                    .setPopup(new maplibregl.Popup().setHTML(`
+                        <h3>${item.location_name}</h3>
+                        <p>${item.description}</p>
+                        <p><strong>โดย:</strong> ${item.full_name}</p>
+                        <p><strong>วันที่:</strong> ${new Date(item.date).toLocaleDateString()}</p>
+                    `))
+                    .addTo(map);
+                markers.push(marker);
+            }
+        });
+    }
 };
 
 const updateKaitomTimeline = () => {
@@ -111,12 +106,11 @@ const pauseTimeline = () => {
 };
 
 onMounted(() => {
-    // console.log(props.kaitomData);
 
     if (mapContainer.value) {
         map = new maplibregl.Map({
             container: mapContainer.value,
-            style: "https://api.maptiler.com/maps/streets/style.json?key=SPy8tbXAIMMPKadG7FvD",
+            style: "https://demotiles.maplibre.org/style.json",
             center: [100.523186, 13.736717], // ศูนย์กลางประเทศไทย
             zoom: 5,
             minZoom: 5, // กำหนดการซูมต่ำสุด
@@ -128,17 +122,18 @@ onMounted(() => {
         });
 
         map.on("load", async () => {
-            // const response = await fetch("/data/province.geojson");
-            // const geojsonData = await response.json();
-
-            // map.addSource("provinces", {
-            //     type: "geojson",
-            //     data: geojsonData,
-            // });
-            watch(props.kaitomData, () => {
-                console.log("updateKaitomMarkers");
-                updateKaitomMarkers();
-                isDataReady.value = true; // ตั้งค่า isDataReady เป็น true เมื่อข้อมูลพร้อม
+            watch(props.kaitomData, (newValue) => {
+                if (newValue.length === 0) {
+                    const intervalId = setInterval(() => {
+                        if (props.kaitomData.length > 0) {
+                            clearInterval(intervalId);
+                            console.log(props.kaitomData);
+                            updateKaitomMarkers();
+                        }
+                    }, 500); // ตรวจสอบทุกๆ 500 มิลลิวินาที
+                } else {
+                    updateKaitomMarkers();
+                }
             }, { immediate: true });
         });
     }
