@@ -19,7 +19,5 @@ import { useKaitomData } from "@/composables/useKaitomData";
 
 const { kaitomData } = useKaitomData();
 
-import SomMap from "@/components/SomMap.vue";
-import SomDetail from "@/components/SomDetail.vue";
 
 </script>

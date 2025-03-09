@@ -110,7 +110,8 @@ onMounted(() => {
     if (mapContainer.value) {
         map = new maplibregl.Map({
             container: mapContainer.value,
-            style: "https://demotiles.maplibre.org/style.json",
+            // style: "https://demotiles.maplibre.org/style.json",
+            style: "https://api.maptiler.com/maps/basic/style.json?key=SPy8tbXAIMMPKadG7FvD",
             center: [100.523186, 13.736717], // ศูนย์กลางประเทศไทย
             zoom: 5,
             minZoom: 5, // กำหนดการซูมต่ำสุด
