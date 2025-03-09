@@ -128,7 +128,6 @@ onMounted(() => {
                     const intervalId = setInterval(() => {
                         if (props.kaitomData.length > 0) {
                             clearInterval(intervalId);
-                            console.log(props.kaitomData);
                             updateKaitomMarkers();
                         }
                     }, 500); // ตรวจสอบทุกๆ 500 มิลลิวินาที

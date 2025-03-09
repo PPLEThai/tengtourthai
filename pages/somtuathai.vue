@@ -1,11 +1,11 @@
 <template>
     <div class="flex flex-col md:flex-row" style="height: calc(100vh - 64px);">
 
-        <div class="w-full md:w-1/2 h-1/2 md:h-full">
+        <div id="map-container" class="w-full md:w-1/2 h-1/2 md:h-full">
             <SomMap :kaitom-data="kaitomData" />
         </div>
 
-        <div class="w-full md:w-1/2 overflow-y-auto h-1/2 md:h-full">
+        <div id="detail-container" class="w-full md:w-1/2 overflow-y-auto h-1/2 md:h-full">
             <SomDetail :kaitom-data="kaitomData" />
         </div>
 
@@ -21,3 +21,23 @@ const { kaitomData } = useKaitomData();
 
 
 </script>
+
+<style scoped>
+#map-container {
+    height: 50%;
+}
+
+#detail-container {
+    height: 50%;
+}
+
+@media (min-width: 768px) {
+    #map-container {
+        height: 100%;
+    }
+
+    #detail-container {
+        height: 100%;
+    }
+}
+</style>
