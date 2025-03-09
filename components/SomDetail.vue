@@ -11,8 +11,8 @@
         </div>
         
         <div class="divider text-primary">ข้อมูลกิจกรรมใน  7 วันที่ผ่านมา</div>
-        <div class="h-[calc(100%-140px)]">
-            <div v-for="(item, index) in props.kaitomData.slice().reverse().slice(0, 20)" :key="index" class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
+        <div class="">
+            <div v-for="(item, index) in displayedItems" :key="index" class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
                 <div v-if="item.images && item.images.length > 0" class="w-1/4">
                     <img :src="item.images[0]" alt="activity image" class="w-full h-auto rounded-md">
                 </div>
@@ -23,6 +23,10 @@
                     <p v-if="item.description" class="text-sm font-light">คำอธิบาย: {{ truncateText(item.description, 300) }}</p>
                 </div>
             </div>
+            
+            <div v-if="hasMoreItems" class="flex justify-center mt-4 mb-4">
+                <button @click="loadMore" class="btn btn-primary text-white w-full">ดูเพิ่มเติม</button>
+            </div>
         </div>
     </div>
 </template>
@@ -30,6 +34,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import type { KaitomItem } from "@/composables/useKaitomData";
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     kaitomData: {
@@ -37,6 +42,25 @@ const props = defineProps({
         required: true
     }
 });
+
+const itemsPerPage = 20;
+const currentPage = ref(1);
+
+// คำนวณรายการที่จะแสดงตามจำนวนหน้าปัจจุบัน
+const displayedItems = computed(() => {
+    const reversedData = [...props.kaitomData].reverse();
+    return reversedData.slice(0, currentPage.value * itemsPerPage);
+});
+
+// ตรวจสอบว่ายังมีรายการเพิ่มเติมหรือไม่
+const hasMoreItems = computed(() => {
+    return displayedItems.value.length < props.kaitomData.length;
+});
+
+// โหลดข้อมูลเพิ่มเติม
+const loadMore = () => {
+    currentPage.value += 1;
+};
 
 const truncateText = (text: string, maxLength: number): string => {
     if (!text) return '';
@@ -49,5 +73,4 @@ const formatThaiDate = (dateString: string): string => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('th-TH', options);
 };
-
 </script>
