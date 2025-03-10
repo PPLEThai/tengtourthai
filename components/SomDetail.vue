@@ -9,21 +9,24 @@
                 <h4 class="text-gray-500 text-sm">กระจายตัวทำงานทั่วประเทศ เพื่อเจ้านายที่เป็นประชาชน</h4>
             </div>
         </div>
-        
-        <div class="divider text-primary">ข้อมูลกิจกรรมใน  7 วันที่ผ่านมา</div>
+
+        <div class="divider text-primary">ข้อมูลกิจกรรมใน 7 วันที่ผ่านมา</div>
         <div class="">
-            <div v-for="(item, index) in displayedItems" :key="index" class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
+            <div v-for="(item, index) in displayedItems" :key="index"
+                class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
                 <div v-if="item.images && item.images.length > 0" class="w-1/4">
-                    <img :src="item.images[0]" alt="activity image" class="w-full h-auto rounded-md">
+                    <img :src="'https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/' + encodeURIComponent(item.images[0])"
+                        alt="activity image" class="w-full h-auto rounded-md">
                 </div>
                 <div class="w-3/4 pl-4">
                     <h3 class="text-lg font-bold">{{ truncateText(item.location_name, 100) }}</h3>
                     <p class="text-sm font-light">ผู้นำเข้าข้อมูล: {{ item.full_name }}</p>
                     <p class="text-sm font-light">วันที่: {{ formatThaiDate(item.date) }}</p>
-                    <p v-if="item.description" class="text-sm font-light">คำอธิบาย: {{ truncateText(item.description, 300) }}</p>
+                    <p v-if="item.description" class="text-sm font-light">คำอธิบาย: {{ truncateText(item.description,
+                        300) }}</p>
                 </div>
             </div>
-            
+
             <div v-if="hasMoreItems" class="flex justify-center mt-4 mb-4">
                 <button @click="loadMore" class="btn btn-primary text-white w-full">ดูเพิ่มเติม</button>
             </div>
