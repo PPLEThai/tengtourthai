@@ -6,6 +6,12 @@
             <button @click="zoomIn" class="text-primary">+</button>
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
+            <select v-model="selectedMonth" class="select select-bordered select-sm" @change="drawActDataLayer">
+                <option value="all">ทุกเดือน</option>
+                <option v-for="month in availableMonths" :key="month" :value="month" v-show="month !== 'all'">
+                    {{ month }}
+                </option>
+            </select>
         </div>
         <div class="timeline-slider">
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
@@ -17,13 +23,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, type PropType } from "vue";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import type { KaitomItem } from "@/composables/useKaitomData";
+import type { ActMonthlyData } from "@/composables/useActData";
 
 const props = defineProps({
     kaitomData: {
         type: Array as PropType<KaitomItem[]>,
+        required: true
+    },
+    actData: {
+        type: Object as PropType<ActMonthlyData>,
         required: true
     }
 });
@@ -45,6 +57,11 @@ const formattedDate = computed(() => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - (7 - timelineValue.value));
     return startDate.toISOString().split('T')[0];
+});
+
+const selectedMonth = ref<string>('all');
+const availableMonths = computed(() => {
+    return ['all', ...Object.keys(props.actData)].sort();
 });
 
 const updateKaitomMarkers = () => {
@@ -105,24 +122,137 @@ const pauseTimeline = () => {
     }
 };
 
-onMounted(() => {
+const calculateTotalActivities = (province: string) => {
+    let total = 0;
+    if (selectedMonth.value === 'all') {
+        // รวมจำนวนกิจกรรมจากทุกเดือน
+        Object.values(props.actData).forEach(monthData => {
+            if (monthData[province]) {
+                total += monthData[province];
+            }
+        });
+    } else {
+        // รวมจำนวนกิจกรรมเฉพาะเดือนที่เลือก
+        const monthData = props.actData[selectedMonth.value];
+        if (monthData && monthData[province]) {
+            total = monthData[province];
+        }
+    }
+    return total;
+};
 
+const getProvinceColor = (total: number) => {
+    // กำหนดเฉดสีตามจำนวนกิจกรรม
+    if (total === 0) return '#B9B9B9';
+    if (total <= 3) return '#FFE5CC';
+    if (total <= 6) return '#FFB366';
+    if (total <= 9) return '#FF8000';
+    return '#FF6A13'; // มากกว่า 9 กิจกรรม
+};
+
+const drawActDataLayer = async () => {
+    try {
+        const response = await fetch("/data/province.geojson");
+        const geojsonData = await response.json() as GeoJSON.FeatureCollection;
+
+        if (!map.getSource("provinces")) {
+            map.addSource("provinces", {
+                type: "geojson",
+                data: geojsonData
+            });
+        }
+
+        if (map.getLayer("province-layer")) {
+            map.removeLayer("province-layer");
+        }
+        if (map.getLayer("states-layer-outline")) {
+            map.removeLayer("states-layer-outline");
+        }
+
+        const fillColorExpression: (string | string[])[] = [
+            "match",
+            ["get", "ADM1_TH"]
+        ];
+        
+        // รวบรวมรายชื่อจังหวัดทั้งหมดจากทุกเดือน
+        const allProvinces = new Set<string>();
+        Object.values(props.actData).forEach(monthData => {
+            Object.keys(monthData).forEach(province => {
+                allProvinces.add(province);
+            });
+        });
+        
+        // วนลูปผ่านทุกจังหวัด
+        Array.from(allProvinces).sort().forEach(province => {
+            const total = calculateTotalActivities(province);
+            fillColorExpression.push(province, getProvinceColor(total));
+        });
+
+        fillColorExpression.push("#B9B9B9"); // สีเริ่มต้นสำหรับจังหวัดที่ไม่มีข้อมูล
+
+        map.addLayer({
+            id: "province-layer",
+            type: "fill",
+            // @ts-ignore
+            source: "provinces",
+            paint: {
+                // @ts-ignore
+                "fill-color": fillColorExpression,
+                "fill-opacity": 0.7,
+            },
+        });
+
+        map.addLayer({
+            id: "states-layer-outline",
+            type: "line",
+            source: "provinces",
+            paint: {
+                "line-color": "#000000",
+                "line-width": 0.5,
+            },
+        });
+
+        // เพิ่ม popup แสดงจำนวนกิจกรรม
+        map.on("click", "province-layer", (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
+            if (e.features && e.features.length > 0) {
+                const provinceName = e.features[0].properties.ADM1_TH;
+                const total = calculateTotalActivities(provinceName);
+                
+                new maplibregl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(`
+                        <h3>${provinceName}</h3>
+                        <p>จำนวนกิจกรรมทั้งหมด: ${total}</p>
+                    `)
+                    .addTo(map);
+            }
+        });
+    } catch (error) {
+        console.error("Error loading province data:", error);
+    }
+};
+
+onMounted(() => {
     if (mapContainer.value) {
         map = new maplibregl.Map({
             container: mapContainer.value,
-            // style: "https://demotiles.maplibre.org/style.json",
             style: "https://api.maptiler.com/maps/basic/style.json?key=SPy8tbXAIMMPKadG7FvD",
-            center: [100.523186, 13.736717], // ศูนย์กลางประเทศไทย
+            center: [100.523186, 13.736717],
             zoom: 5,
-            minZoom: 5, // กำหนดการซูมต่ำสุด
-            maxZoom: 11, // กำหนดการซูมสูงสุด
-            maxBounds: [
-                [93.0, 3.0], // พิกัดมุมซ้ายล่าง
-                [108.0, 22.0]  // พิกัดมุมขวาบน
-            ] // กำหนดขอบเขตการเลื่อนแผนที่
+            minZoom: 5,
+            maxZoom: 11,
+            maxBounds: [[93.0, 3.0], [108.0, 22.0]]
         });
 
-        map.on("load", async () => {
+        map.on("load", () => {
+            // เฝ้าดูการเปลี่ยนแปลงของ actData
+            watch(() => props.actData, (newActData) => {
+                if (Object.keys(newActData).length > 0) {
+                    drawActDataLayer();
+                }
+            }, { immediate: true });
+
+            // เฝ้าดูการเปลี่ยนแปลงของ kaitomData
             watch(props.kaitomData, (newValue) => {
                 if (newValue.length === 0) {
                     const intervalId = setInterval(() => {
@@ -130,7 +260,7 @@ onMounted(() => {
                             clearInterval(intervalId);
                             updateKaitomMarkers();
                         }
-                    }, 500); // ตรวจสอบทุกๆ 500 มิลลิวินาที
+                    }, 500);
                 } else {
                     updateKaitomMarkers();
                 }
@@ -192,5 +322,19 @@ onMounted(() => {
     .timeline-slider {
         max-width: 250px;
     }
+}
+
+.map-controls .select {
+    background-color: white;
+    border: none;
+    font-size: 14px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-width: 120px;
+}
+
+.map-controls .select:focus {
+    outline: none;
+    border-color: #FF6A13;
 }
 </style>

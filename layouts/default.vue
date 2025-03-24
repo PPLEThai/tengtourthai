@@ -14,13 +14,12 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { onMounted, getCurrentInstance, ref } from "vue";
 import { createPinia } from 'pinia'
 import { useMockupStore } from "@/stores/mockupStore";
 
-import Navbar from "@/components/Navbar.vue";
+// import Navbar from "@/components/Navbar.vue";
 
 const instance = getCurrentInstance();
 if (instance) {

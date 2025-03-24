@@ -7,7 +7,7 @@
           <div class="flex-shrink-0 flex items-center space-x-2">
             <img src="/images/logo-pp.png" alt="Logo" class="h-8" />
             <div class="flex items-center">
-              <a class="text-xl font-bold text-white mr-2">{{ currentUrl === '/somtuathai' ? '#ส้มทั่วไทย' : '#เท้งทั่วไทย' }}</a>
+              <a class="text-xl font-bold text-white mr-2">{{ currentUrl === '/teng' ? '#เท้งทั่วไทย' : '#ส้มทั่วไทย' }}</a>
               <img src="/images/arrow-down.svg" @click="toggleWebType" alt="Logo" class="h-4 cursor-pointer" />
             </div>
           </div>
@@ -16,7 +16,7 @@
         <!-- Dropdown Menu -->
         <div v-show="isWebTypeOpen" class="absolute bg-third shadow-lg rounded-md mt-2 top-16 z-30">
           <div class="px-4 py-4">
-            <a href="/" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/teng" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/teng-logo.png" alt="เท้งทั่วไทย Logo" class="h-10" />
               <div>
                 <div class="font-bold">เท้งทั่วไทย</div>
@@ -24,7 +24,7 @@
               </div>
             </a>
             <!-- <div class="border-t border-gray-200 my-2"></div> -->
-            <a href="/somtuathai" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/som-logo.svg" alt="ส้มทั่วไทย Logo" class="h-8" />
               <div>
                 <div class="font-bold">ส้มทั่วไทย</div>
@@ -35,15 +35,26 @@
         </div>
 
         <!-- จังหวัดที่ไปมาแล้ว -->
-        <div v-if="currentUrl !== '/somtuathai'" class="flex items-center space-x-2">
+        <div v-if="currentUrl === '/teng'" class="flex items-center space-x-2">
           <span class="text-white hidden md:block md:text-lg">ไปมาแล้ว</span>
+          <div class="flex space-x-1">
+            <span v-for="digit in tengVisitedDigits" :key="digit"
+              class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+              {{ digit }}
+            </span>
+          </div>
+          <span class="text-white text-sm md:text-lg">จังหวัด</span>
+        </div>
+        
+        <div v-if="currentUrl === '/'" class="flex items-center space-x-2">
+          <span class="text-white hidden md:block md:text-lg">สัปดาห์นี้</span>
           <div class="flex space-x-1">
             <span v-for="digit in visitedDigits" :key="digit"
               class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
               {{ digit }}
             </span>
           </div>
-          <span class="text-white text-sm md:text-lg">จังหวัด</span>
+          <span class="text-white text-sm md:text-lg">ครั้ง</span>
         </div>
 
         <!-- Desktop Menu -->
@@ -79,6 +90,7 @@
 import { ref, computed } from "vue";
 import { useMockupStore } from "@/stores/mockupStore";
 import { useRoute } from 'vue-router';
+import { useKaitomStore } from "@/stores/kaitomStore";
 
 const isMenuOpen = ref(false);
 const isWebTypeOpen = ref(false);
@@ -97,10 +109,16 @@ const mockupStore = useMockupStore();
 const groupedData = computed(() => mockupStore.groupedData);
 
 // Compute the number of visited provinces
-const visitedProvinces = computed(() => {
+const tengVisitedProvinces = computed(() => {
   return Object.keys(groupedData.value).length;
 });
 
-// แยกตัวเลขเป็น Array เพื่อให้แต่ละหลักเป็นกล่องแยก
-const visitedDigits = computed(() => visitedProvinces.value.toString().split(""));
+const kaitomStore = useKaitomStore();
+
+const tengVisitedDigits = computed(() => tengVisitedProvinces.value.toString().split(""));
+
+const visitedDigits = computed(() => {
+    const count = kaitomStore.kaitomData.length.toString();
+    return count.padStart(3, '0').split('');
+});
 </script>

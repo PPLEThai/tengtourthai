@@ -1,39 +1,28 @@
 <template>
-  <div class="flex flex-col md:flex-row" style="height: calc(100vh - 64px);">
+    <div class="flex flex-col md:flex-row" style="height: calc(100vh - 64px);">
 
-    <div id="map-container" class="w-full md:w-1/2 h-1/2 md:h-full">
-      <Map :provinces="provinces" @select-province="handleSelectProvince" />
+        <div id="map-container" class="w-full md:w-1/2 h-1/2 md:h-full">
+            <SomMap :kaitom-data="kaitomStore.kaitomData" :act-data="actData" />
+        </div>
+
+        <div id="detail-container" class="w-full md:w-1/2 overflow-y-auto h-1/2 md:h-full">
+            <SomDetail :kaitom-data="kaitomStore.kaitomData" />
+        </div>
+
     </div>
-
-    <div id="detail-container" class="w-full md:w-1/2 p-2 md:p-4 overflow-y-auto h-1/2 md:h-full">
-      <Detail :provinces="provinces" />
-    </div>
-
-    <!-- <div class="w-full md:w-1/2 h-full">
-      <Map :provinces="provinces" @select-province="handleSelectProvince" />
-    </div>
-
-    <div class="w-full md:w-1/2 p-2 md:p-4 overflow-y-auto h-1/2 md:h-full">
-      <Detail :provinces="provinces" />
-    </div> -->
-
-  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import Map from "@/components/Map.vue";
-import Detail from "@/components/Detail.vue";
-import { useProvinces } from "@/composables/useProvince";
+import { onMounted } from "vue";
+import { useKaitomStore } from "@/stores/kaitomStore";
+import { useActData } from "@/composables/useActData";
 
-const { provinces } = useProvinces();
+const kaitomStore = useKaitomStore();
+const { actData } = useActData();
 
-// เก็บจังหวัดที่ถูกเลือก
-const selectedProvinceId = ref<number | null>(null);
-
-const handleSelectProvince = (provinceId: number) => {
-  selectedProvinceId.value = provinceId;
-};
+onMounted(() => {
+    kaitomStore.fetchKaitomData();
+});
 </script>
 
 <style scoped>
