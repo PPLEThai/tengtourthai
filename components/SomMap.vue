@@ -7,9 +7,8 @@
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
             <select v-model="selectedMonth" class="select select-bordered select-sm" @change="drawActDataLayer">
-                <option value="all">ทุกเดือน</option>
-                <option v-for="month in availableMonths" :key="month" :value="month" v-show="month !== 'all'">
-                    {{ month }}
+                <option v-for="month in availableMonths" :key="month" :value="month">
+                    {{ formatMonthThai(month) }}
                 </option>
             </select>
         </div>
@@ -17,7 +16,8 @@
             <button @click="playTimeline" class="text-primary" :disabled="isPlaying">Play</button>
             <button @click="pauseTimeline" class="text-primary">Pause</button>
             <span class="text-black"> | {{ formattedDate }}</span>
-            <input type="range" min="0" max="7" v-model.number="timelineValue" @input="updateKaitomTimeline">
+            <input type="range" min="1" :max="daysInSelectedMonth" v-model.number="timelineValue"
+                @input="updateKaitomTimeline">
         </div>
     </div>
 </template>
@@ -28,6 +28,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { KaitomItem } from "@/composables/useKaitomData";
 import type { ActMonthlyData } from "@/composables/useActData";
+import { useKaitomStore } from "@/stores/kaitomStore";
 
 const props = defineProps({
     kaitomData: {
@@ -39,6 +40,8 @@ const props = defineProps({
         required: true
     }
 });
+
+const kaitomStore = useKaitomStore();
 
 const mapContainer = ref<HTMLElement | null>(null);
 const isDataReady = ref(false);
@@ -52,16 +55,36 @@ const zoomIn = () => map?.zoomIn();
 const zoomOut = () => map?.zoomOut();
 const resetZoom = () => map?.setZoom(5).setCenter([100.523186, 13.736717]);
 
-const timelineValue = ref(7);
+const timelineValue = ref(1);
 const formattedDate = computed(() => {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - (7 - timelineValue.value));
-    return startDate.toISOString().split('T')[0];
+    if (!selectedMonth.value) return '';
+
+    const [year, month] = selectedMonth.value.split('-');
+    // สร้างวันที่โดยใช้ค่า timelineValue
+    return `${year}-${month.padStart(2, '0')}-${String(timelineValue.value).padStart(2, '0')}`;
 });
 
-const selectedMonth = ref<string>('all');
+const selectedMonth = ref<string>('');
 const availableMonths = computed(() => {
-    return ['all', ...Object.keys(props.actData)].sort();
+    const months = Object.keys(props.actData).sort().reverse();
+    if (months.length > 0 && !selectedMonth.value) {
+        // หาเดือนปัจจุบัน
+        const currentDate = new Date();
+        const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+        // ถ้ามีเดือนปัจจุบันในข้อมูล ให้เลือกเดือนปัจจุบัน ถ้าไม่มีให้เลือกเดือนล่าสุดในข้อมูล
+        const monthToSelect = months.includes(currentMonth) ? currentMonth : months[0];
+        selectedMonth.value = monthToSelect;
+        // เรียกข้อมูลทันทีเมื่อได้เดือนที่ต้องการ
+        kaitomStore.fetchKaitomDataByMonth(monthToSelect);
+    }
+    return months;
+});
+
+// เพิ่มฟังก์ชันคำนวณจำนวนวันในเดือน
+const daysInSelectedMonth = computed(() => {
+    if (!selectedMonth.value) return 31;
+    const [year, month] = selectedMonth.value.split('-');
+    return new Date(parseInt(year), parseInt(month), 0).getDate();
 });
 
 const updateKaitomMarkers = () => {
@@ -70,14 +93,16 @@ const updateKaitomMarkers = () => {
 
     if (props.kaitomData.length > 0) {
         props.kaitomData.forEach((item: KaitomItem) => {
-            if (new Date(item.date) <= new Date(formattedDate.value + "T00:00:00")) {
+            // แสดงหมุดตามวันที่เลือกใน timeline
+            const itemDate = new Date(item.date).toISOString().split('T')[0];
+            if (itemDate <= formattedDate.value) {
                 const marker = new maplibregl.Marker()
                     .setLngLat([item.longitude, item.latitude])
                     .setPopup(new maplibregl.Popup().setHTML(`
                         <h3>${item.location_name}</h3>
-                        <p>${item.description}</p>
+                        <p>${item.description || ''}</p>
                         <p><strong>โดย:</strong> ${item.full_name}</p>
-                        <p><strong>วันที่:</strong> ${new Date(item.date).toLocaleDateString()}</p>
+                        <p><strong>วันที่:</strong> ${new Date(item.date).toLocaleDateString('th-TH')}</p>
                     `))
                     .addTo(map);
                 markers.push(marker);
@@ -91,27 +116,25 @@ const updateKaitomTimeline = () => {
 };
 
 const playTimeline = () => {
-    if (isPlaying.value) return; // ถ้า isPlaying เป็น true ให้ return ออกไป
-    isPlaying.value = true; // ตั้งค่า isPlaying เป็น true
+    if (isPlaying.value) return;
+    isPlaying.value = true;
 
-    if (timelineValue.value >= 7) {
-        timelineValue.value = 0;
-    } else {
-        timelineValue.value += 1;
+    if (timelineValue.value >= daysInSelectedMonth.value) {
+        timelineValue.value = 1;
     }
 
     interval = setInterval(() => {
-        if (timelineValue.value < 7) {
+        if (timelineValue.value < daysInSelectedMonth.value) {
             timelineValue.value += 1;
         } else {
             if (interval !== null) {
                 clearInterval(interval);
             }
             interval = null;
-            isPlaying.value = false; // ตั้งค่า isPlaying เป็น false เมื่อหยุดเล่น
+            isPlaying.value = false;
         }
         updateKaitomTimeline();
-    }, 500); // Adjust the speed of the timeline as needed
+    }, 100);
 };
 
 const pauseTimeline = () => {
@@ -173,7 +196,7 @@ const drawActDataLayer = async () => {
             "match",
             ["get", "ADM1_TH"]
         ];
-        
+
         // รวบรวมรายชื่อจังหวัดทั้งหมดจากทุกเดือน
         const allProvinces = new Set<string>();
         Object.values(props.actData).forEach(monthData => {
@@ -181,7 +204,7 @@ const drawActDataLayer = async () => {
                 allProvinces.add(province);
             });
         });
-        
+
         // วนลูปผ่านทุกจังหวัด
         Array.from(allProvinces).sort().forEach(province => {
             const total = calculateTotalActivities(province);
@@ -217,7 +240,7 @@ const drawActDataLayer = async () => {
             if (e.features && e.features.length > 0) {
                 const provinceName = e.features[0].properties.ADM1_TH;
                 const total = calculateTotalActivities(provinceName);
-                
+
                 new maplibregl.Popup()
                     .setLngLat(e.lngLat)
                     .setHTML(`
@@ -230,6 +253,26 @@ const drawActDataLayer = async () => {
     } catch (error) {
         console.error("Error loading province data:", error);
     }
+};
+
+// เมื่อเปลี่ยนเดือน
+watch(selectedMonth, async (newMonth) => {
+    if (newMonth) {
+        await kaitomStore.fetchKaitomDataByMonth(newMonth);
+        updateKaitomMarkers();
+    }
+});
+
+// updateKaitomMarkers();
+
+const formatMonthThai = (monthStr: string) => {
+    const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    const [year, month] = monthStr.split('-');
+    const thaiYear = parseInt(year) + 543;
+    return `${thaiMonths[parseInt(month) - 1]} ${thaiYear}`;
 };
 
 onMounted(() => {
@@ -302,7 +345,7 @@ onMounted(() => {
 
 .timeline-slider {
     position: absolute;
-    bottom: 20px;
+    bottom: 45px;
     left: 40px;
     display: flex;
     align-items: center;

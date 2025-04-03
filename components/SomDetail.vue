@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div class="divider text-primary">ข้อมูลกิจกรรมใน 7 วันที่ผ่านมา</div>
+        <div class="divider text-primary">ข้อมูลกิจกรรมที่ผ่านมา</div>
         <div class="">
             <div v-for="(item, index) in displayedItems" :key="index"
                 class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">

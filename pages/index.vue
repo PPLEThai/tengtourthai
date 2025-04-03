@@ -13,16 +13,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
 import { useKaitomStore } from "@/stores/kaitomStore";
 import { useActData } from "@/composables/useActData";
 
 const kaitomStore = useKaitomStore();
 const { actData } = useActData();
 
-onMounted(() => {
-    kaitomStore.fetchKaitomData();
-});
+// ไม่จำเป็นต้องเรียก fetchKaitomData แล้ว เพราะ store จะเรียก fetchKaitomDataByMonth โดยอัตโนมัติ
 </script>
 
 <style scoped>

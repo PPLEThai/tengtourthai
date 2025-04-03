@@ -47,7 +47,7 @@
         </div>
         
         <div v-if="currentUrl === '/'" class="flex items-center space-x-2">
-          <span class="text-white hidden md:block md:text-lg">สัปดาห์นี้</span>
+          <span class="text-white hidden md:block md:text-lg">เข้าพื้นที่</span>
           <div class="flex space-x-1">
             <span v-for="digit in visitedDigits" :key="digit"
               class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
@@ -119,6 +119,6 @@ const tengVisitedDigits = computed(() => tengVisitedProvinces.value.toString().s
 
 const visitedDigits = computed(() => {
     const count = kaitomStore.kaitomData.length.toString();
-    return count.padStart(3, '0').split('');
+    return count.padStart(1, '0').split('');
 });
 </script>

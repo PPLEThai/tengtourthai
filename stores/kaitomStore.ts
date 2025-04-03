@@ -8,12 +8,25 @@ export const useKaitomStore = defineStore('kaitom', () => {
     const error = ref<string | null>(null);
     const apiKaitomDataUrl = 'https://hackcity.pplethai.org/api/kaitom-fieldwork';
 
-    const fetchKaitomData = async () => {
-        if (kaitomData.value.length > 0) return; // ถ้ามีข้อมูลแล้วไม่ต้อง fetch ใหม่
+    const fetchKaitomDataByMonth = async (month: string) => {
+        // ถ้ากำลังโหลดข้อมูลอยู่ ไม่ต้องเรียก API ซ้ำ
+        if (isLoading.value) return;
         
         try {
             isLoading.value = true;
-            const response = await fetch(apiKaitomDataUrl);
+            // แยกปีและเดือนจาก string (เช่น "2025-02")
+            const [year, monthStr] = month.split('-');
+            const yearNum = parseInt(year);
+            const monthNum = parseInt(monthStr);
+            
+            // สร้างวันแรกของเดือน
+            const from = `${year}-${monthStr.padStart(2, '0')}-01`;
+            
+            // คำนวณวันสุดท้ายของเดือน
+            const lastDay = new Date(yearNum, monthNum, 0).getDate();
+            const to = `${year}-${monthStr.padStart(2, '0')}-${lastDay}`;
+            
+            const response = await fetch(`${apiKaitomDataUrl}?from=${from}&to=${to}`);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
@@ -28,13 +41,15 @@ export const useKaitomStore = defineStore('kaitom', () => {
         }
     };
 
-    // เรียก fetchKaitomData ทันทีที่สร้าง store
-    fetchKaitomData();
+    // เรียกข้อมูลเดือนปัจจุบันเมื่อเริ่มต้น (เรียกครั้งเดียวตอนสร้าง store)
+    const currentDate = new Date();
+    const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+    fetchKaitomDataByMonth(currentMonth);
 
     return {
         kaitomData,
         isLoading,
         error,
-        fetchKaitomData
+        fetchKaitomDataByMonth
     };
 }); 
