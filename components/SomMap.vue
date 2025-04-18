@@ -33,6 +33,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { KaitomItem } from "@/composables/useKaitomData";
 import type { ActMonthlyData } from "@/composables/useActData";
 import { useKaitomStore } from "@/stores/kaitomStore";
+import { useActData } from "@/composables/useActData";
 
 const props = defineProps({
     kaitomData: {
@@ -46,6 +47,7 @@ const props = defineProps({
 });
 
 const kaitomStore = useKaitomStore();
+const { selectedMonth } = useActData();
 const isLoading = ref(false);
 const mapContainer = ref<HTMLElement | null>(null);
 const isDataReady = ref(false);
@@ -68,7 +70,6 @@ const formattedDate = computed(() => {
     return `${year}-${month.padStart(2, '0')}-${String(timelineValue.value).padStart(2, '0')}`;
 });
 
-const selectedMonth = ref<string>('');
 const availableMonths = computed(() => {
     const months = Object.keys(props.actData).sort().reverse();
     if (months.length > 0 && !selectedMonth.value) {
@@ -270,7 +271,7 @@ const drawActDataLayer = async () => {
 // เมื่อเปลี่ยนเดือน
 watch(selectedMonth, async (newMonth) => {
     if (newMonth) {
-        // isLoading.value = true;
+        isLoading.value = true;
         try {
             await kaitomStore.fetchKaitomDataByMonth(newMonth);
             const currentDate = new Date();
@@ -289,9 +290,9 @@ watch(selectedMonth, async (newMonth) => {
             console.error("Error fetching data:", error);
         } finally {
             // delay เล็กน้อยให้ UI มีเวลาอัพเดท
-            // setTimeout(() => {
-            //     isLoading.value = false;
-            // }, 500);
+            setTimeout(() => {
+                isLoading.value = false;
+            }, 500);
         }
     }
 });
