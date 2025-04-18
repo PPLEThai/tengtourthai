@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <!-- Tabs -->
+        <!-- Main Tabs -->
         <div class="flex flex-row gap-2 mt-6">
             <button 
                 class="w-1/2 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
@@ -73,30 +73,128 @@
 
         <!-- Leader Board Tab -->
         <div v-if="currentTab === 'leaderboard'" class="mt-4">
-            <div class="divider text-primary">สถิติการเข้าพื้นที่</div>
-            <div class="overflow-x-auto">
-                <table class="table w-full">
-                    <thead>
-                        <tr>
-                            <th>อันดับ</th>
-                            <th>ชื่อ-นามสกุล</th>
-                            <th>จำนวนครั้ง</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(leader, index) in leaderboard" :key="index" 
-                            :class="{ 'bg-primary text-white': index < 3 }">
-                            <td>
-                                <div v-if="index === 0" class="text-2xl">🥇</div>
-                                <div v-else-if="index === 1" class="text-2xl">🥈</div>
-                                <div v-else-if="index === 2" class="text-2xl">🥉</div>
-                                <div v-else>{{ index + 1 }}</div>
-                            </td>
-                            <td>{{ leader.name }}</td>
-                            <td>{{ leader.count }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Sub Tabs -->
+            <div class="flex flex-row gap-2 mb-4">
+                <button 
+                    class="w-1/3 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
+                    :class="[
+                        leaderboardSubTab === 'mp' 
+                            ? 'bg-primary text-white shadow-lg transform scale-105' 
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ]"
+                    @click="leaderboardSubTab = 'mp'"
+                >
+                    ส.ส.
+                </button>
+                <button 
+                    class="w-1/3 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
+                    :class="[
+                        leaderboardSubTab === 'province' 
+                            ? 'bg-primary text-white shadow-lg transform scale-105' 
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ]"
+                    @click="leaderboardSubTab = 'province'"
+                >
+                    ทีมจังหวัด
+                </button>
+                <button 
+                    class="w-1/3 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
+                    :class="[
+                        leaderboardSubTab === 'local' 
+                            ? 'bg-primary text-white shadow-lg transform scale-105' 
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ]"
+                    @click="leaderboardSubTab = 'local'"
+                >
+                    ทีมท้องถิ่น
+                </button>
+            </div>
+
+            <!-- MP Leader Board -->
+            <div v-if="leaderboardSubTab === 'mp'">
+                <div class="divider text-primary">สถิติการเข้าพื้นที่ ส.ส.</div>
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>อันดับ</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>จำนวนครั้ง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(leader, index) in mpLeaderboard" :key="'mp-' + index" 
+                                :class="{ 'bg-primary text-white': index < 3 }">
+                                <td>
+                                    <div v-if="index === 0" class="text-2xl">🥇</div>
+                                    <div v-else-if="index === 1" class="text-2xl">🥈</div>
+                                    <div v-else-if="index === 2" class="text-2xl">🥉</div>
+                                    <div v-else>{{ index + 1 }}</div>
+                                </td>
+                                <td>{{ leader.name }}</td>
+                                <td>{{ leader.count }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Province Leader Board -->
+            <div v-if="leaderboardSubTab === 'province'">
+                <div class="divider text-primary">สถิติการเข้าพื้นที่ ทีมจังหวัด</div>
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>อันดับ</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>จำนวนครั้ง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(leader, index) in provinceLeaderboard" :key="'province-' + index" 
+                                :class="{ 'bg-primary text-white': index < 3 }">
+                                <td>
+                                    <div v-if="index === 0" class="text-2xl">🥇</div>
+                                    <div v-else-if="index === 1" class="text-2xl">🥈</div>
+                                    <div v-else-if="index === 2" class="text-2xl">🥉</div>
+                                    <div v-else>{{ index + 1 }}</div>
+                                </td>
+                                <td>{{ leader.name }}</td>
+                                <td>{{ leader.count }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Local Leader Board -->
+            <div v-if="leaderboardSubTab === 'local'">
+                <div class="divider text-primary">สถิติการเข้าพื้นที่ ทีมท้องถิ่น</div>
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>อันดับ</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>จำนวนครั้ง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(leader, index) in localLeaderboard" :key="'local-' + index" 
+                                :class="{ 'bg-primary text-white': index < 3 }">
+                                <td>
+                                    <div v-if="index === 0" class="text-2xl">🥇</div>
+                                    <div v-else-if="index === 1" class="text-2xl">🥈</div>
+                                    <div v-else-if="index === 2" class="text-2xl">🥉</div>
+                                    <div v-else>{{ index + 1 }}</div>
+                                </td>
+                                <td>{{ leader.name }}</td>
+                                <td>{{ leader.count }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -107,14 +205,19 @@ import type { PropType } from 'vue';
 import type { KaitomItem } from "@/composables/useKaitomData";
 import { ref, computed } from 'vue';
 
+interface ExtendedKaitomItem extends KaitomItem {
+    role: 'mp' | 'province' | 'local';
+}
+
 const props = defineProps({
     kaitomData: {
-        type: Array as PropType<KaitomItem[]>,
+        type: Array as PropType<ExtendedKaitomItem[]>,
         required: true
     }
 });
 
 const currentTab = ref('activities');
+const leaderboardSubTab = ref('mp');
 const itemsPerPage = 20;
 const currentPage = ref(1);
 
@@ -130,18 +233,38 @@ const hasMoreItems = computed(() => {
 });
 
 // คำนวณ Leader Board
-const leaderboard = computed<Array<{ name: string; count: number }>>(() => {
-    const visitCounts = new Map<string, number>();
+const leaderboard = computed<Array<{ name: string; count: number; role: string }>>(() => {
+    const visitCounts = new Map<string, { count: number; role: string }>();
     
     props.kaitomData.forEach(item => {
         const name = item.full_name || 'ไม่ระบุชื่อ';
-        const count = visitCounts.get(name) || 0;
-        visitCounts.set(name, count + 1);
+        const current = visitCounts.get(name) || { count: 0, role: item.role };
+        visitCounts.set(name, { count: current.count + 1, role: item.role });
     });
     
     return Array.from(visitCounts.entries())
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count)
+        .map(([name, data]) => ({ name, count: data.count, role: data.role }))
+        .sort((a, b) => b.count - a.count);
+});
+
+// Leader Board สำหรับ ส.ส.
+const mpLeaderboard = computed(() => {
+    return leaderboard.value
+        .filter(item => item.role === 'mp')
+        .slice(0, 10);
+});
+
+// Leader Board สำหรับ ทีมจังหวัด
+const provinceLeaderboard = computed(() => {
+    return leaderboard.value
+        .filter(item => item.role === 'province')
+        .slice(0, 10);
+});
+
+// Leader Board สำหรับ ทีมท้องถิ่น
+const localLeaderboard = computed(() => {
+    return leaderboard.value
+        .filter(item => item.role === 'local')
         .slice(0, 10);
 });
 

@@ -8,6 +8,7 @@ export interface KaitomItem {
     description: string;
     images: string[];
     full_name: string;
+    role: 'mp' | 'province' | 'local';
 }
 
 export const useKaitomData = () => {
