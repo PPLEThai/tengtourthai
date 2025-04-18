@@ -1,6 +1,10 @@
 <template>
     <div class="h-full relative">
-        <!-- <div v-if="!isDataReady" class="loading-overlay">Loading...</div> -->
+        <!-- loading overlay -->
+        <div v-if="isLoading" class="loading-overlay flex items-center justify-center">
+            <div class="loading-spinner"></div>
+            <div class="ml-2 text-white font-semibold">กำลังโหลดข้อมูล...</div>
+        </div>
         <div ref="mapContainer" class="map-container"></div>
         <div class="map-controls flex flex-row gap-2">
             <button @click="zoomIn" class="text-primary">+</button>
@@ -42,7 +46,7 @@ const props = defineProps({
 });
 
 const kaitomStore = useKaitomStore();
-
+const isLoading = ref(false);
 const mapContainer = ref<HTMLElement | null>(null);
 const isDataReady = ref(false);
 
@@ -80,7 +84,6 @@ const availableMonths = computed(() => {
     return months;
 });
 
-// เพิ่มฟังก์ชันคำนวณจำนวนวันในเดือน
 const daysInSelectedMonth = computed(() => {
     if (!selectedMonth.value) return 31;
     const [year, month] = selectedMonth.value.split('-');
@@ -88,6 +91,7 @@ const daysInSelectedMonth = computed(() => {
 });
 
 const updateKaitomMarkers = () => {
+    // isLoading.value = true;
     markers.forEach(marker => marker.remove());
     markers.length = 0;
 
@@ -109,6 +113,11 @@ const updateKaitomMarkers = () => {
             }
         });
     }
+    
+    // delay ให้ map ได้วาดเสร็จ
+    // setTimeout(() => {
+    //     isLoading.value = false;
+    // }, 500);
 };
 
 const updateKaitomTimeline = () => {
@@ -174,6 +183,7 @@ const getProvinceColor = (total: number) => {
 };
 
 const drawActDataLayer = async () => {
+    isLoading.value = true;
     try {
         const response = await fetch("/data/province.geojson");
         const geojsonData = await response.json() as GeoJSON.FeatureCollection;
@@ -252,18 +262,39 @@ const drawActDataLayer = async () => {
         });
     } catch (error) {
         console.error("Error loading province data:", error);
+    } finally {
+        isLoading.value = false;
     }
 };
 
 // เมื่อเปลี่ยนเดือน
 watch(selectedMonth, async (newMonth) => {
     if (newMonth) {
-        await kaitomStore.fetchKaitomDataByMonth(newMonth);
-        updateKaitomMarkers();
+        // isLoading.value = true;
+        try {
+            await kaitomStore.fetchKaitomDataByMonth(newMonth);
+            const currentDate = new Date();
+            const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+            
+            // ถ้าเป็นเดือนปัจจุบัน ให้ใช้วันที่ปัจจุบัน
+            if (newMonth === currentMonth) {
+                timelineValue.value = currentDate.getDate();
+            } else {
+                // ถ้าเป็นเดือนอื่น ให้ใช้วันสุดท้ายของเดือน
+                const [year, month] = newMonth.split('-');
+                timelineValue.value = new Date(parseInt(year), parseInt(month), 0).getDate();
+            }
+            updateKaitomMarkers();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            // delay เล็กน้อยให้ UI มีเวลาอัพเดท
+            // setTimeout(() => {
+            //     isLoading.value = false;
+            // }, 500);
+        }
     }
 });
-
-// updateKaitomMarkers();
 
 const formatMonthThai = (monthStr: string) => {
     const thaiMonths = [
@@ -379,5 +410,33 @@ onMounted(() => {
 .map-controls .select:focus {
     outline: none;
     border-color: #FF6A13;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #FF6A13;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 </style>
