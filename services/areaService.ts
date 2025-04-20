@@ -36,7 +36,7 @@ export const searchByArea = async (district: string, subdistrict: string, provin
         if (subdistrict) params.append('subdistrict', subdistrict);
         if (province) params.append('province', province);
         
-        const response = await fetch(`https://hackcity.pplethai.org/api/search-by-area?${params}`);
+        const response = await fetch(`https://hackcity.pplethai.org/api/search-by-area?all=true&${params}`);
         
         if (!response.ok) {
             throw new Error('Network response was not ok');

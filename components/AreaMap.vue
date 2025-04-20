@@ -1,6 +1,16 @@
 <template>
-  <div class="w-full h-full">
+  <div class="w-full h-full relative">
     <div ref="mapContainer" class="w-full h-full"></div>
+    <div class="absolute bottom-10 right-4 bg-white p-4 rounded-lg shadow-lg">
+      <div class="flex items-center mb-2">
+        <div class="w-6 h-6 bg-blue-500 rounded-full mr-2"></div>
+        <span>การลงพื้นที่</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-6 h-6 bg-red-500 rounded-full mr-2"></div>
+        <span>ปัญหา/ข้อเสนอนโยบาย</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -53,7 +63,7 @@ export default defineComponent({
                 <div class="p-2">
                   <h3 class="font-bold">${item.name}</h3>
                   <p class="text-sm">${item.detail}</p>
-                  ${item.images.length > 0 ? `<img src="${item.images[0]}" class="w-full mt-2" />` : ''}
+                  ${item.images.length > 0 ? `<img src="https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/${encodeURIComponent(item.images[0])}" class="w-full mt-2" />` : ''}
                 </div>
               `)
           )
@@ -67,8 +77,8 @@ export default defineComponent({
         
         const el = document.createElement('div');
         el.className = 'marker fieldwork';
-        el.style.width = '38px';
-        el.style.height = '38px';
+        el.style.width = '30px';
+        el.style.height = '30px';
         el.style.backgroundImage = 'url(/images/pin-blue.png)';
         el.style.backgroundSize = 'cover';
         el.style.cursor = 'pointer';
@@ -83,7 +93,7 @@ export default defineComponent({
                   <p class="text-sm">${item.full_name} (${item.role})</p>
                   <p class="text-sm">${item.district}, ${item.subdistrict}, ${item.province}</p>
                   ${item.description ? `<p class="text-sm mt-2">${item.description}</p>` : ''}
-                  ${item.images.length > 0 ? `<img src="${item.images[0]}" class="w-full mt-2" />` : ''}
+                  ${item.images.length > 0 ? `<img src="https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/${encodeURIComponent(item.images[0])}" class="w-full mt-2" />` : ''}
                 </div>
               `)
           )
