@@ -10,6 +10,10 @@ import { useRoute } from 'vue-router';
 import AreaMap from "@/components/AreaMap.vue";
 import { searchByArea, type AreaData, searchFieldwork, type FieldworkData } from '@/services/areaService';
 
+definePageMeta({
+  layout: 'map'
+});
+
 const route = useRoute();
 const areaData = ref<AreaData[]>([]);
 const fieldworkData = ref<FieldworkData[]>([]);
