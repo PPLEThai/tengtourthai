@@ -140,7 +140,7 @@ const clearFilter = () => {
 
 const fetchProjects = async () => {
   try {
-    const response = await fetch('https://hackcity.pplethai.org/api/political-project');
+    const response = await fetch('https://hackcity.pplethai.org/api/political-project?limit=1000');
     const data = await response.json();
     projects.value = data.list;
   } catch (error) {
