@@ -18,7 +18,9 @@
     <div class="w-full md:w-1/2 h-[50%] md:h-full overflow-y-auto p-2 md:p-4">
       <div class="container mx-auto p-2 md:p-4">
         <div class="flex justify-between items-center mb-4">
-          <h1 class="text-white text-xl md:text-2xl font-bold">วาระจังหวัด</h1>
+          <h1 class="text-white text-xl md:text-2xl font-bold">
+            วาระจังหวัด{{ selectedProvince ? `: ${selectedProvince}` : '' }}
+          </h1>
           <button 
             v-if="selectedProvince" 
             @click="clearFilter"
@@ -29,7 +31,7 @@
         </div>
         <div class="grid grid-cols-1 gap-2 md:gap-4">
           <div v-if="filteredProjects.length === 0 && selectedProvince" class="bg-white rounded-lg shadow-md p-4 text-center">
-            <p class="text-gray-600 text-lg">--ไม่มีข้อมูล--</p>
+            <p class="text-gray-600 text-lg">--อยู่ระหว่างการนำเข้าข้อมูล--</p>
           </div>
           <div 
             v-for="project in filteredProjects" 
@@ -43,7 +45,7 @@
             <p class="text-gray-600 text-sm md:text-base mb-1 md:mb-2">ระยะเวลา: {{ formatDate(project.วันที่เริ่ม) }} - {{ formatDate(project.วันที่สิ้นสุด) }}</p>
             <button 
               @click="showDetail(project)"
-              class="mt-1 md:mt-2 bg-blue-500 text-white px-3 py-1 md:px-4 md:py-2 rounded hover:bg-blue-600 text-sm md:text-base"
+              class="mt-1 md:mt-2 bg-primary text-white px-3 py-1 md:px-4 md:py-2 rounded hover:bg-blue-600 text-sm md:text-base"
             >
               ดูรายละเอียด
             </button>

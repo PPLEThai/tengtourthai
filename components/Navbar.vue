@@ -38,7 +38,7 @@
               <img src="@/assets/images/logo-pp.png" alt="วาระจังหวัด Logo" class="h-8" />
               <div>
                 <div class="font-bold">วาระจังหวัด</div>
-                <div class="text-sm font-light">Political Projects</div>
+                <div class="text-sm font-light">เป้าหมายการขับเคลื่อนจังหวัด</div>
               </div>
             </a>
             <a href="/teng" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
