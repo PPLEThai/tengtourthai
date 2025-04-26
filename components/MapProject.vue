@@ -132,8 +132,6 @@ const drawPolygon = (data: any) => {
 
 // เพิ่ม watch เพื่อติดตามการเปลี่ยนแปลงของ projects
 watch(() => props.projects, (newProjects) => {
-    console.log(newProjects);
-    console.log(map);
     if (newProjects && map && map.isStyleLoaded()) {
         drawPolygon(newProjects);
     }
