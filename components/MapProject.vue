@@ -132,6 +132,8 @@ const drawPolygon = (data: any) => {
 
 // เพิ่ม watch เพื่อติดตามการเปลี่ยนแปลงของ projects
 watch(() => props.projects, (newProjects) => {
+    console.log(newProjects);
+    console.log(map);
     if (newProjects && map && map.isStyleLoaded()) {
         drawPolygon(newProjects);
     }
@@ -177,10 +179,10 @@ onMounted(() => {
                     data: geojsonData,
                 });
 
-                // เรียก drawPolygon เพื่อวาดเลเยอร์หลังจาก source ถูกโหลดเสร็จ
-                if (props.projects) {
-                    drawPolygon(props.projects);
-                }
+                // // เรียก drawPolygon เพื่อวาดเลเยอร์หลังจาก source ถูกโหลดเสร็จ
+                // if (props.projects) {
+                //     drawPolygon(props.projects);
+                // }
             } catch (error) {
                 console.error('Error loading province data:', error);
             }
