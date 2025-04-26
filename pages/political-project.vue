@@ -76,11 +76,11 @@
           </div>
           <div>
             <h3 class="font-semibold text-sm md:text-base">เป้าหมายระยะสั้น:</h3>
-            <div class="text-gray-700 text-sm md:text-base" v-html="renderMarkdown(selectedProject.เป้าหมายระยะสั้น)"></div>
+            <div class="text-gray-700 text-sm md:text-base whitespace-pre-line">{{ selectedProject.เป้าหมายระยะสั้น }}</div>
           </div>
           <div>
             <h3 class="font-semibold text-sm md:text-base">เป้าหมายระยะยาว:</h3>
-            <div class="text-gray-700 text-sm md:text-base" v-html="renderMarkdown(selectedProject.เป้าหมายระยะยาว)"></div>
+            <div class="text-gray-700 text-sm md:text-base whitespace-pre-line">{{ selectedProject.เป้าหมายระยะยาว }}</div>
           </div>
         </div>
         <button 
