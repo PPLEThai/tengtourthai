@@ -39,7 +39,7 @@ const props = defineProps<{
     projects: any;
 }>();
 
-const testFx = (data: any) => {
+const drawPolygon = (data: any) => {
     if (data && data.length > 0) {
         const fillColorExpression: any[] = ["case"];
         
@@ -55,12 +55,21 @@ const testFx = (data: any) => {
         // สีเริ่มต้นสำหรับจังหวัดที่ไม่มีโครงการ
         fillColorExpression.push("#B9B9B9");
 
+        // ตรวจสอบว่า source มีอยู่จริงก่อนที่จะเพิ่ม layer
+        if (!map.getSource('provinces')) {
+            console.warn('Source "provinces" not found');
+            return;
+        }
+
         // ลบเลเยอร์เก่าถ้ามี
         if (map.getLayer("province-layer")) {
             map.removeLayer("province-layer");
         }
         if (map.getLayer("states-layer-outline")) {
             map.removeLayer("states-layer-outline");
+        }
+        if (map.getLayer("province-highlight")) {
+            map.removeLayer("province-highlight");
         }
 
         // เพิ่มเลเยอร์ใหม่
@@ -123,8 +132,8 @@ const testFx = (data: any) => {
 
 // เพิ่ม watch เพื่อติดตามการเปลี่ยนแปลงของ projects
 watch(() => props.projects, (newProjects) => {
-    if (newProjects) {
-        testFx(newProjects);
+    if (newProjects && map && map.isStyleLoaded()) {
+        drawPolygon(newProjects);
     }
 }, { immediate: true });
 
@@ -156,13 +165,30 @@ onMounted(() => {
         });
 
         map.on("load", async () => {
-            const response = await fetch("/data/province.geojson");
-            const geojsonData = await response.json();
+            try {
+                const response = await fetch('/data/province.geojson');
+                if (!response.ok) {
+                    throw new Error('Failed to load province data');
+                }
+                const geojsonData = await response.json();
 
-            map.addSource("provinces", {
-                type: "geojson",
-                data: geojsonData,
-            });
+                map.addSource("provinces", {
+                    type: "geojson",
+                    data: geojsonData,
+                });
+
+                // เรียก drawPolygon เพื่อวาดเลเยอร์หลังจาก source ถูกโหลดเสร็จ
+                if (props.projects) {
+                    drawPolygon(props.projects);
+                }
+            } catch (error) {
+                console.error('Error loading province data:', error);
+            }
+        });
+
+        // เพิ่ม error handling สำหรับการโหลดแผนที่
+        map.on('error', (e) => {
+            console.error('Map error:', e.error);
         });
     }
 });
