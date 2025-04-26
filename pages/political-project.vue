@@ -53,25 +53,32 @@
     </div>
 
     <!-- Modal สำหรับแสดงรายละเอียด -->
-    <div v-if="selectedProject" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4">
-      <div class="bg-white rounded-lg p-4 md:p-6 w-full md:max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div 
+      v-if="selectedProject" 
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 z-10"
+      @click="closeModal"
+    >
+      <div 
+        class="bg-white rounded-lg p-4 md:p-6 w-full md:max-w-2xl max-h-[90vh] overflow-y-auto"
+        @click.stop
+      >
         <h2 class="text-xl md:text-2xl font-bold mb-2 md:mb-4">{{ selectedProject.วาระ }}</h2>
         <div class="space-y-2 md:space-y-4">
           <div>
             <h3 class="font-semibold text-sm md:text-base">รายละเอียดวาระ:</h3>
-            <p class="text-gray-700 text-sm md:text-base">{{ selectedProject.รายละเอียดวาระ }}</p>
+            <div class="text-gray-700 text-sm md:text-base" v-html="renderMarkdown(selectedProject.รายละเอียดวาระ)"></div>
           </div>
           <div>
             <h3 class="font-semibold text-sm md:text-base">วิธีการขับเคลื่อน:</h3>
-            <p class="text-gray-700 text-sm md:text-base">{{ selectedProject.วิธีการขับเคลื่อน }}</p>
+            <div class="text-gray-700 text-sm md:text-base" v-html="renderMarkdown(selectedProject.วิธีการขับเคลื่อน)"></div>
           </div>
           <div>
             <h3 class="font-semibold text-sm md:text-base">เป้าหมายระยะสั้น:</h3>
-            <p class="text-gray-700 text-sm md:text-base">{{ selectedProject.เป้าหมายระยะสั้น }}</p>
+            <div class="text-gray-700 text-sm md:text-base" v-html="renderMarkdown(selectedProject.เป้าหมายระยะสั้น)"></div>
           </div>
           <div>
             <h3 class="font-semibold text-sm md:text-base">เป้าหมายระยะยาว:</h3>
-            <p class="text-gray-700 text-sm md:text-base">{{ selectedProject.เป้าหมายระยะยาว }}</p>
+            <div class="text-gray-700 text-sm md:text-base" v-html="renderMarkdown(selectedProject.เป้าหมายระยะยาว)"></div>
           </div>
         </div>
         <button 
@@ -88,6 +95,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useProvinces } from "@/composables/useProvince";
+import { marked } from 'marked';
 
 const { provinces } = useProvinces();
 
@@ -159,6 +167,16 @@ const formatDate = (dateString: string) => {
 
 const showDetail = (project: Project) => {
   selectedProject.value = project;
+};
+
+const renderMarkdown = (markdown: string) => {
+  return marked(markdown);
+};
+
+const closeModal = (event: MouseEvent) => {
+  if (event.target === event.currentTarget) {
+    selectedProject.value = null;
+  }
 };
 
 onMounted(() => {
