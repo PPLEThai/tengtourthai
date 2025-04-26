@@ -92,7 +92,6 @@ const daysInSelectedMonth = computed(() => {
 });
 
 const updateKaitomMarkers = () => {
-    // isLoading.value = true;
     markers.forEach(marker => marker.remove());
     markers.length = 0;
 
@@ -114,11 +113,6 @@ const updateKaitomMarkers = () => {
             }
         });
     }
-    
-    // delay ให้ map ได้วาดเสร็จ
-    // setTimeout(() => {
-    //     isLoading.value = false;
-    // }, 500);
 };
 
 const updateKaitomTimeline = () => {

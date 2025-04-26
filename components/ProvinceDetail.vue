@@ -9,7 +9,8 @@
           <p class="text-sm text-gray-500 font-light">
             เข้าพื้นที่ทั้งหมด {{ province.visits }} ครั้ง
           </p>
-          <p v-if="province.lastVisit" class="text-sm text-gray-500 font-light"> | ล่าสุด {{ formatDate(province.lastVisit) }}</p>
+          <p v-if="province.lastVisit" class="text-sm text-gray-500 font-light"> | ล่าสุด {{
+            formatDate(province.lastVisit) }}</p>
         </div>
 
         <div v-if="province.actions && province.actions.length" class="flex flex-wrap space-x-2 mt-2">
@@ -27,11 +28,13 @@
 
         <Modal v-if="showModal" @close="showModal = false">
           <template v-slot:header>
-            <h3 class="text-lg font-semibold">Facebook Posts</h3>
+            <h3 class="text-lg font-semibold">โพสต์ Facebook</h3>
           </template>
           <template v-slot:body>
             <div v-for="(post, index) in province.posts" :key="index" class="mb-2">
-              <a :href="post" target="_blank" class="text-blue-500 underline">{{ post }}</a>
+              <a :href="post" target="_blank" class="text-blue-500 hover:text-blue-700">
+                โพสต์ที่ {{ index + 1 }}
+              </a>
             </div>
           </template>
           <template v-slot:footer>
@@ -69,7 +72,8 @@
             <p class="text-sm text-gray-500 font-light">
               เข้าพื้นที่ทั้งหมด {{ details.visits }} ครั้ง
             </p>
-            <p v-if="details.lastVisit" class="text-sm text-gray-500 font-light"> | ล่าสุด {{ formatDate(details.lastVisit) }}</p>
+            <p v-if="details.lastVisit" class="text-sm text-gray-500 font-light"> | ล่าสุด {{
+              formatDate(details.lastVisit) }}</p>
 
           </div>
           <div v-else class="text-sm text-gray-500 font-light">
@@ -87,20 +91,23 @@
         </div>
 
         <div class="flex flex-col ml-auto mt-2 md:mt-0">
-          <button class="btn btn-sm btn-outline btn-primary hover:text-white flex items-center" @click="showModalAll = name">
+          <button class="btn btn-sm btn-outline btn-primary hover:text-white flex items-center"
+            @click="showModalAll = name">
             ดูรายละเอียด
             <!-- <span class="text-primary"></span> -->
           </button>
 
           <Modal v-if="showModalAll === name" @close="showModalAll = ''">
             <template v-slot:header>
-              <h3 class="text-lg font-semibold">Facebook Posts</h3>
+              <h3 class="text-lg font-semibold">โพสต์ Facebook</h3>
             </template>
             <template v-slot:body>
-              <div v-for="(post, index) in allProvinces[name].posts" :key="index" class="mb-2">
-                <a :href="post" target="_blank" class="text-blue-500 underline">{{ post }}</a>
-              </div>
-            </template>
+            <div v-for="(post, index) in allProvinces[name].posts" :key="index" class="my-4">
+              <a :href="post" target="_blank" class="text-blue-500 hover:text-blue-700">
+                โพสต์ที่ {{ index + 1 }}
+              </a>
+            </div>
+          </template>
             <template v-slot:footer>
               <button class="btn btn-sm btn-outline btn-primary" @click="showModalAll = ''">
                 ปิด
@@ -147,10 +154,12 @@ function getActionClass(action: string) {
     case 'เท้งทั่วไทย':
       return 'bg-[#fce9cc]';
     case 'ลงพื้นที่ภัยพิบัติ':
-      return 'bg-[#fccccc]';
+      return 'bg-[#e9fccf]';
     case 'ลงพื้นที่ทั่วไป':
       return 'bg-[#cce9fc]';
     case 'ผู้นำฝ่ายค้าน':
+      return 'bg-[#fccccc]';
+    case 'ผนค. พบ ปชช.':
       return 'bg-[#fccccc]';
     default:
       return '';

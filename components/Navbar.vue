@@ -5,9 +5,17 @@
         <!-- Logo และ Brand -->
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center space-x-2">
-            <img src="/images/logo-pp.png" alt="Logo" class="h-8" />
+
+            <img v-if="currentUrl === '/teng'" src="@/assets/images/teng-logo.png" alt="เท้งทั่วไทย Logo" class="h-10" />
+            <img v-else-if="currentUrl === '/political-project'" src="@/assets/images/logo-pp.png" alt="วาระจังหวัด" class="h-8" />
+            <img v-else src="@/assets/images/som-logo.svg" alt="ส้มทั่วไทย" class="h-8" />
+
             <div class="flex items-center">
-              <a class="text-xl font-bold text-white mr-2">{{ currentUrl === '/teng' ? '#เท้งทั่วไทย' : '#ส้มทั่วไทย' }}</a>
+              <a class="text-xl font-bold text-white mr-2">{{ 
+                currentUrl === '/teng' ? '#เท้งทั่วไทย' : 
+                currentUrl === '/political-project' ? '#วาระจังหวัด' : 
+                '#ส้มทั่วไทย' 
+              }}</a>
               <img src="/images/arrow-down.svg" @click="toggleWebType" alt="Logo" class="h-4 cursor-pointer" />
             </div>
           </div>
@@ -23,7 +31,13 @@
                 <div class="text-sm font-light">ภารกิจหัวหน้าพรรคประชาชน</div>
               </div>
             </a>
-            <!-- <div class="border-t border-gray-200 my-2"></div> -->
+            <a href="/political-project" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/logo-pp.png" alt="วาระจังหวัด Logo" class="h-8" />
+              <div>
+                <div class="font-bold">วาระจังหวัด</div>
+                <div class="text-sm font-light">Political Projects</div>
+              </div>
+            </a>
             <a href="/" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/som-logo.svg" alt="ส้มทั่วไทย Logo" class="h-8" />
               <div>
@@ -46,20 +60,45 @@
           <span class="text-white text-sm md:text-lg">จังหวัด</span>
         </div>
         
-        <div v-if="currentUrl === '/'" class="flex items-center space-x-2">
+        <!-- Desktop View -->
+        <div v-if="currentUrl === '/'" class="hidden md:flex items-center space-x-4">
           <div class="flex items-center space-x-2">
-            <button class="text-white hidden md:block md:text-lg flex items-center">
+            <span class="text-white text-lg">เข้าพื้นที่</span>
+            <div class="flex space-x-1">
+              <span v-for="digit in visitedDigits" :key="digit"
+                class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+                {{ digit }}
+              </span>
+            </div>
+            <span class="text-white text-lg">ครั้ง</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-white text-lg">กิจกรรม</span>
+            <div class="flex space-x-1">
+              <span v-for="digit in activityDigits" :key="digit"
+                class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+                {{ digit }}
+              </span>
+            </div>
+            <span class="text-white text-lg">ครั้ง</span>
+          </div>
+        </div>
+
+        <!-- Mobile View -->
+        <div v-if="currentUrl === '/'" class="md:hidden flex items-center space-x-2">
+          <div class="flex items-center space-x-2">
+            <!-- <button class="text-white text-lg flex items-center">
               <span class="mr-2">{{ displayType === 'visit' ? 'เข้าพื้นที่' : 'กิจกรรม' }}</span>
-            </button>
+            </button> -->
           </div>
           <div class="flex space-x-1">
             <span v-for="digit in displayType === 'visit' ? visitedDigits : activityDigits" :key="digit"
-              class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+              class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-1.5 py-0.5 rounded-md shadow-md text-sm">
               {{ digit }}
             </span>
           </div>
-          <span class="text-white text-sm md:text-lg">ครั้ง</span>
-          <button @click="toggleDisplayType" class="text-white hidden md:block md:text-lg flex items-center">
+          <span class="text-white text-sm">ครั้ง</span>
+          <button @click="toggleDisplayType" class="text-white text-lg flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
             </svg>
