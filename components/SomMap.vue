@@ -401,7 +401,7 @@ onMounted(() => {
                             clearInterval(intervalId);
                             updateKaitomMarkers();
                         }
-                    }, 500);
+                    }, 1200);
                 } else {
                     updateKaitomMarkers();
                 }
