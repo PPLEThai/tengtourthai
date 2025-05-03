@@ -67,7 +67,7 @@ const formattedDate = computed(() => {
     if (!selectedMonth.value) return '';
 
     const [year, month] = selectedMonth.value.split('-');
-    // สร้างวันที่โดยใช้ค่า timelineValue
+
     return `${year}-${month.padStart(2, '0')}-${String(timelineValue.value).padStart(2, '0')}`;
 });
 
@@ -171,18 +171,24 @@ const drawActDataLayer = async () => {
             });
         }
 
-        map.addLayer({
-            id: 'kaitom-circles',
-            type: 'circle',
-            source: 'kaitom-points',
-            paint: {
-                'circle-radius': 4,
-                'circle-color': '#FF6A13',
-                'circle-opacity': 1,
-                'circle-stroke-width': 1,
-                'circle-stroke-color': '#fff'
-            }
-        });
+        // รอให้ kaitomData พร้อมก่อนเพิ่ม circle layer
+        if (props.kaitomData && props.kaitomData.length > 0) {
+            map.addLayer({
+                id: 'kaitom-circles',
+                type: 'circle',
+                source: 'kaitom-points',
+                paint: {
+                    'circle-radius': 4,
+                    'circle-color': '#FF6A13',
+                    'circle-opacity': 0.8,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#fff'
+                }
+            });
+
+            // อัปเดตข้อมูล circle ทันที
+            updateKaitomMarkers();
+        }
 
         // เพิ่ม popup เมื่อคลิกที่ circle
         map.on('click', 'kaitom-circles', (e) => {
@@ -351,17 +357,40 @@ watch(selectedMonth, async (newMonth) => {
                 const [year, month] = newMonth.split('-');
                 timelineValue.value = new Date(parseInt(year), parseInt(month), 0).getDate();
             }
-            updateKaitomMarkers();
+
+            // รอให้ kaitomData พร้อมก่อนอัปเดต markers
+            if (props.kaitomData && props.kaitomData.length > 0) {
+                updateKaitomMarkers();
+            }
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
-            // delay เล็กน้อยให้ UI มีเวลาอัพเดท
-            setTimeout(() => {
-                isLoading.value = false;
-            }, 500);
+            isLoading.value = false;
         }
     }
 });
+
+// เฝ้าดูการเปลี่ยนแปลงของ kaitomData
+watch(props.kaitomData, (newValue) => {
+    if (newValue && newValue.length > 0) {
+        // ถ้ายังไม่มี circle layer ให้เพิ่มใหม่
+        if (!map.getLayer('kaitom-circles')) {
+            map.addLayer({
+                id: 'kaitom-circles',
+                type: 'circle',
+                source: 'kaitom-points',
+                paint: {
+                    'circle-radius': 8,
+                    'circle-color': '#FF6A13',
+                    'circle-opacity': 0.8,
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#fff'
+                }
+            });
+        }
+        updateKaitomMarkers();
+    }
+}, { immediate: true });
 
 const formatMonthThai = (monthStr: string) => {
     const thaiMonths = [
@@ -395,14 +424,8 @@ onMounted(() => {
 
             // เฝ้าดูการเปลี่ยนแปลงของ kaitomData
             watch(props.kaitomData, (newValue) => {
-                if (newValue.length === 0) {
-                    const intervalId = setInterval(() => {
-                        if (props.kaitomData.length > 0) {
-                            clearInterval(intervalId);
-                            updateKaitomMarkers();
-                        }
-                    }, 1200);
-                } else {
+                updateKaitomMarkers();
+                if (newValue.length > 0) {
                     updateKaitomMarkers();
                 }
             }, { immediate: true });
