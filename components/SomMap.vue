@@ -52,6 +52,7 @@ const { selectedMonth } = useActData();
 const isLoading = ref(false);
 const mapContainer = ref<HTMLElement | null>(null);
 const isDataReady = ref(false);
+const isMapReady = ref(false);
 
 let map: maplibregl.Map;
 const markers: maplibregl.Marker[] = [];
@@ -93,160 +94,10 @@ const daysInSelectedMonth = computed(() => {
 });
 
 const drawActDataLayer = async () => {
-    isLoading.value = true;
-    try {
-        const response = await fetch("/data/province.geojson");
-        const geojsonData = await response.json() as GeoJSON.FeatureCollection;
 
-        if (!map.getSource("provinces")) {
-            map.addSource("provinces", {
-                type: "geojson",
-                data: geojsonData
-            });
-        }
-
-        // ลบ layer เก่าทั้งหมด
-        if (map.getLayer("province-layer")) {
-            map.removeLayer("province-layer");
-        }
-        if (map.getLayer("states-layer-outline")) {
-            map.removeLayer("states-layer-outline");
-        }
-        if (map.getLayer("kaitom-circles")) {
-            map.removeLayer("kaitom-circles");
-        }
-
-        const fillColorExpression: (string | string[])[] = [
-            "match",
-            ["get", "ADM1_TH"]
-        ];
-
-        // รวบรวมรายชื่อจังหวัดทั้งหมดจากทุกเดือน
-        const allProvinces = new Set<string>();
-        Object.values(props.actData).forEach(monthData => {
-            Object.keys(monthData).forEach(province => {
-                allProvinces.add(province);
-            });
-        });
-
-        // วนลูปผ่านทุกจังหวัด
-        Array.from(allProvinces).sort().forEach(province => {
-            const total = calculateTotalActivities(province);
-            fillColorExpression.push(province, getProvinceColor(total));
-        });
-
-        fillColorExpression.push("#B9B9B9"); // สีเริ่มต้นสำหรับจังหวัดที่ไม่มีข้อมูล
-
-        // เพิ่ม province layer ก่อน
-        map.addLayer({
-            id: "province-layer",
-            type: "fill",
-            // @ts-ignore
-            source: "provinces",
-            paint: {
-                // @ts-ignore
-                "fill-color": fillColorExpression,
-                "fill-opacity": 0.7,
-            },
-        });
-
-        map.addLayer({
-            id: "states-layer-outline",
-            type: "line",
-            source: "provinces",
-            paint: {
-                "line-color": "#000000",
-                "line-width": 0.5,
-            },
-        });
-
-        // เพิ่ม circle layer ใหม่หลังจาก province layer
-        if (!map.getSource('kaitom-points')) {
-            map.addSource('kaitom-points', {
-                type: 'geojson',
-                data: {
-                    type: 'FeatureCollection',
-                    features: []
-                }
-            });
-        }
-
-        // รอให้ kaitomData พร้อมก่อนเพิ่ม circle layer
-        if (props.kaitomData && props.kaitomData.length > 0) {
-            map.addLayer({
-                id: 'kaitom-circles',
-                type: 'circle',
-                source: 'kaitom-points',
-                paint: {
-                    'circle-radius': 4,
-                    'circle-color': '#FF6A13',
-                    'circle-opacity': 0.8,
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#fff'
-                }
-            });
-
-            // อัปเดตข้อมูล circle ทันที
-            updateKaitomMarkers();
-        }
-
-        // เพิ่ม popup เมื่อคลิกที่ circle
-        map.on('click', 'kaitom-circles', (e) => {
-            if (e.features && e.features.length > 0) {
-                const feature = e.features[0];
-                new maplibregl.Popup()
-                    .setLngLat(e.lngLat)
-                    .setHTML(`
-                        <h3>${feature.properties.location_name}</h3>
-                        <p>${feature.properties.description || ''}</p>
-                        <p><strong>โดย:</strong> ${feature.properties.full_name}</p>
-                        <p><strong>วันที่:</strong> ${new Date(feature.properties.date).toLocaleDateString('th-TH')}</p>
-                    `)
-                    .addTo(map);
-                return true; // หยุดการ bubbling ของ event
-            }
-        });
-
-        // เพิ่ม cursor pointer เมื่อ hover
-        map.on('mouseenter', 'kaitom-circles', () => {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-
-        map.on('mouseleave', 'kaitom-circles', () => {
-            map.getCanvas().style.cursor = '';
-        });
-
-        // เพิ่ม popup แสดงจำนวนกิจกรรม
-        map.on("click", "province-layer", (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
-            // ตรวจสอบว่ามี circle อยู่ที่ตำแหน่งที่คลิกหรือไม่
-            const features = map.queryRenderedFeatures(e.point, { layers: ['kaitom-circles'] });
-            if (features.length > 0) {
-                return; // ถ้ามี circle อยู่ที่ตำแหน่งที่คลิก ให้ไม่แสดง popup ของ province
-            }
-
-            if (e.features && e.features.length > 0) {
-                const provinceName = e.features[0].properties.ADM1_TH;
-                const total = calculateTotalActivities(provinceName);
-
-                new maplibregl.Popup()
-                    .setLngLat(e.lngLat)
-                    .setHTML(`
-                        <h3>${provinceName}</h3>
-                        <p>จำนวนกิจกรรมทั้งหมด: ${total}</p>
-                    `)
-                    .addTo(map);
-            }
-        });
-    } catch (error) {
-        console.error("Error loading province data:", error);
-    } finally {
-        isLoading.value = false;
-    }
 };
 
 const updateKaitomMarkers = () => {
-    markers.forEach(marker => marker.remove());
-    markers.length = 0;
 
     if (props.kaitomData.length > 0) {
         const features: Feature<Point, GeoJsonProperties>[] = props.kaitomData
@@ -348,7 +199,7 @@ watch(selectedMonth, async (newMonth) => {
             await kaitomStore.fetchKaitomDataByMonth(newMonth);
             const currentDate = new Date();
             const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
-            
+
             // ถ้าเป็นเดือนปัจจุบัน ให้ใช้วันที่ปัจจุบัน
             if (newMonth === currentMonth) {
                 timelineValue.value = currentDate.getDate();
@@ -358,10 +209,6 @@ watch(selectedMonth, async (newMonth) => {
                 timelineValue.value = new Date(parseInt(year), parseInt(month), 0).getDate();
             }
 
-            // รอให้ kaitomData พร้อมก่อนอัปเดต markers
-            if (props.kaitomData && props.kaitomData.length > 0) {
-                updateKaitomMarkers();
-            }
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -370,27 +217,6 @@ watch(selectedMonth, async (newMonth) => {
     }
 });
 
-// เฝ้าดูการเปลี่ยนแปลงของ kaitomData
-watch(props.kaitomData, (newValue) => {
-    if (newValue && newValue.length > 0) {
-        // ถ้ายังไม่มี circle layer ให้เพิ่มใหม่
-        if (!map.getLayer('kaitom-circles')) {
-            map.addLayer({
-                id: 'kaitom-circles',
-                type: 'circle',
-                source: 'kaitom-points',
-                paint: {
-                    'circle-radius': 8,
-                    'circle-color': '#FF6A13',
-                    'circle-opacity': 0.8,
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#fff'
-                }
-            });
-        }
-        updateKaitomMarkers();
-    }
-}, { immediate: true });
 
 const formatMonthThai = (monthStr: string) => {
     const thaiMonths = [
@@ -414,22 +240,185 @@ onMounted(() => {
             // maxBounds: [[93.0, 3.0], [108.0, 22.0]]
         });
 
-        map.on("load", () => {
-            // เฝ้าดูการเปลี่ยนแปลงของ actData
-            watch(() => props.actData, (newActData) => {
-                if (Object.keys(newActData).length > 0) {
-                    drawActDataLayer();
-                }
-            }, { immediate: true });
+        map.on("load", async () => {
 
-            // เฝ้าดูการเปลี่ยนแปลงของ kaitomData
-            watch(props.kaitomData, (newValue) => {
-                updateKaitomMarkers();
-                if (newValue.length > 0) {
-                    updateKaitomMarkers();
-                }
-            }, { immediate: true });
+            isLoading.value = true;
+            try {
+                const response = await fetch("/data/province.geojson");
+                const geojsonData = await response.json() as GeoJSON.FeatureCollection;
+                const geojsonDataWithActCount = geojsonData.features.map(feature => {
+                    if (!feature.properties) {
+                        feature.properties = {}
+                    }
+                    feature.properties.act_count = 0;
+                    return feature;
+                });
+
+                map.addSource("provinces", {
+                    type: "geojson",
+                    data: geojsonData
+                });
+
+                // เพิ่ม province layer ก่อน
+                map.addLayer({
+                    id: "province-layer",
+                    type: "fill",
+                    // @ts-ignore
+                    source: "provinces",
+                    paint: {
+                        // @ts-ignore
+                        "fill-color": [
+                            "step",
+                            ["get", "act_count"],
+                            "#B9B9B9",
+                            1,
+                            "#ffe5cc",
+                            2,
+                            "#ffd6b0",
+                            3,
+                            "#ffc694",
+                            4,
+                            "#ffb67a",
+                            5,
+                            "#ffa561",
+                            6,
+                            "#ff9348",
+                            7,
+                            "#ff8030",
+                            8,
+                            "#ff6a14"
+                        ],
+                        "fill-opacity": 0.7,
+                    },
+                });
+
+                map.addLayer({
+                    id: "states-layer-outline",
+                    type: "line",
+                    source: "provinces",
+                    paint: {
+                        "line-color": "#000000",
+                        "line-width": 0.5,
+                    },
+                });
+
+                // เพิ่ม circle layer ใหม่หลังจาก province layer
+                map.addSource('kaitom-points', {
+                    type: 'geojson',
+                    data: {
+                        type: 'FeatureCollection',
+                        features: []
+                    }
+                });
+
+                // รอให้ kaitomData พร้อมก่อนเพิ่ม circle layer
+                map.addLayer({
+                    id: 'kaitom-circles',
+                    type: 'circle',
+                    source: 'kaitom-points',
+                    paint: {
+                        'circle-radius': 4,
+                        'circle-color': '#FF6A13',
+                        'circle-opacity': 0.8,
+                        'circle-stroke-width': 1,
+                        'circle-stroke-color': '#fff'
+                    }
+                });
+
+
+                // เพิ่ม popup เมื่อคลิกที่ circle
+                map.on('click', 'kaitom-circles', (e) => {
+                    if (e.features && e.features.length > 0) {
+                        const feature = e.features[0];
+                        new maplibregl.Popup()
+                            .setLngLat(e.lngLat)
+                            .setHTML(`
+                        <h3>${feature.properties.location_name}</h3>
+                        <p>${feature.properties.description || ''}</p>
+                        <p><strong>โดย:</strong> ${feature.properties.full_name}</p>
+                        <p><strong>วันที่:</strong> ${new Date(feature.properties.date).toLocaleDateString('th-TH')}</p>
+                    `)
+                            .addTo(map);
+                        return true; // หยุดการ bubbling ของ event
+                    }
+                });
+
+                // เพิ่ม cursor pointer เมื่อ hover
+                map.on('mouseenter', 'kaitom-circles', () => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                map.on('mouseleave', 'kaitom-circles', () => {
+                    map.getCanvas().style.cursor = '';
+                });
+
+                // เพิ่ม popup แสดงจำนวนกิจกรรม
+                map.on("click", "province-layer", (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
+                    // ตรวจสอบว่ามี circle อยู่ที่ตำแหน่งที่คลิกหรือไม่
+                    const features = map.queryRenderedFeatures(e.point, { layers: ['kaitom-circles'] });
+                    if (features.length > 0) {
+                        return; // ถ้ามี circle อยู่ที่ตำแหน่งที่คลิก ให้ไม่แสดง popup ของ province
+                    }
+
+                    if (e.features && e.features.length > 0) {
+                        const provinceName = e.features[0].properties.ADM1_TH;
+                        const total = e.features[0].properties?.act_count || 0;
+
+                        new maplibregl.Popup()
+                            .setLngLat(e.lngLat)
+                            .setHTML(`
+                        <h3>${provinceName}</h3>
+                        <p>จำนวนกิจกรรมทั้งหมด: ${total}</p>
+                    `)
+                            .addTo(map);
+                    }
+                });
+                isMapReady.value = true;
+            } catch (error) {
+                console.error("Error loading province data:", error);
+            } finally {
+                isLoading.value = false;
+            }
+
         });
+
+        // เฝ้าดูการเปลี่ยนแปลงของ kaitomData, actData และ isMapReady
+        watch([() => props.actData, () => props.kaitomData, isMapReady, timelineValue], ([newActValue, newKaitomValue, isMapReady, newTimelineValue]) => {
+            if (!isMapReady) {
+                return;
+            }
+
+
+            if (newKaitomValue.length > 0) {
+                updateKaitomMarkers();
+            }
+
+            if (Object.keys(newActValue).length > 0) {
+                // Get the provinces source and update it with activity data
+                if (map.getSource("provinces")) {
+                    const provincesSource = map.getSource("provinces") as maplibregl.GeoJSONSource;
+                    const geojsonData = provincesSource.serialize().data;
+
+                    if (geojsonData && typeof geojsonData === 'object' && 'features' in geojsonData) {
+                        // Update each province feature with activity count
+                        const updatedFeatures = geojsonData.features.map(feature => {
+                            if (feature.properties) {
+                                const provinceName = feature.properties.ADM1_TH;
+                                feature.properties.act_count = calculateTotalActivities(provinceName);
+                            }
+                            return feature;
+                        });
+
+                        // Update the source with new data
+                        provincesSource.setData({
+                            type: "FeatureCollection",
+                            features: updatedFeatures
+                        });
+                    }
+                }
+            }
+        }, { immediate: true, deep: true });
+
     }
 });
 </script>

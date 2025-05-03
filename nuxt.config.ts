@@ -18,7 +18,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-02-26',
   css: [
     '@/assets/css/fonts.css',
-    "maplibre-gl/dist/maplibre-gl.css"
+    "maplibre-gl/dist/maplibre-gl.css",
+    '@/assets/css/styles.css'
   ],
   app: {
     head: {
