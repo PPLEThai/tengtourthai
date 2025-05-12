@@ -115,7 +115,8 @@ const updateKaitomMarkers = () => {
                     location_name: item.location_name,
                     description: item.description,
                     full_name: item.full_name,
-                    date: item.date
+                    date: item.date,
+                    role: item.role
                 }
             }));
 
@@ -318,7 +319,14 @@ onMounted(() => {
                     source: 'kaitom-points',
                     paint: {
                         'circle-radius': 4,
-                        'circle-color': '#FF6A13',
+                        'circle-color': [
+                            'match',
+                            ['get', 'role'],
+                            'mp', '#FF6A13',
+                            'local', '#0066FF',
+                            'province', '#808080',
+                            '#FF6A13' // ค่าเริ่มต้น
+                        ],
                         'circle-opacity': 0.8,
                         'circle-stroke-width': 1,
                         'circle-stroke-color': '#fff'
