@@ -11,8 +11,8 @@
         </div>
 
         <!-- Main Tabs -->
-        <div class="flex flex-row gap-2 mt-6">
-            <button 
+        <div class="flex flex-row gap-2 mt-2">
+            <!-- <button 
                 class="w-1/2 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
                 :class="[
                     currentTab === 'activities' 
@@ -25,10 +25,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                     </svg>
-                    เข้าพื้นที่
+                    การเข้าพื้นที่
                 </div>
-            </button>
-            <button 
+            </button> -->
+            <!-- <button 
                 class="w-1/2 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
                 :class="[
                     currentTab === 'leaderboard' 
@@ -43,7 +43,7 @@
                     </svg>
                     Leaderboard
                 </div>
-            </button>
+            </button> -->
         </div>
 
         <!-- Activities Tab -->
@@ -73,7 +73,7 @@
 
         <!-- Leader Board Tab -->
         <div v-if="currentTab === 'leaderboard'" class="mt-4">
-            <!-- Sub Tabs -->
+
             <div class="flex flex-row gap-2 mb-4">
                 <button 
                     class="w-1/3 px-4 py-2 rounded-lg text-base font-medium transition-all duration-300"
@@ -110,7 +110,6 @@
                 </button>
             </div>
 
-            <!-- MP Leader Board -->
             <div v-if="leaderboardSubTab === 'mp'">
                 <div class="divider text-primary">สถิติการเข้าพื้นที่ ส.ส.</div>
                 <div class="overflow-x-auto">
@@ -139,7 +138,6 @@
                 </div>
             </div>
 
-            <!-- Province Leader Board -->
             <div v-if="leaderboardSubTab === 'province'">
                 <div class="divider text-primary">สถิติการเข้าพื้นที่ ทีมจังหวัด</div>
                 <div class="overflow-x-auto">
@@ -168,7 +166,6 @@
                 </div>
             </div>
 
-            <!-- Local Leader Board -->
             <div v-if="leaderboardSubTab === 'local'">
                 <div class="divider text-primary">สถิติการเข้าพื้นที่ ทีมท้องถิ่น</div>
                 <div class="overflow-x-auto">
