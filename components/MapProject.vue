@@ -56,86 +56,88 @@ const drawPolygon = (data: any) => {
         fillColorExpression.push("#B9B9B9");
 
         // ตรวจสอบว่า source มีอยู่จริงก่อนที่จะเพิ่ม layer
-        if (!map.getSource('provinces')) {
+        const provincesSource = map.getSource('provinces');
+        if (!provincesSource) {
             console.warn('Source "provinces" not found');
             return;
         }
 
-        // ลบเลเยอร์เก่าถ้ามี
-        if (map.getLayer("province-layer")) {
-            map.removeLayer("province-layer");
-        }
-        if (map.getLayer("states-layer-outline")) {
-            map.removeLayer("states-layer-outline");
-        }
-        if (map.getLayer("province-highlight")) {
-            map.removeLayer("province-highlight");
-        }
-
-        // เพิ่มเลเยอร์ใหม่
-        map.addLayer({
-            id: "province-layer",
-            type: "fill",
-            source: "provinces",
-            paint: {
-                "fill-color": (fillColorExpression as unknown) as string,
-                "fill-opacity": 1,
-            },
-        });
-
-        map.addLayer({
-            id: "states-layer-outline",
-            type: "line",
-            source: "provinces",
-            paint: {
-                "line-color": "rgba(0, 0, 0, 1)",
-                "line-width": 0.5,
-            },
-        });
-
-        // เพิ่มเลเยอร์สำหรับ highlight จังหวัดที่เลือก
-        map.addLayer({
-            id: "province-highlight",
-            type: "fill",
-            source: "provinces",
-            paint: {
-                "fill-color": "#FFD700", // สีทองสำหรับ highlight
-                "fill-opacity": 0.5,
-            },
-            filter: ["==", ["get", "ADM1_TH"], ""] // เริ่มต้นไม่มีจังหวัดที่ถูกเลือก
-        });
-
-        // เพิ่ม event listener สำหรับการคลิกที่จังหวัด
-        map.on('click', 'province-layer', (e) => {
-            if (e.features && e.features.length > 0) {
-                const provinceName = e.features[0].properties.ADM1_TH;
-                // ส่ง event ไปยัง parent component
-                emit('province-click', provinceName);
-                
-                // Highlight จังหวัดที่คลิก
-                map.setFilter('province-highlight', [
-                    '==', ['get', 'ADM1_TH'], provinceName
-                ]);
+        // อัพเดทข้อมูลของ source
+        const source = map.getSource('provinces');
+        if (source) {
+            const sourceData = (source as maplibregl.GeoJSONSource).serialize();
+            if (sourceData && sourceData.data) {
+                const geoJsonData = sourceData.data as GeoJSON.FeatureCollection;
+                if (geoJsonData.features) {
+                    (provincesSource as maplibregl.GeoJSONSource).setData({
+                        type: "FeatureCollection",
+                        features: geoJsonData.features
+                    });
+                }
             }
-        });
+        }
 
-        // เพิ่ม hover effect
-        map.on('mouseenter', 'province-layer', () => {
-            map.getCanvas().style.cursor = 'pointer';
-        });
+        // ถ้ายังไม่มี layer ให้สร้างใหม่
+        if (!map.getLayer("province-layer")) {
+            map.addLayer({
+                id: "province-layer",
+                type: "fill",
+                source: "provinces",
+                paint: {
+                    "fill-color": (fillColorExpression as unknown) as string,
+                    "fill-opacity": 1,
+                },
+            });
 
-        map.on('mouseleave', 'province-layer', () => {
-            map.getCanvas().style.cursor = '';
-        });
+            map.addLayer({
+                id: "states-layer-outline",
+                type: "line",
+                source: "provinces",
+                paint: {
+                    "line-color": "rgba(0, 0, 0, 1)",
+                    "line-width": 0.5,
+                },
+            });
+
+            map.addLayer({
+                id: "province-highlight",
+                type: "fill",
+                source: "provinces",
+                paint: {
+                    "fill-color": "#FFD700", // สีทองสำหรับ highlight
+                    "fill-opacity": 0.5,
+                },
+                filter: ["==", ["get", "ADM1_TH"], ""] // เริ่มต้นไม่มีจังหวัดที่ถูกเลือก
+            });
+
+            // เพิ่ม event listener สำหรับการคลิกที่จังหวัด
+            map.on('click', 'province-layer', (e) => {
+                if (e.features && e.features.length > 0) {
+                    const provinceName = e.features[0].properties.ADM1_TH;
+                    // ส่ง event ไปยัง parent component
+                    emit('province-click', provinceName);
+                    
+                    // Highlight จังหวัดที่คลิก
+                    map.setFilter('province-highlight', [
+                        '==', ['get', 'ADM1_TH'], provinceName
+                    ]);
+                }
+            });
+
+            // เพิ่ม hover effect
+            map.on('mouseenter', 'province-layer', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            map.on('mouseleave', 'province-layer', () => {
+                map.getCanvas().style.cursor = '';
+            });
+        } else {
+            // อัพเดทสีของ layer ที่มีอยู่
+            map.setPaintProperty('province-layer', 'fill-color', fillColorExpression);
+        }
     }
 }
-
-// เพิ่ม watch เพื่อติดตามการเปลี่ยนแปลงของ projects
-watch(() => props.projects, (newProjects) => {
-    if (newProjects && map && map.isStyleLoaded()) {
-        drawPolygon(newProjects);
-    }
-}, { immediate: true });
 
 onMounted(() => {
     if (mapContainer.value) {
@@ -158,11 +160,9 @@ onMounted(() => {
             zoom: 5,
             minZoom: 5,
             maxZoom: 11,
-            // maxBounds: [
-            //     [93.0, 3.0],
-            //     [108.0, 22.0]
-            // ]
         });
+
+        let isSourceLoaded = false;
 
         map.on("load", async () => {
             try {
@@ -177,14 +177,23 @@ onMounted(() => {
                     data: geojsonData,
                 });
 
-                // // เรียก drawPolygon เพื่อวาดเลเยอร์หลังจาก source ถูกโหลดเสร็จ
-                // if (props.projects) {
-                //     drawPolygon(props.projects);
-                // }
+                isSourceLoaded = true;
+                
+                // วาด polygon หลังจาก source ถูกโหลดเสร็จ
+                if (props.projects) {
+                    drawPolygon(props.projects);
+                }
             } catch (error) {
                 console.error('Error loading province data:', error);
             }
         });
+
+        // แก้ไข watch ให้ตรวจสอบว่า source ถูกโหลดแล้ว
+        watch(() => props.projects, (newProjects) => {
+            if (newProjects && map && map.isStyleLoaded() && isSourceLoaded) {
+                drawPolygon(newProjects);
+            }
+        }, { immediate: true });
 
         // เพิ่ม error handling สำหรับการโหลดแผนที่
         map.on('error', (e) => {
