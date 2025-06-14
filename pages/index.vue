@@ -19,7 +19,6 @@ import { useActData } from "@/composables/useActData";
 const kaitomStore = useKaitomStore();
 const { actData } = useActData();
 
-// ไม่จำเป็นต้องเรียก fetchKaitomData แล้ว เพราะ store จะเรียก fetchKaitomDataByMonth โดยอัตโนมัติ
 </script>
 
 <style scoped>

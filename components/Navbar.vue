@@ -10,11 +10,14 @@
               class="h-10" />
             <img v-else-if="currentUrl === '/political-project'" src="@/assets/images/logo-pp.png" alt="วาระจังหวัด"
               class="h-8" />
+            <img v-else-if="currentUrl.startsWith('/mp')" src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน"
+              class="h-8" />
             <img v-else src="@/assets/images/som-logo.svg" alt="ส้มทั่วไทย" class="h-8" />
 
             <div class="flex items-center">
               <a class="text-xl font-bold text-white mr-2">{{
                 currentUrl === '/teng' ? '#เท้งทั่วไทย' :
+                currentUrl.startsWith('/mp') ? '#ผู้แทนของฉัน' :
                 currentUrl === '/political-project' ? '#วาระจังหวัด' :
                 '#ส้มทั่วไทย'
                 }}</a>
@@ -48,6 +51,13 @@
                 <div class="text-sm font-light">ภารกิจหัวหน้าพรรคประชาชน</div>
               </div>
             </a>
+            <!-- <a href="/mp" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน Logo" class="h-8" />
+              <div>
+                <div class="font-bold">ผู้แทนของฉัน</div>
+                <div class="text-sm font-light">การทำงานเพื่อประชาชนของ สส.</div>
+              </div>
+            </a> -->
           </div>
         </div>
 
@@ -172,23 +182,28 @@ const tengVisitedProvinces = computed(() => {
   return Object.keys(groupedData.value).length;
 });
 
-const kaitomStore = useKaitomStore();
+// ตรวจสอบว่าไม่ใช่หน้า /mp ก่อนเรียกใช้ services
+const isMPPage = computed(() => currentUrl.startsWith('/mp'));
+
+// เรียกใช้ services เฉพาะเมื่อไม่ใช่หน้า /mp
+const kaitomStore = !isMPPage.value ? useKaitomStore() : null;
+const { actData, selectedMonth, getActivityCount } = !isMPPage.value ? useActData() : { actData: ref([]), selectedMonth: ref(''), getActivityCount: () => 0 };
 
 const tengVisitedDigits = computed(() => tengVisitedProvinces.value.toString().split(""));
 
 const visitedDigits = computed(() => {
-  const count = kaitomStore.kaitomData.length.toString();
+  if (isMPPage.value) return ['0'];
+  const count = kaitomStore?.kaitomData.length.toString() || '0';
   return count.padStart(1, '0').split('');
 });
 
-const { actData, selectedMonth, getActivityCount } = useActData();
-
 // คำนวณจำนวนกิจกรรมจากเดือนที่เลือก
-const activityCount = computed(() => getActivityCount());
+const activityCount = computed(() => {
+  if (isMPPage.value) return 0;
+  return getActivityCount();
+});
 
 const activityDigits = computed(() => {
   return activityCount.value.toString().padStart(1, '0').split("");
 });
-
-// ไม่จำเป็นต้องมี updateSelectedMonth แล้ว เพราะใช้ global selectedMonth จาก useActData
 </script>
