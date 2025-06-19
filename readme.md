@@ -24,3 +24,52 @@
 This code is released into the Public Domain, which means it has no copyright restrictions whatsoever. You are free to use, copy, modify, distribute, or do anything with this software without limitations. No permission or attribution is required.
 
 We have waived all rights to this work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law.
+
+# Teng Tour Thai Frontend
+
+เว็บไซต์ติดตามการเดินทางของหัวหน้าพรรคประชาชน
+
+## การติดตั้ง
+
+```bash
+npm install
+```
+
+## การตั้งค่า Environment Variables
+
+สร้างไฟล์ `.env` ในโฟลเดอร์หลักของโปรเจค และเพิ่มค่าต่อไปนี้:
+
+```env
+# GraphQL API Configuration
+GRAPHQL_API_TOKEN=your_access_token_here
+GRAPHQL_API_URL=
+
+# API Teng Data (ถ้ามี)
+API_TENG_DATA=your_api_teng_data_url
+```
+
+### คำอธิบาย Environment Variables
+
+- `GRAPHQL_API_TOKEN`: Token สำหรับการเข้าถึง GraphQL API
+- `GRAPHQL_API_URL`: URL ของ GraphQL API (default: )
+- `API_TENG_DATA`: URL สำหรับข้อมูลการเดินทางของเท้ง (ถ้ามี)
+
+## การรันโปรเจค
+
+```bash
+# Development
+npm run dev
+
+# Build
+npm run build
+
+# Preview
+npm run preview
+```
+
+## โครงสร้างโปรเจค
+
+- `pages/mp/[name].vue` - หน้าแสดงข้อมูล MP แต่ละคน
+- `composables/useGraphQL.ts` - Composable สำหรับเรียก GraphQL API
+- `composables/useMPData.ts` - Composable สำหรับข้อมูล MP
+- `composables/useKaitomMP.ts` - Composable สำหรับข้อมูล Kaitom MP
