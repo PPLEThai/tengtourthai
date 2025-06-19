@@ -29,10 +29,6 @@
             @error="handleImageError" />
           <h2 class="text-xl md:text-2xl font-bold mt-4 text-[#0A2940] text-center">{{ mp.fullname }}</h2>
           <div class="text-[#FF6A13] font-semibold mt-1 text-center text-sm md:text-base">{{ mp.status }}</div>
-          <div class="flex gap-2 mt-2" v-if="mp.status !== 'บัญชีรายชื่อ'">
-            <button class="bg-[#FF6A13] text-white px-3 py-1 rounded-full text-xs md:text-sm">ราชเทวี</button>
-            <button class="bg-[#FF6A13] text-white px-3 py-1 rounded-full text-xs md:text-sm">สีลม</button>
-          </div>
         </div>
         <!-- ประเด็นที่ผลักดัน -->
         <div>
