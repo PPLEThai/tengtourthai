@@ -4,7 +4,7 @@
     <div class="absolute bottom-10 right-4 bg-white p-4 rounded-lg shadow-lg">
       <div class="flex items-center mb-2">
         <div class="w-6 h-6 bg-blue-500 rounded-full mr-2"></div>
-        <span>การลงพื้นที่</span>
+        <span>การเข้าพื้นที่</span>
       </div>
       <div class="flex items-center">
         <div class="w-6 h-6 bg-red-500 rounded-full mr-2"></div>

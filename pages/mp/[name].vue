@@ -32,10 +32,12 @@
         </div>
         <!-- ประเด็นที่ผลักดัน -->
         <div>
-          <h3 class="font-bold text-[#0A2940] mb-2 text-base md:text-lg">ประเด็นที่ผลักดันปัจจุบัน</h3>
-          <div class="grid grid-cols-2 gap-2">
-            <div v-for="topic in mp.topics" :key="topic" class="flex items-center gap-2">
-              <span class="text-[#0A2940] text-xs md:text-sm">• {{ topic }}</span>
+          <div v-if="mp.topics && mp.topics.length > 0">
+            <h3 class="font-bold text-[#0A2940] mb-2 text-base md:text-lg">ประเด็นที่ผลักดันปัจจุบัน</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <div v-for="topic in mp.topics" :key="topic" class="flex items-center gap-2">
+                <span class="text-[#0A2940] text-xs md:text-sm">• {{ topic }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -98,12 +100,17 @@
                   {{ day.day }}
                 </span>
                 <div v-if="day.events.length > 0"
-                  class="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-0.5">
-                  <div v-for="(event, index) in day.events" :key="index" class="w-1.5 h-1.5 rounded-full" :class="{
-                    'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
-                    'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
-                    'bg-[#2196F3]': event.type === 'กิจกรรม'
-                  }">
+                  class="absolute top-1 right-1 flex gap-0.5">
+                  <template v-if="day.events.length <= 3">
+                    <div v-for="(event, index) in day.events" :key="index" class="w-1.5 h-1.5 rounded-full" :class="{
+                      'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
+                      'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
+                      'bg-[#2196F3]': event.type === 'กิจกรรม'
+                    }">
+                    </div>
+                  </template>
+                  <div v-else class="w-5 h-5 rounded-full bg-[#9C27B0] flex items-center justify-center shadow-sm">
+                    <span class="text-white text-[10px] font-bold leading-none">{{ day.events.length }}</span>
                   </div>
                 </div>
               </div>
@@ -116,7 +123,7 @@
               </div>
               <div class="flex items-center gap-1">
                 <div class="w-2 h-2 rounded-full bg-[#4CAF50]"></div>
-                <span class="text-[#0A2940]">ลงพื้นที่</span>
+                <span class="text-[#0A2940]">เข้าพื้นที่</span>
               </div>
               <div class="flex items-center gap-1">
                 <div class="w-2 h-2 rounded-full bg-[#2196F3]"></div>
@@ -130,7 +137,8 @@
               <div class="flex flex-col">
                 <span class="text-[#FF6A13] text-xs font-semibold">{{ new Date(event.date).toLocaleDateString('th-TH', { month: 'short', day: 'numeric' }) }}</span>
                 <span class="text-[#0A2940] text-xs">
-                  {{ event.type === 'กรรมาธิการ' ? event.committee_name : event.location_name }}
+                  {{ event.type === 'กรรมาธิการ' ? event.committee_name : 
+                     event.type === 'ลงพื้นที่' ? event.location_name : event.location_name }}
                 </span>
                 <span v-if="event.type === 'กรรมาธิการ' && event.sub_committee_name" class="text-[#0A2940] text-xs opacity-75">{{ event.sub_committee_name }}</span>
                 <span class="text-[#0A2940] text-xs opacity-75">{{ event.type }}</span>
@@ -181,7 +189,7 @@
               <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
             <p class="text-yellow-800 text-sm">
-              <strong>หมายเหตุ:</strong> ข้อมูลที่ปรากฎนี้ เป็นเพียงบางส่วนของการนำเข้าด้วย อาจมีข้อมูลที่ยังไม่ครบถ้วน
+              <strong>หมายเหตุ:</strong> ข้อมูลที่ปรากฎนี้ เป็นเพียงบางส่วนของการนำเข้าเบื้องต้น ยังไม่ครบถ้วนทั้งหมด
             </p>
           </div>
         </div>
@@ -280,8 +288,7 @@
             ยังไม่มีข้อมูลการประชุมกรรมาธิการ
           </div>
         </div>
-
-        <!-- กฎหมายที่ผลักดันอยู่ -->
+                <!-- กฎหมายที่ผลักดันอยู่ -->
         <div class="bg-white rounded-2xl p-4 md:p-6 h-[200px] md:h-[300px] col-span-1 flex flex-col">
           <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">กฎหมายที่ผลักดันอยู่</h3>
           <div class="text-[#0A2940] text-sm opacity-75">
@@ -291,6 +298,57 @@
           <div class="flex-1"></div>
           <a href="https://promise.peoplesparty.or.th/" target="_blank"
             class="text-[#FF6A13] text-sm hover:underline">*สามารถติดตามกฎหมายของพรรคได้ที่นี่</a>
+        </div>
+
+        <!-- ข่าวที่ถูกพูดถึง -->
+        <div class="bg-white rounded-2xl p-4 md:p-6 h-[450px] md:h-[500px] col-span-1 md:col-span-2 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">ข่าวที่ถูกพูดถึงล่าสุด</h3>
+          <!-- เนื้อหา -->
+          <div v-if="kaitomLoading" class="text-[#0A2940] text-sm">
+            กำลังโหลดข้อมูลข่าว...
+          </div>
+          <div v-else-if="kaitomError" class="text-red-500 text-sm">
+            เกิดข้อผิดพลาด: {{ kaitomError }}
+          </div>
+          <div v-else-if="mpReport && mpReport.news && mpReport.news.length > 0"
+            class="flex-1 flex flex-col overflow-hidden">
+            <p class="text-[#0A2940] text-sm mb-3">พบข่าวที่ถูกพูดถึง 10 ข่าวล่าสุด จาก Social Listening</p>
+            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
+              <div v-for="(news, index) in newsWithMetaImages" :key="news.permalink || index" 
+                class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <a :href="news.permalink" target="_blank" rel="noopener noreferrer" 
+                  class="block hover:no-underline">
+                  <div class="flex gap-4">
+                    <!-- รูปภาพ preview -->
+                    <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-gray-100">
+                      <img v-if="news.photos || news.metaImage" :src="news.photos || news.metaImage" :alt="news.news_name"
+                        class="w-full h-full object-cover" @error="handleImageError" />
+                      <div v-else class="w-full h-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <!-- เนื้อหาข่าว -->
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-[#0A2940] font-semibold text-sm md:text-base line-clamp-3 mb-2 hover:text-[#4CAF50] transition-colors">
+                        {{ news.news_name }}
+                      </h4>
+                      <div class="flex items-center justify-between text-xs text-gray-600">
+                        <span class="bg-[#4CAF50]/10 text-[#4CAF50] px-2 py-1 rounded-full font-medium">
+                          {{ news.source_name }}
+                        </span>
+                        <span>{{ news.posted_at ? new Date(news.posted_at).toLocaleDateString('th-TH') : 'ไม่ระบุวันที่' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-[#0A2940] text-sm opacity-75">
+            ไม่มีข่าวที่ถูกพูดถึง 14 วันที่ผ่านมา
+          </div>
         </div>
 
         <div class="bg-white rounded-2xl p-4 md:p-6 h-[450px] md:h-[500px] col-span-1 md:col-span-2 flex flex-col">
@@ -555,7 +613,7 @@ declare global {
 
 const { mpData } = useMPData();
 const route = useRoute();
-const mpName = decodeURIComponent(route.params.name as string);
+const mpName = decodeURIComponent(route.params.name as string).replace(/_/g, ' ');
 console.log('mpName', mpName);
 const { mpReport, loading: kaitomLoading, error: kaitomError } = useKaitomMP(mpName.replace(/ /g, '_'));
 
@@ -594,6 +652,23 @@ const fieldReports = computed(() => {
   }));
 });
 
+// เพิ่มข่าวสำหรับปฏิทิน
+const newsEvents = computed(() => {
+  if (!mpReport.value || !mpReport.value.news) {
+    return [];
+  }
+
+  return mpReport.value.news.map(news => ({
+    date: news.posted_at || '',
+    news_name: news.news_name || '',
+    source_name: news.source_name || '',
+    permalink: news.permalink || '',
+    description: news.news_name || '', // ใช้ news_name เป็น description
+    created_at: news.posted_at || '',
+    type: 'ข่าว'
+  }));
+});
+
 // รวมข้อมูลทั้งหมดสำหรับปฏิทิน
 const allEvents = computed(() => {
   const events: Array<{
@@ -601,6 +676,9 @@ const allEvents = computed(() => {
     committee_name?: string;
     sub_committee_name?: string | null;
     location_name?: string;
+    news_name?: string;
+    source_name?: string;
+    permalink?: string;
     description: string;
     created_at: string;
     type: string;
@@ -677,7 +755,7 @@ const fetchMPData = async () => {
   error.value = null;
 
   try {
-    const mpName = decodeURIComponent(route.params.name as string);
+    const mpName = decodeURIComponent(route.params.name as string).replace(/_/g, ' ');
     mp.value = mpData.value.find(mp => mp.fullname === mpName) || null;
 
     if (mp.value) {
@@ -722,7 +800,7 @@ const getImageUrl = (url: string) => {
   if (url.includes('drive.google.com')) {
     const fileId = url.match(/[-\w]{25,}/);
     if (fileId) {
-      return `https://drive.google.com/thumbnail?id=${fileId[0]}&sz=w200`;
+      return `https://drive.google.com/thumbnail?id=${fileId[0]}&sz=w300`;
     }
   }
 
@@ -1067,60 +1145,6 @@ const addMarkersToMap = () => {
   }
 };
 
-interface NewsItem {
-  url: string;
-  title: string;
-  description: string;
-  source: string;
-  date: string;
-  image: string;
-}
-
-const newsItems = ref<NewsItem[]>([
-  {
-    url: 'https://www.thaipost.net/politics-news/804761/',
-    title: 'สส. ประชาธิปัตย์ เปิดเผยข้อมูลการใช้งบประมาณของรัฐบาล',
-    description: 'สมาชิกสภาผู้แทนราษฎรพรรคประชาธิปัตย์ ได้เปิดเผยข้อมูลการใช้งบประมาณของรัฐบาลที่อาจมีปัญหา...',
-    source: 'ไทยโพสต์',
-    date: '5 มิ.ย. 2566',
-    image: ''
-  },
-  {
-    url: 'https://www.naewna.com/politic/890897',
-    title: 'สส. ประชาธิปัตย์ เรียกร้องให้รัฐบาลแก้ไขปัญหาค่าครองชีพ',
-    description: 'สมาชิกสภาผู้แทนราษฎรพรรคประชาธิปัตย์ ได้เรียกร้องให้รัฐบาลเร่งแก้ไขปัญหาค่าครองชีพที่สูงขึ้น...',
-    source: 'แนวหน้า',
-    date: '4 มิ.ย. 2566',
-    image: ''
-  },
-  {
-    url: 'https://www.thairath.co.th/news/politic/2862099',
-    title: 'สส. ประชาธิปัตย์ เปิดเผยข้อมูลการทุจริตในโครงการของรัฐ',
-    description: 'สมาชิกสภาผู้แทนราษฎรพรรคประชาธิปัตย์ ได้เปิดเผยข้อมูลการทุจริตในโครงการของรัฐที่อาจมีมูลความจริง...',
-    source: 'ไทยรัฐ',
-    date: '3 มิ.ย. 2566',
-    image: ''
-  }
-]);
-
-const fetchNewsMeta = async () => {
-  try {
-    const promises = newsItems.value.map(async (news) => {
-      try {
-        const response = await fetch(`/api/meta?url=${encodeURIComponent(news.url)}`);
-        const data = await response.json();
-        news.image = data.image || '/images/news-placeholder.jpg';
-      } catch (error) {
-        console.error(`Error fetching meta for ${news.url}:`, error);
-        news.image = '/images/news-placeholder.jpg';
-      }
-    });
-    await Promise.all(promises);
-  } catch (error) {
-    console.error('Error fetching news meta:', error);
-  }
-};
-
 onMounted(() => {
   fetchMPData();
 
@@ -1163,6 +1187,7 @@ watch(mpReport, (newValue) => {
   if (newValue) {
     console.log('Field reports count:', newValue.field_reports?.length || 0);
     console.log('Committee meetings count:', newValue.committee_meetings?.length || 0);
+    console.log('News count:', newValue.news?.length || 0);
     // อัปเดตปฏิทินเมื่อข้อมูลเปลี่ยน
     nextTick(() => {
       calendarDays.value = generateCalendarDays();
@@ -1171,6 +1196,8 @@ watch(mpReport, (newValue) => {
         addMarkersToMap();
       }
     });
+    // อัปเดต meta images สำหรับข่าว
+    updateNewsWithMetaImages();
   }
 });
 
@@ -1207,6 +1234,49 @@ watch(mp, (newValue, oldValue) => {
 }, { immediate: true });
 
 definePageMeta({ layout: 'mp' })
+
+// ฟังก์ชันสำหรับดึง meta image จาก permalink
+const fetchNewsMetaImage = async (permalink: string) => {
+  try {
+    const response = await fetch(`/api/meta?url=${encodeURIComponent(permalink)}`);
+    const data = await response.json();
+    return data.image || '';
+  } catch (error) {
+    console.error('Error fetching meta image:', error);
+    return '';
+  }
+};
+
+// อัปเดตข่าวด้วย meta image
+const newsWithMetaImages = ref<Array<News & { metaImage?: string }>>([]);
+
+const updateNewsWithMetaImages = async () => {
+  if (!mpReport.value?.news) {
+    newsWithMetaImages.value = [];
+    return;
+  }
+
+  // ดึงแค่ 10 ข่าวล่าสุด และ sort ตามวันที่ล่าสุด
+  const latestNews = mpReport.value.news
+    .sort((a, b) => {
+      const dateA = new Date(a.posted_at || '');
+      const dateB = new Date(b.posted_at || '');
+      return dateB.getTime() - dateA.getTime(); // เรียงจากใหม่ไปเก่า
+    })
+    .slice(0, 10);
+
+  const newsWithImages = await Promise.all(
+    latestNews.map(async (news) => {
+      const metaImage = await fetchNewsMetaImage(news.permalink);
+      return {
+        ...news,
+        metaImage
+      };
+    })
+  );
+
+  newsWithMetaImages.value = newsWithImages;
+};
 </script>
 
 <style>
@@ -1313,5 +1383,20 @@ definePageMeta({ layout: 'mp' })
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

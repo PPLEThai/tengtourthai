@@ -21,9 +21,18 @@ export interface CommitteeMeeting {
     owner_full_name: string;
 }
 
+export interface News {
+    news_name: string;
+    source_name: string;
+    permalink: string;
+    photos: string;
+    posted_at: string;
+}
+
 export interface MPReport {
     field_reports: FieldReport[];
     committee_meetings: CommitteeMeeting[];
+    news: News[];
 }
 
 export const useKaitomMP = (fullname: string) => {
@@ -85,6 +94,18 @@ export const useKaitomMP = (fullname: string) => {
                         description: meeting.description || '',
                         created_at: meeting.created_at || null,
                         owner_full_name: meeting.owner_full_name || ''
+                    }));
+                }
+
+                // Clean news
+                if (Array.isArray(data.news)) {
+                    data.news = data.news.map((news: any) => ({
+                        ...news,
+                        news_name: news.news_name || '',
+                        source_name: news.source_name || '',
+                        permalink: news.permalink || '',
+                        photos: news.photos || '',
+                        posted_at: news.posted_at || null
                     }));
                 }
             }
