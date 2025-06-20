@@ -16,6 +16,24 @@
 import { useKaitomStore } from "@/stores/kaitomStore";
 import { useActData } from "@/composables/useActData";
 
+useHead({
+  title: 'เว็บไซต์ส้มทั่วไทย พรรคประชาชน',
+  meta: [
+    {
+      name: 'description',
+      content: 'การเดินทางขององคาพยพ พรรคประชาชน'
+    },
+    {
+      property: 'og:title',
+      content: 'ส้มทั่วไทย พรรคประชาชน'
+    },
+    {
+      property: 'og:description',
+      content: 'การเดินทางขององคาพยพ พรรคประชาชน'
+    }
+  ]
+});
+
 const kaitomStore = useKaitomStore();
 const { actData } = useActData();
 

@@ -61,6 +61,24 @@ import { useMPData, type MPItem } from '@/composables/useMPData';
 
 definePageMeta({ layout: 'mp' })
 
+useHead({
+  title: 'ผู้แทนของฉัน พรรคประชาชน',
+  meta: [
+    {
+      name: 'description',
+      content: 'ข้อมูลและกิจกรรมของผู้แทน พรรคประชาชน'
+    },
+    {
+      property: 'og:title',
+      content: 'ผู้แทนของฉัน พรรคประชาชน'
+    },
+    {
+      property: 'og:description',
+      content: 'ข้อมูลและกิจกรรมของ พรรคประชาชน'
+    }
+  ]
+});
+
 const { mpData } = useMPData();
 const search = ref('');
 const selectedType = ref('');

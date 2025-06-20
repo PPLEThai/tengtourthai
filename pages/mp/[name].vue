@@ -4,11 +4,13 @@
     <nav class="bg-white py-3 px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-0">
       <div class="flex items-center justify-between w-full">
         <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#FF6A13]" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          <span class="font-bold text-[#FF6A13] text-xl"><router-link to="/mp">หน้ารวมผู้แทน</router-link></span>
+          <router-link to="/mp" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#FF6A13]" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="font-bold text-[#FF6A13] text-xl">หน้ารวมผู้แทน</span>
+          </router-link>
         </div>
       </div>
     </nav>
@@ -94,26 +96,45 @@
               </div>
             </div>
             <div class="grid grid-cols-7 gap-1">
+              
               <div v-for="day in calendarDays" :key="day.date"
                 class="aspect-square relative p-1 border border-[#0A2940]/10 rounded">
-                <span class="text-[#0A2940] text-xs" :class="{ 'opacity-50': !day.isCurrentMonth }">
-                  {{ day.day }}
-                </span>
-                <div v-if="day.events.length > 0"
-                  class="absolute top-1 right-1 flex gap-0.5">
-                  <template v-if="day.events.length <= 3">
-                    <div v-for="(event, index) in day.events" :key="index" class="w-1.5 h-1.5 rounded-full" :class="{
-                      'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
-                      'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
-                      'bg-[#2196F3]': event.type === 'กิจกรรม'
-                    }">
-                    </div>
-                  </template>
-                  <div v-else class="w-5 h-5 rounded-full bg-[#9C27B0] flex items-center justify-center shadow-sm">
-                    <span class="text-white text-[10px] font-bold leading-none">{{ day.events.length }}</span>
+                <!-- วันที่อยู่ด้านบน -->
+                <div class="flex justify-center">
+                  <span class="text-[#0A2940] text-xs font-medium" :class="{ 'opacity-50': !day.isCurrentMonth }">
+                    {{ day.day }}
+                  </span>
+                </div>
+                
+                <!-- จุด event อยู่ด้านล่าง -->
+                <div v-if="day.events.length > 0" class="absolute bottom-1 left-1 right-1">
+                  <div class="flex justify-center items-end gap-0.5">
+                    <template v-if="day.events.length <= 4">
+                      <!-- แสดงจุดทั้งหมดถ้าไม่เกิน 4 จุด -->
+                      <div v-for="(event, index) in day.events" :key="index" 
+                        class="w-1.5 h-1.5 rounded-full" 
+                        :class="{
+                          'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
+                          'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
+                          'bg-[#2196F3]': event.type === 'กิจกรรม',
+                        }">
+                      </div>
+                    </template>
+                    <template v-else>
+                      <!-- แสดง 4 จุดแรกเมื่อมีมากกว่า 4 จุด -->
+                      <div v-for="(event, index) in day.events.slice(0, 4)" :key="index" 
+                        class="w-1.5 h-1.5 rounded-full" 
+                        :class="{
+                          'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
+                          'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
+                          'bg-[#2196F3]': event.type === 'กิจกรรม',
+                        }">
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
+
             </div>
             <!-- คำอธิบายสี -->
             <div class="flex gap-4 mt-4 text-xs">
@@ -557,14 +578,177 @@
           </div>
         </div>
 
-        <!-- เนื้อหาที่อยากเล่า -->
-        <!-- <div class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[400px] col-span-1 md:col-span-2 flex flex-col">
-          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">เนื้อหาที่อยากเล่า</h3>
+        <!-- Facebook -->
+        <div v-if="mp?.fb" class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[400px] col-span-1 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2 flex items-center gap-2">
+            <svg class="w-6 h-6 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+            Facebook
+          </h3>
           
-          <div class="text-[#0A2940] text-sm opacity-75">
-            ยังไม่มีเนื้อหา อยู่ระหว่างการนำเข้าข้อมูล
+          <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-3">
+              <a :href="mp.fb" target="_blank" rel="noopener noreferrer"
+                class="text-[#1877F2] text-sm hover:underline font-medium">
+                {{ getSocialMediaDisplayName(mp.fb) }}
+              </a>
+              <a :href="mp.fb" target="_blank" rel="noopener noreferrer"
+                class="text-[#1877F2] text-xs hover:underline">
+                ดูหน้าเพจ →
+              </a>
+            </div>
+            
+            <!-- Loading state -->
+            <div v-if="facebookLoading" class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1877F2] mx-auto mb-2"></div>
+                <p class="text-xs text-gray-600">กำลังโหลดหน้า Facebook...</p>
+              </div>
+            </div>
+            
+            <!-- Error state -->
+            <div v-else-if="facebookError" class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <p class="text-xs text-red-500 mb-2">{{ facebookError }}</p>
+                <a :href="mp.fb" target="_blank" rel="noopener noreferrer"
+                  class="text-[#1877F2] text-xs hover:underline">
+                  เปิดหน้า Facebook ในแท็บใหม่
+                </a>
+              </div>
+            </div>
+            
+            <!-- Facebook Page Plugin Container -->
+            <div v-else-if="facebookPageUrl" class="flex-1">
+              <div 
+                class="fb-page h-full" 
+                :data-href="facebookPageUrl"
+                data-tabs="timeline"
+                data-width="300"
+                data-height="300"
+                data-small-header="true"
+                data-adapt-container-width="true"
+                data-hide-cover="false"
+                data-show-facepile="false">
+              </div>
+            </div>
+            
+            <!-- Fallback -->
+            <div v-else class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <p class="text-xs text-gray-600">
+                  ติดตามข่าวสารและกิจกรรมล่าสุดของ {{ mp.fullname }}
+                </p>
+              </div>
+            </div>
           </div>
-        </div> -->
+        </div>
+
+        <!-- Instagram -->
+        <div v-if="mp?.ig" class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[400px] col-span-1 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2 flex items-center gap-2">
+            <svg class="w-6 h-6 text-[#E4405F]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+            </svg>
+            Instagram
+          </h3>
+          
+          <div class="flex-1 flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <a :href="mp.ig" target="_blank" rel="noopener noreferrer"
+                class="text-[#E4405F] text-sm hover:underline font-medium">
+                {{ getSocialMediaDisplayName(mp.ig) }}
+              </a>
+              <a :href="mp.ig" target="_blank" rel="noopener noreferrer"
+                class="text-[#E4405F] text-xs hover:underline">
+                ดูโปรไฟล์ →
+              </a>
+            </div>
+            
+            <div class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-gray-400 mb-4">
+                  <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                </div>
+                <p class="text-[#0A2940] text-sm mb-2">ดูภาพและสตอรี่ล่าสุด</p>
+                <p class="text-xs text-gray-600">ติดตาม {{ mp.fullname }} บน Instagram</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- X (Twitter) -->
+        <div v-if="mp?.x" class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[400px] col-span-1 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2 flex items-center gap-2">
+            <svg class="w-6 h-6 text-[#000000]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            X (Twitter)
+          </h3>
+          
+          <div class="flex-1 flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <a :href="mp.x" target="_blank" rel="noopener noreferrer"
+                class="text-[#000000] text-sm hover:underline font-medium">
+                {{ getSocialMediaDisplayName(mp.x) }}
+              </a>
+              <a :href="mp.x" target="_blank" rel="noopener noreferrer"
+                class="text-[#000000] text-xs hover:underline">
+                ดูทวิตเตอร์ →
+              </a>
+            </div>
+            
+            <div class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-gray-400 mb-4">
+                  <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </div>
+                <p class="text-[#0A2940] text-sm mb-2">ติดตามความคิดเห็นและข่าวสารล่าสุด</p>
+                <p class="text-xs text-gray-600">ติดตาม {{ mp.fullname }} บน X (Twitter)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TikTok -->
+        <div v-if="mp?.tiktok" class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[400px] col-span-1 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2 flex items-center gap-2">
+            <svg class="w-6 h-6 text-[#000000]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+            </svg>
+            TikTok
+          </h3>
+          
+          <div class="flex-1 flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <a :href="mp.tiktok" target="_blank" rel="noopener noreferrer"
+                class="text-[#000000] text-sm hover:underline font-medium">
+                {{ getSocialMediaDisplayName(mp.tiktok) }}
+              </a>
+              <a :href="mp.tiktok" target="_blank" rel="noopener noreferrer"
+                class="text-[#000000] text-xs hover:underline">
+                ดูวิดีโอ →
+              </a>
+            </div>
+            
+            <div class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-gray-400 mb-4">
+                  <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+                  </svg>
+                </div>
+                <p class="text-[#0A2940] text-sm mb-2">ดูวิดีโอและเนื้อหาสั้นๆ</p>
+                <p class="text-xs text-gray-600">ติดตาม {{ mp.fullname }} บน TikTok</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </main>
     </div>
@@ -598,7 +782,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { useHead } from '@vueuse/head';
 import { useMPData, type MPItem } from '@/composables/useMPData'
 import { useKaitomMP } from '@/composables/useKaitomMP'
 import maplibregl from 'maplibre-gl';
@@ -614,7 +797,7 @@ declare global {
 const { mpData } = useMPData();
 const route = useRoute();
 const mpName = decodeURIComponent(route.params.name as string).replace(/_/g, ' ');
-console.log('mpName', mpName);
+
 const { mpReport, loading: kaitomLoading, error: kaitomError } = useKaitomMP(mpName.replace(/ /g, '_'));
 
 const mp = ref<MPItem | null>(null);
@@ -642,7 +825,6 @@ const fieldReports = computed(() => {
   if (!mpReport.value || !mpReport.value.field_reports) {
     return [];
   }
-
   return mpReport.value.field_reports.map(report => ({
     date: report.date || '',
     location_name: report.location_name || '',
@@ -825,18 +1007,15 @@ const facebookError = ref<string | null>(null);
 // ฟังก์ชันสำหรับแปลง Facebook URL เป็นรูปแบบที่ใช้กับ Page Plugin
 const getFacebookPageUrl = (url: string) => {
   if (!url || !url.includes('facebook.com')) {
-    console.log('Not a Facebook URL:', url);
     return '';
   }
 
   try {
     const urlObj = new URL(url);
     const pathname = urlObj.pathname;
-    console.log('Facebook pathname:', pathname);
     
     // กรณี URL แบบ /people/name/...
     if (pathname.includes('/people/')) {
-      console.log('Using original URL for people page');
       return url; // ใช้ URL เดิม
     }
     
@@ -844,11 +1023,9 @@ const getFacebookPageUrl = (url: string) => {
     const username = pathname.split('/').filter(Boolean)[0];
     if (username) {
       const pageUrl = `https://www.facebook.com/${username}`;
-      console.log('Generated page URL:', pageUrl);
       return pageUrl;
     }
     
-    console.log('Using original URL as fallback');
     return url;
   } catch (error) {
     console.error('Error parsing Facebook URL:', error);
@@ -895,18 +1072,15 @@ const loadFacebookSDK = () => {
 // ฟังก์ชันสำหรับโหลด Facebook Page Plugin
 const loadFacebookPagePlugin = async () => {
   if (!mp.value?.fb) {
-    console.log('No Facebook URL found');
     return;
   }
 
-  console.log('Loading Facebook Page Plugin for URL:', mp.value.fb);
   facebookLoading.value = true;
   facebookError.value = null;
 
   try {
     // แปลง URL เป็นรูปแบบที่ใช้กับ Page Plugin
     const pageUrl = getFacebookPageUrl(mp.value.fb);
-    console.log('Parsed Facebook URL:', pageUrl);
     
     if (!pageUrl) {
       throw new Error('ไม่สามารถแปลง Facebook URL ได้');
@@ -915,18 +1089,14 @@ const loadFacebookPagePlugin = async () => {
     facebookPageUrl.value = pageUrl;
 
     // โหลด Facebook SDK
-    console.log('Loading Facebook SDK...');
     await loadFacebookSDK();
-    console.log('Facebook SDK loaded successfully');
 
     // รอให้ DOM อัปเดตแล้วค่อย render Page Plugin
     await nextTick();
     
     // เรียกใช้ FB.XFBML.parse() เพื่อ render Page Plugin
     if (window.FB && window.FB.XFBML) {
-      console.log('Parsing XFBML...');
       window.FB.XFBML.parse();
-      console.log('XFBML parsing completed');
     } else {
       console.warn('Facebook SDK not available for XFBML parsing');
     }
@@ -1040,8 +1210,6 @@ const initMap = () => {
     return;
   }
 
-  console.log('Initializing map...');
-
   try {
     // สร้าง map instance
     map = new maplibregl.Map({
@@ -1059,7 +1227,6 @@ const initMap = () => {
 
     // รอให้ map โหลดเสร็จแล้วเพิ่ม markers
     map.on('load', () => {
-      console.log('Map loaded successfully');
       addMarkersToMap();
     });
 
@@ -1183,11 +1350,8 @@ onUnmounted(() => {
 
 // เพิ่มการติดตามสถานะของ mpReport
 watch(mpReport, (newValue) => {
-  console.log('mpReport updated:', newValue);
+
   if (newValue) {
-    console.log('Field reports count:', newValue.field_reports?.length || 0);
-    console.log('Committee meetings count:', newValue.committee_meetings?.length || 0);
-    console.log('News count:', newValue.news?.length || 0);
     // อัปเดตปฏิทินเมื่อข้อมูลเปลี่ยน
     nextTick(() => {
       calendarDays.value = generateCalendarDays();
@@ -1209,7 +1373,6 @@ watch(allEvents, () => {
 }, { deep: true });
 
 watch(kaitomLoading, (newValue, oldValue) => {
-  console.log('kaitomLoading:', newValue);
   // เมื่อโหลดเสร็จและมีข้อมูล
   if (oldValue && !newValue && mpReport.value && map) {
     nextTick(() => {

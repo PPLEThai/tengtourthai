@@ -101,6 +101,24 @@ import { marked } from 'marked';
 
 const { provinces } = useProvinces();
 
+useHead({
+  title: 'เว็บไซต์ติดตามวาระจังหวัด พรรคประชาชน',
+  meta: [
+    {
+      name: 'description',
+      content: 'เป้าหมายการขับเคลื่อนของจังหวัด'
+    },
+    {
+      property: 'og:title',
+      content: 'เว็บไซต์ติดตามวาระจังหวัด พรรคประชาชน'
+    },
+    {
+      property: 'og:description',
+      content: 'เป้าหมายการขับเคลื่อนของจังหวัด'
+    }
+  ]
+});
+
 interface Project {
   Id: number;
   วาระ: string;
