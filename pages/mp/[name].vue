@@ -216,7 +216,7 @@
         </div>
 
         <!-- ไข่ต้ม -->
-        <div v-if="getKaitomDataForMP(mp?.fullname || '').length > 0"
+        <div v-if="getKaitomDataForMP(mp?.fullname || '').length > 0 && mpReport && mpReport.field_reports && mpReport.field_reports.length > 0"
           class="bg-[#FF6A13] rounded-2xl p-4 md:p-6 h-[400px] md:h-[630px] col-span-1 row-span-2 flex flex-col">
           <h3 class="text-white font-bold text-lg md:text-2xl mb-2">การเข้าพื้นที่/กิจกรรม</h3>
 
@@ -281,7 +281,7 @@
         </div>
 
         <!-- การประชุมกรรมาธิการ -->
-        <div class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[300px] col-span-1 flex flex-col">
+        <div v-if="mpReport && mpReport.committee_meetings && mpReport.committee_meetings.length > 0" class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[300px] col-span-1 flex flex-col">
           <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">การประชุมกรรมาธิการ</h3>
           <!-- เนื้อหา -->
           <div v-if="kaitomLoading" class="text-[#0A2940] text-sm">
@@ -313,7 +313,7 @@
         <div class="bg-white rounded-2xl p-4 md:p-6 h-[200px] md:h-[300px] col-span-1 flex flex-col">
           <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">กฎหมายที่ผลักดันอยู่</h3>
           <div class="text-[#0A2940] text-sm opacity-75">
-            อยู่ระหว่างการนำเข้าข้อมูล
+            อยู่ระหว่างการนำเข้าข้อมูลอัตโนมัติจากสภา
           </div>
 
           <div class="flex-1"></div>
@@ -372,7 +372,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-4 md:p-6 h-[450px] md:h-[500px] col-span-1 md:col-span-2 flex flex-col">
+        <div v-if="mpReport && mpReport.field_reports && mpReport.field_reports.length > 0" class="bg-white rounded-2xl p-4 md:p-6 h-[450px] md:h-[500px] col-span-1 md:col-span-2 flex flex-col">
           <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">แผนที่การลงพื้นที่</h3>
           <div class="flex-1 w-full rounded-lg overflow-hidden">
             <div ref="mapContainer" class="w-full h-full bg-gray-100">
