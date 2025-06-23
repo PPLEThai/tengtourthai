@@ -1141,11 +1141,6 @@ onMounted(() => {
 
   document.addEventListener('keydown', handleKeydown);
 
-  // เริ่มต้นแผนที่
-  nextTick(() => {
-    initMap();
-  });
-
   // โหลด Facebook Page Plugin ถ้ามี Facebook URL
   if (mp.value?.fb) {
     loadFacebookPagePlugin();
@@ -1157,28 +1152,34 @@ onMounted(() => {
   });
 });
 
-// ทำความสะอาด map เมื่อ component unmount
-onUnmounted(() => {
-  if (map) {
-    map.remove();
-    map = null;
-  }
-});
-
-// เพิ่มการติดตามสถานะของ mpReport
+// เพิ่ม watcher สำหรับ mpReport เพื่อเริ่มต้นแผนที่เมื่อมีข้อมูล
 watch(mpReport, (newValue) => {
-
   if (newValue) {
     // อัปเดตปฏิทินเมื่อข้อมูลเปลี่ยน
     nextTick(() => {
       calendarDays.value = generateCalendarDays();
+      
+      // เริ่มต้นแผนที่เมื่อมี field_reports
+      if (newValue.field_reports && newValue.field_reports.length > 0 && !map) {
+        nextTick(() => {
+          initMap();
+        });
+      }
       // อัปเดตแผนที่เมื่อข้อมูลเปลี่ยน
-      if (map) {
+      else if (map) {
         addMarkersToMap();
       }
     });
     // อัปเดต meta images สำหรับข่าว
     updateNewsWithMetaImages();
+  }
+});
+
+// ทำความสะอาด map เมื่อ component unmount
+onUnmounted(() => {
+  if (map) {
+    map.remove();
+    map = null;
   }
 });
 
