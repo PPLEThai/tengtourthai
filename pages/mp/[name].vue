@@ -74,15 +74,79 @@
           :error="kaitomError"
         />
 
-        <!-- กฎหมายที่ผลักดันอยู่ -->
-        <div class="bg-white rounded-2xl p-4 md:p-6 h-[200px] md:h-[300px] col-span-1 flex flex-col">
-          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">กฎหมายที่ผลักดันอยู่</h3>
-          <div class="text-[#0A2940] text-sm opacity-75">
-            อยู่ระหว่างการนำเข้าข้อมูลอัตโนมัติจากสภา
+        <!-- กฎหมายที่เสนอ -->
+        <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-4">กฎหมายที่เสนอ</h3>
+          
+          <div v-if="lawsLoading" class="flex-1 flex items-center justify-center">
+            <div class="text-[#0A2940] text-sm">กำลังโหลดข้อมูล...</div>
           </div>
-          <div class="flex-1"></div>
-          <a href="https://promise.peoplesparty.or.th/" target="_blank"
-            class="text-[#FF6A13] text-sm hover:underline">*สามารถติดตามกฎหมายของพรรคได้ที่นี่</a>
+          
+          <div v-else-if="lawsError" class="flex-1 flex items-center justify-center">
+            <div class="text-red-500 text-sm">{{ lawsError }}</div>
+          </div>
+          
+          <div v-else-if="mpLawsData && mpLawsData.list_laws && mpLawsData.list_laws.length > 0" class="flex-1">
+            <div class="space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
+              <div 
+                v-for="(law, index) in mpLawsData.list_laws" 
+                :key="index"
+                class="p-3 bg-gray-50 rounded-lg border-l-4 border-[#FF6A13]"
+              >
+                <h4 class="text-[#0A2940] font-medium text-sm line-clamp-3">{{ law.title }}</h4>
+              </div>
+            </div>
+          </div>
+          
+          <div v-else class="flex-1 flex items-center justify-center">
+            <div class="text-[#0A2940] text-sm opacity-75 text-center">
+              ยังไม่มีข้อมูลกฎหมายที่เสนอ
+            </div>
+          </div>
+        </div>
+
+        <!-- การปรึกษาหารือ -->
+        <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col">
+          <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-4">การปรึกษาหารือ</h3>
+          
+          <div v-if="lawsLoading" class="flex-1 flex items-center justify-center">
+            <div class="text-[#0A2940] text-sm">กำลังโหลดข้อมูล...</div>
+          </div>
+          
+          <div v-else-if="lawsError" class="flex-1 flex items-center justify-center">
+            <div class="text-red-500 text-sm">{{ lawsError }}</div>
+          </div>
+          
+          <div v-else-if="mpLawsData && mpLawsData.list_consultations && mpLawsData.list_consultations.length > 0" class="flex-1">
+            <div class="space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
+              <div 
+                v-for="(consultation, index) in mpLawsData.list_consultations" 
+                :key="index"
+                class="p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500"
+              >
+                <a 
+                  :href="consultation.link" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="block hover:bg-gray-100 transition-colors rounded p-2 -m-2"
+                >
+                  <h4 class="text-[#0A2940] font-medium text-sm line-clamp-3 mb-2">{{ consultation.title }}</h4>
+                  <div class="flex items-center gap-2 text-blue-600 text-xs">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    <span>ดูรายละเอียด</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div v-else class="flex-1 flex items-center justify-center">
+            <div class="text-[#0A2940] text-sm opacity-75 text-center">
+              ยังไม่มีข้อมูลการปรึกษาหารือ
+            </div>
+          </div>
         </div>
 
         <!-- News -->
@@ -155,6 +219,7 @@ import { ref, onMounted, watch, computed, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMPData, type MPItem } from '@/composables/useMPData'
 import { useKaitomMP } from '@/composables/useKaitomMP'
+import { useMPLaws } from '@/composables/useMPLaws'
 
 // Import components
 // ใช้ auto-import ของ Nuxt 3 แทนการ import แบบปกติ
@@ -180,6 +245,7 @@ const route = useRoute();
 const mpName = decodeURIComponent(route.params.name as string).replace(/_/g, ' ');
 
 const { mpReport, loading: kaitomLoading, error: kaitomError } = useKaitomMP(mpName.replace(/ /g, '_'));
+const { mpLawsData, loading: lawsLoading, error: lawsError } = useMPLaws(mpName.replace(/ /g, '_'));
 
 const mp = ref<MPItem | null>(null);
 const loading = ref(true);
