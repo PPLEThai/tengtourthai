@@ -75,6 +75,18 @@ useHead({
     {
       property: 'og:description',
       content: 'ข้อมูลและกิจกรรมของ พรรคประชาชน'
+    },
+    {
+      property: 'og:image',
+      content: 'https://tourthai.peoplesparty.or.th/images/thumbnail-mp.png'
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    },
+    {
+      property: 'og:url',
+      content: 'https://tourthai.peoplesparty.or.th/mp'
     }
   ]
 });
