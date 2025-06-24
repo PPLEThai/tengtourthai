@@ -10,6 +10,12 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
   ],
+  components: {
+    dirs: [
+      '~/components',
+      '~/components/mp'
+    ]
+  },
   tailwindcss: {
     config: {
       plugins: [require('daisyui')]
@@ -44,7 +50,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiTengData: process.env.API_TENG_DATA || '',
+      apiTengData: process.env.API_TENG_DATA || ''
     }
   },
 });
