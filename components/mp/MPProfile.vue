@@ -20,7 +20,7 @@
   <!-- ประวัติ สส. -->
   <div>
     <h3 class="font-bold text-[#0A2940] mb-2 text-base md:text-lg">การศึกษา</h3>
-    <div class="text-[#0A2940] text-xs md:text-sm">
+    <div class="text-[#0A2940] text-md md:text-sm">
       <ul class="list-disc list-inside space-y-1">
         <li v-for="(item, index) in mp.edu?.split('\n').filter(item => item.trim())" :key="index">
           {{ item.trim() }}
@@ -32,7 +32,7 @@
   <!-- การทำงาน -->
   <div>
     <h3 class="font-bold text-[#0A2940] mb-2 text-base md:text-lg">การทำงาน</h3>
-    <div class="text-[#0A2940] text-xs md:text-sm">
+    <div class="text-[#0A2940] text-md md:text-sm">
       <ul class="list-disc list-inside space-y-1">
         <li v-for="(item, index) in mp.work?.split('\n').filter(item => item.trim())" :key="index">
           {{ item.trim() }}
