@@ -65,7 +65,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useMPData, type MPItem } from '@/composables/useMPData';
-import { getEnglishImageName } from '@/utils/mpImageMapping';
 
 definePageMeta({ layout: 'mp' })
 
@@ -125,8 +124,9 @@ const getImageUrl = (url: string) => {
 };
 
 const getLocalImageUrl = (firstname: string, lastname: string) => {
-  const englishName = getEnglishImageName(firstname, lastname);
-  return `/images/mp/${englishName}.png`;
+  const thaiName = `${firstname}_${lastname}`;
+  const encodedName = encodeURIComponent(thaiName);
+  return `https://storage.googleapis.com/mp-laws/img/${encodedName}.png`;
 };
 
 const handleImageError = (e: Event) => {
