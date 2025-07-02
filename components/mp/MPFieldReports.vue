@@ -31,7 +31,7 @@
               <div class="flex gap-2 overflow-x-auto custom-scrollbar pb-2">
                 <div v-for="(image, imgIndex) in report.images.slice(0, 5)" :key="imgIndex"
                   class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-gray-200">
-                  <img :src="image" :alt="`รูปภาพ ${imgIndex + 1}`"
+                  <img :src="getLocalImageUrl(image)" :alt="`รูปภาพ ${imgIndex + 1}`"
                     class="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
                     @click="handleImageClick(image, report.location_name)" @error="handleImageError" />
                 </div>
@@ -94,6 +94,10 @@ const openImageModal = (imageUrl: string, title: string) => {
 
 const handleImageClick = (imageUrl: string, locationName?: string) => {
   openImageModal(imageUrl, locationName || 'ไม่ระบุสถานที่');
+};
+
+const getLocalImageUrl = (imageUrl: string) => {
+  return `https://img.pplethai.org/unsafe/rs:fit:300:300:1/plain/${encodeURIComponent(imageUrl)}`;
 };
 </script>
 

@@ -513,9 +513,7 @@ watch(mpReport, (newValue) => {
 
 // เพิ่ม watcher สำหรับ mp.value เพื่อโหลด Facebook Page Plugin
 watch(mp, (newValue, oldValue) => {
-  console.log('MP data changed:', newValue?.fullname);
   if (newValue && newValue.fb && (!oldValue || oldValue.fb !== newValue.fb)) {
-    console.log('Loading Facebook Page Plugin for new MP');
     loadFacebookPagePlugin();
   }
 }, { immediate: true });

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[400px] col-span-1 flex flex-col">
+  <div class="bg-white rounded-2xl p-4 md:p-6 h-[500px] md:h-[500px] col-span-1 flex flex-col">
     <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2 flex items-center gap-2">
       <component :is="iconComponent" class="w-6 h-6" :class="iconColor" />
       {{ platformName }}

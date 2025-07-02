@@ -126,7 +126,7 @@ const getImageUrl = (url: string) => {
 const getLocalImageUrl = (firstname: string, lastname: string) => {
   const thaiName = `${firstname}_${lastname}`;
   const encodedName = encodeURIComponent(thaiName);
-  return `https://storage.googleapis.com/mp-laws/img/${encodedName}.png`;
+  return `https://img.pplethai.org/unsafe/rs:fit:300:300:1/plain/https://storage.googleapis.com/mp-laws/img/${encodedName}.png`;
 };
 
 const handleImageError = (e: Event) => {
