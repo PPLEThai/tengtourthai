@@ -1,8 +1,15 @@
 <template>
   <div class="flex flex-col items-center">
-    <img :src="getImageUrl(mp.img)"
-      class="w-48 h-48 md:w-56 md:h-56 rounded-xl object-cover border-4 border-[#001a2c]"
-      @error="handleImageError" />
+    <!-- <div v-if="mp.img" class="relative">
+      <img :src="getImageUrl(mp.img)"
+        class="w-48 h-48 md:w-56 md:h-56 rounded-xl object-cover border-4 border-[#001a2c]"
+        @error="handleImageError" />
+    </div> -->
+    <div class="relative">
+      <img :src="getLocalImageUrl(mp.firstname, mp.lastname)"
+        class="w-48 h-48 md:w-56 md:h-56 rounded-xl object-cover border-4 border-[#001a2c]"
+        @error="handleImageError" />
+    </div>
     <h2 class="text-xl md:text-2xl font-bold mt-4 text-[#0A2940] text-center">{{ mp.fullname }}</h2>
     <div class="text-[#FF6A13] font-semibold mt-1 text-center text-sm md:text-base">{{ mp.status }}</div>
   </div>
@@ -74,4 +81,9 @@ const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement;
   // target.src = '/images/news-placeholder.jpg';
 };
+
+const getLocalImageUrl = (firstname: string, lastname: string) => {
+  return `/images/mp/${firstname}_${lastname}.png`;
+};
+
 </script> 

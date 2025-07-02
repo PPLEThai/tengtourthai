@@ -32,8 +32,15 @@
         :key="mp.id"
         class="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center transition-transform hover:-translate-y-1 hover:shadow-2xl border border-[#FF6A13]/10"
       >
-        <img 
+        <!-- <img 
           :src="getImageUrl(mp.img)" 
+          :alt="mp.fullname" 
+          class="w-28 h-28 rounded-full object-cover border-4 border-[#001a2c] mb-4 shadow"
+          loading="lazy"
+          @error="handleImageError"
+        /> -->
+        <img 
+          :src="getLocalImageUrl(mp.firstname, mp.lastname)" 
           :alt="mp.fullname" 
           class="w-28 h-28 rounded-full object-cover border-4 border-[#001a2c] mb-4 shadow"
           loading="lazy"
@@ -114,6 +121,10 @@ const getImageUrl = (url: string) => {
     }
   }
   return url;
+};
+
+const getLocalImageUrl = (firstname: string, lastname: string) => {
+  return `/images/mp/${firstname}_${lastname}.png`;
 };
 
 const handleImageError = (e: Event) => {
