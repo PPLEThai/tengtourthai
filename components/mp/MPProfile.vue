@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import type { MPItem } from '@/composables/useMPData'
+import { getEnglishImageName } from '@/utils/mpImageMapping'
 
 interface Props {
   mp: MPItem
@@ -83,7 +84,8 @@ const handleImageError = (e: Event) => {
 };
 
 const getLocalImageUrl = (firstname: string, lastname: string) => {
-  return `/images/mp/${firstname}_${lastname}.png`;
+  const englishName = getEnglishImageName(firstname, lastname);
+  return `/images/mp/${englishName}.png`;
 };
 
 </script> 
