@@ -5,7 +5,7 @@
       <input
         v-model="search"
         type="text"
-        placeholder="ค้นหาชื่อ สส. หรือเขต..."
+        placeholder="ค้นหาชื่อ สส. หรือจังหวัด"
         class="rounded-full px-4 py-2 w-full md:w-80 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF6A13] shadow-sm"
       />
       <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
@@ -126,7 +126,7 @@ const getImageUrl = (url: string) => {
 const getLocalImageUrl = (firstname: string, lastname: string) => {
   const thaiName = `${firstname}_${lastname}`;
   const encodedName = encodeURIComponent(thaiName);
-  return `https://img.pplethai.org/unsafe/rs:fit:300:300:1/plain/https://storage.googleapis.com/mp-laws/img/${encodedName}.png`;
+  return `https://img.pplethai.org/unsafe/rs:fit:300:300:1/plain/https://storage.googleapis.com/mp-laws/img/${encodedName}.png?re=1`;
 };
 
 const handleImageError = (e: Event) => {
