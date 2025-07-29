@@ -233,7 +233,7 @@ onMounted(() => {
     if (mapContainer.value) {
         map = new maplibregl.Map({
             container: mapContainer.value,
-            style: "https://api.maptiler.com/maps/basic/style.json?key=SPy8tbXAIMMPKadG7FvD",
+            style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
             center: [100.523186, 13.736717],
             zoom: 5,
             minZoom: 5,

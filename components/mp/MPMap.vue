@@ -59,7 +59,7 @@ const initMap = () => {
     // สร้าง map instance
     map = new maplibregl.Map({
       container: mapContainer.value,
-      style: 'https://api.maptiler.com/maps/basic/style.json?key=SPy8tbXAIMMPKadG7FvD',
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
       center: [100.5018, 13.7563], // พิกัดกรุงเทพฯ
       zoom: 5,
       attributionControl: false
