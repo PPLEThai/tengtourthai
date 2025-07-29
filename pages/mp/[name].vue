@@ -30,7 +30,10 @@
         <MPProfile :mp="mp" />
         
         <!-- Calendar -->
-        <MPCalendar :events="allEvents" />
+        <MPCalendar 
+          :events="allEvents" 
+          :parliament-meetings="mpReport?.attendances?.parliament_meeting || []"
+        />
         
         <!-- Social Media Links -->
         <MPSocialMedia :mp="mp" />

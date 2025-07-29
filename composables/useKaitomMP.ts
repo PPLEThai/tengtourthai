@@ -29,10 +29,15 @@ export interface News {
     posted_at: string;
 }
 
+export interface Attendances {
+    parliament_meeting: string[];
+}
+
 export interface MPReport {
     field_reports: FieldReport[];
     committee_meetings: CommitteeMeeting[];
     news: News[];
+    attendances: Attendances;
 }
 
 export const useKaitomMP = (fullname: string) => {
@@ -107,6 +112,19 @@ export const useKaitomMP = (fullname: string) => {
                         photos: news.photos || '',
                         posted_at: news.posted_at || null
                     }));
+                }
+
+                // Clean attendances
+                if (data.attendances && typeof data.attendances === 'object') {
+                    data.attendances = {
+                        parliament_meeting: Array.isArray(data.attendances.parliament_meeting) 
+                            ? data.attendances.parliament_meeting.filter((date: any) => typeof date === 'string' && date.trim() !== '')
+                            : []
+                    };
+                } else {
+                    data.attendances = {
+                        parliament_meeting: []
+                    };
                 }
             }
             

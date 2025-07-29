@@ -54,6 +54,7 @@
                     'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
                     'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
                     'bg-[#2196F3]': event.type === 'กิจกรรม',
+                    'bg-[#9C27B0]': event.type === 'ประชุมสภา',
                   }">
                 </div>
               </template>
@@ -65,6 +66,7 @@
                     'bg-[#FF6A13]': event.type === 'กรรมาธิการ',
                     'bg-[#4CAF50]': event.type === 'ลงพื้นที่',
                     'bg-[#2196F3]': event.type === 'กิจกรรม',
+                    'bg-[#9C27B0]': event.type === 'ประชุมสภา',
                   }">
                 </div>
               </template>
@@ -77,7 +79,7 @@
       <div class="flex gap-4 mt-4 text-xs">
         <div class="flex items-center gap-1">
           <div class="w-2 h-2 rounded-full bg-[#FF6A13]"></div>
-          <span class="text-[#0A2940]">กรรมาธิการ</span>
+          <span class="text-[#0A2940]">กมธ.</span>
         </div>
         <div class="flex items-center gap-1">
           <div class="w-2 h-2 rounded-full bg-[#4CAF50]"></div>
@@ -86,6 +88,10 @@
         <div class="flex items-center gap-1">
           <div class="w-2 h-2 rounded-full bg-[#2196F3]"></div>
           <span class="text-[#0A2940]">กิจกรรม</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <div class="w-2 h-2 rounded-full bg-[#9C27B0]"></div>
+          <span class="text-[#0A2940]">ประชุมสภา</span>
         </div>
       </div>
     </div>
@@ -108,11 +114,34 @@ interface Event {
   type: string;
 }
 
+interface ParliamentMeeting {
+  date: string;
+  type: string;
+}
+
 interface Props {
   events: Event[]
+  parliamentMeetings?: string[]
 }
 
 const props = defineProps<Props>()
+
+// สร้าง events สำหรับการเข้าประชุมสภา
+const parliamentMeetingEvents = computed(() => {
+  if (!props.parliamentMeetings) return [];
+  
+  return props.parliamentMeetings.map(date => ({
+    date: date,
+    description: 'ประชุมสภา',
+    created_at: date,
+    type: 'ประชุมสภา'
+  } as Event));
+});
+
+// รวม events ทั้งหมด
+const allEvents = computed(() => {
+  return [...props.events, ...parliamentMeetingEvents.value];
+});
 
 // ตัวแปรสำหรับปฎิทิน
 const currentDate = ref(new Date());
@@ -164,7 +193,7 @@ const generateCalendarDays = () => {
       date: date.toISOString(),
       day: date.getDate(),
       isCurrentMonth: false,
-      events: props.events.filter(event =>
+      events: allEvents.value.filter(event =>
         new Date(event.date).toDateString() === date.toDateString()
       )
     });
@@ -177,7 +206,7 @@ const generateCalendarDays = () => {
       date: date.toISOString(),
       day: i,
       isCurrentMonth: true,
-      events: props.events.filter(event =>
+      events: allEvents.value.filter(event =>
         new Date(event.date).toDateString() === date.toDateString()
       )
     });
@@ -191,7 +220,7 @@ const generateCalendarDays = () => {
       date: date.toISOString(),
       day: i,
       isCurrentMonth: false,
-      events: props.events.filter(event =>
+      events: allEvents.value.filter(event =>
         new Date(event.date).toDateString() === date.toDateString()
       )
     });
@@ -202,8 +231,8 @@ const generateCalendarDays = () => {
 
 const calendarDays = ref(generateCalendarDays());
 
-// เพิ่ม watcher สำหรับ events เพื่ออัปเดตปฏิทิน
-watch(() => props.events, () => {
+// เพิ่ม watcher สำหรับ events และ parliamentMeetings เพื่ออัปเดตปฏิทิน
+watch([() => props.events, () => props.parliamentMeetings], () => {
   nextTick(() => {
     calendarDays.value = generateCalendarDays();
   });
