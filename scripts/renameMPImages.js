@@ -107,9 +107,7 @@ const mpImageMappings = [
 
 const mpImagesDir = path.join(__dirname, '../public/images/mp');
 
-function renameMPImages() {
-  console.log('เริ่มเปลี่ยนชื่อไฟล์รูปภาพ สส. จากภาษาไทยเป็นภาษาอังกฤษ...');
-  
+function renameMPImages() {  
   // ตรวจสอบว่าโฟลเดอร์มีอยู่หรือไม่
   if (!fs.existsSync(mpImagesDir)) {
     console.error('ไม่พบโฟลเดอร์:', mpImagesDir);
