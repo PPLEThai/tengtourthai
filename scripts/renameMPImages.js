@@ -136,7 +136,7 @@ function renameMPImages() {
           }
           
           fs.renameSync(oldPath, newPath);
-          console.log(`✅ เปลี่ยนชื่อ: ${file} → ${mapping.englishName}.png`);
+          // console.log(`✅ เปลี่ยนชื่อ: ${file} → ${mapping.englishName}.png`);
           renamedCount++;
         } catch (error) {
           console.error(`❌ เกิดข้อผิดพลาดในการเปลี่ยนชื่อ ${file}:`, error.message);
