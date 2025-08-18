@@ -56,7 +56,7 @@
 
         <!-- Field Reports -->
         <MPFieldReports 
-          v-if="getKaitomDataForMP(mp?.fullname || '').length > 0 && mpReport && mpReport.field_reports && mpReport.field_reports.length > 0"
+          v-if="getKaitomDataForMP(mp?.fullname || '').length > 2 && mpReport && mpReport.field_reports && mpReport.field_reports.length > 0"
           :field-reports="mpReport.field_reports.map(report => ({
             ...report,
             created_at: report.created_at || undefined,
@@ -161,7 +161,7 @@
 
         <!-- Map -->
         <MPMap 
-          v-if="mpReport && mpReport.field_reports && mpReport.field_reports.length > 0"
+          v-if="mpReport && mpReport.field_reports && mpReport.field_reports.length > 2"
           :field-reports="mpReport.field_reports.map(report => ({
             ...report,
             created_at: report.created_at || undefined,
