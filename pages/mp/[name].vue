@@ -43,7 +43,7 @@
       <main class="w-full md:flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         
         <!-- Disclaimer -->
-        <div class="col-span-1 md:col-span-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-2">
+        <!-- <div class="col-span-1 md:col-span-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-2">
           <div class="flex items-start gap-2">
             <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -52,7 +52,7 @@
               <strong>หมายเหตุ:</strong> ข้อมูลที่ปรากฎนี้ เป็นเพียงบางส่วนของการนำเข้าเบื้องต้น ยังไม่ครบถ้วนทั้งหมด
             </p>
           </div>
-        </div>
+        </div> -->
 
         <!-- Field Reports -->
         <MPFieldReports 
