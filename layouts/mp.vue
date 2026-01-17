@@ -11,12 +11,14 @@
     <div v-if="isLoading" class="loading-overlay">
       กำลังโหลด...
     </div>
+    <ElectionBannerModal />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, getCurrentInstance, ref } from "vue";
 import { createPinia } from 'pinia'
+import ElectionBannerModal from "@/components/ElectionBannerModal.vue";
 
 const instance = getCurrentInstance();
 if (instance) {
