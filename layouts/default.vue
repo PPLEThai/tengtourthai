@@ -11,7 +11,6 @@
     <div v-if="isLoading" class="loading-overlay">
       กำลังโหลด...
     </div>
-    <ElectionBannerModal />
   </div>
 </template>
 
@@ -19,7 +18,6 @@
 import { onMounted, getCurrentInstance, ref } from "vue";
 import { createPinia } from 'pinia'
 import { useMockupStore } from "@/stores/mockupStore";
-import ElectionBannerModal from "@/components/ElectionBannerModal.vue";
 
 // import Navbar from "@/components/Navbar.vue";
 
