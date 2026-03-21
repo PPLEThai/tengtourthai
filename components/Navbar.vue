@@ -54,8 +54,15 @@
             <a href="/mp" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน Logo" class="h-8" />
               <div>
-                <div class="font-bold">ผู้แทนของฉัน</div>
-                <div class="text-sm font-light">การทำงานเพื่อประชาชนของ สส.</div>
+                <div class="font-bold">ผู้แทน สส.ของฉัน</div>
+                <div class="text-sm font-light">เรื่องราวการทำงานของ สส.</div>
+              </div>
+            </a>
+            <a href="/local" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน Logo" class="h-8" />
+              <div>
+                <div class="font-bold">ผู้แทนท้องถิ่นของฉัน</div>
+                <div class="text-sm font-light">เร่ื่องราวการทำงานของผู้แทนท้องถิ่น</div>
               </div>
             </a>
           </div>

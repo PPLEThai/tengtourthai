@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#FF6A13] rounded-2xl p-4 md:p-6 h-[400px] md:h-[630px] col-span-1 row-span-2 flex flex-col">
+  <div class="bg-[#FF6A13] rounded-2xl p-4 md:p-6 h-[400px] md:h-[630px] col-span-2 row-span-2 flex flex-col">
     <h3 class="text-white font-bold text-lg md:text-2xl mb-2">การเข้าพื้นที่/กิจกรรม</h3>
 
     <!-- แสดงสถานะการโหลดข้อมูล mpReport -->
