@@ -2,7 +2,7 @@ import { ref, onMounted } from 'vue';
 import mockData from '../assets/data/mock-mp-data.json';
 
 interface MockMPItem {
-    Id: number;
+    id: string;
     firstname: string;
     lastname: string;
     fullname: string;
@@ -15,10 +15,12 @@ interface MockMPItem {
     x: string | null;
     edu: string | null;
     work: string | null;
+    youtube: string | null;
+    area: string | null;
 }
 
 export interface MPItem {
-    id: number;
+    id: string;
     firstname: string;
     lastname: string;
     fullname: string;
@@ -40,19 +42,19 @@ export const useMPData = () => {
         try {
             // ใช้ข้อมูล mockup แทนการเรียก API
             mpData.value = mockData.list.map((item: MockMPItem) => ({
-                id: item.Id,
+                id: item.id,
                 firstname: item.firstname,
                 lastname: item.lastname,
                 fullname: item.fullname,
                 status: item.status,
                 img: item.img,
                 topics: item.topic ? item.topic.split(',') : [],
-                fb: item.fb,
-                tiktok: item.tiktok,
-                ig: item.ig,
-                x: item.x,
-                edu: item.edu,
-                work: item.work
+                fb: item.fb || null,
+                tiktok: item.tiktok || null,
+                ig: item.ig || null,
+                x: item.x || null,
+                edu: item.edu || null,
+                work: item.work || null
             }));
         } catch (error) {
             console.error('Error loading mock data:', error);

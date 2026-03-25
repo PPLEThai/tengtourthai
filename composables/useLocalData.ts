@@ -26,7 +26,7 @@ export interface LocalMPItem extends MPItem {
 }
 
 const mapToLocalMPItem = (item: LocalJsonItem): LocalMPItem => ({
-    id: item.Id,
+    id: String(item.Id),
     firstname: item.firstname,
     lastname: item.lastname,
     fullname: item.fullname,
