@@ -6,8 +6,8 @@
         @error="handleImageError" />
     </div> -->
     <div class="relative">
-      <img :src="getLocalImageUrl(mp.firstname, mp.lastname)"
-        class="w-48 h-48 md:w-56 md:h-56 rounded-xl object-cover border-4 border-[#001a2c]"
+      <img :src="getLocalImageUrl(mp.img)"
+        class="w-48 h-80 md:w-56 md:h-80 object-cover"
         @error="handleImageError" />
     </div>
     <h2 class="text-xl md:text-2xl font-bold mt-4 text-[#0A2940] text-center">{{ mp.fullname }}</h2>
@@ -82,10 +82,8 @@ const handleImageError = (e: Event) => {
   // target.src = '/images/news-placeholder.jpg';
 };
 
-const getLocalImageUrl = (firstname: string, lastname: string) => {
-  const thaiName = `${firstname}_${lastname}`;
-  const encodedName = encodeURIComponent(thaiName);
-  return `https://img.pplethai.org/unsafe/rs:fit:300:300:1/plain/https://storage.googleapis.com/mp-laws/img/${encodedName}.png?ff`;
+const getLocalImageUrl = (img: string) => {
+  return `https://img.pplethai.org/unsafe/rs:fit:800:1000:1/plain/${img}`;
 };
 
 </script> 
