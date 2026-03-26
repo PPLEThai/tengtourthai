@@ -4,11 +4,10 @@
       <div class="flex justify-between h-16 items-center">
         <!-- Logo และ Brand -->
         <div class="flex items-center">
-          <div class="flex-shrink-0 flex items-center space-x-2">
+          <button type="button" @click="toggleWebType"
+            class="flex-shrink-0 flex items-center space-x-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-md">
 
-            <img v-if="currentUrl === '/teng'" src="@/assets/images/teng-logo.png" alt="เท้งทั่วไทย Logo"
-              class="h-10" />
-            <img v-else-if="currentUrl === '/political-project'" src="@/assets/images/logo-pp.png" alt="วาระจังหวัด"
+            <img v-if="currentUrl === '/political-project'" src="@/assets/images/logo-pp.png" alt="วาระจังหวัด"
               class="h-8" />
             <img v-else-if="currentUrl.startsWith('/mp')" src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน"
               class="h-8" />
@@ -16,14 +15,13 @@
 
             <div class="flex items-center">
               <a class="text-xl font-bold text-white mr-2">{{
-                currentUrl === '/teng' ? '#เท้งทั่วไทย' :
                 currentUrl.startsWith('/mp') ? '#ผู้แทนของฉัน' :
                 currentUrl === '/political-project' ? '#วาระจังหวัด' :
                 '#ส้มทั่วไทย'
                 }}</a>
-              <img src="/images/arrow-down.svg" @click="toggleWebType" alt="Logo" class="h-4 cursor-pointer" />
+              <img src="/images/arrow-down.svg" alt="Logo" class="h-4 cursor-pointer" />
             </div>
-          </div>
+          </button>
         </div>
 
         <!-- Dropdown Menu -->
@@ -42,13 +40,6 @@
               <div>
                 <div class="font-bold">วาระจังหวัด</div>
                 <div class="text-sm font-light">เป้าหมายการขับเคลื่อนจังหวัด</div>
-              </div>
-            </a>
-            <a href="/teng" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
-              <img src="@/assets/images/teng-logo.png" alt="เท้งทั่วไทย Logo" class="h-10" />
-              <div>
-                <div class="font-bold">เท้งทั่วไทย</div>
-                <div class="text-sm font-light">ภารกิจหัวหน้าพรรคประชาชน</div>
               </div>
             </a>
             <a href="/mp" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
