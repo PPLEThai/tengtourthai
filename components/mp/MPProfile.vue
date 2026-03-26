@@ -83,7 +83,8 @@ const handleImageError = (e: Event) => {
 };
 
 const getLocalImageUrl = (img: string) => {
-  return `https://img.pplethai.org/unsafe/rs:fit:800:1000:1/plain/${img}`;
+  // ใช้ thumbnail pipeline เดียวกับหน้ารวมผู้แทน
+  return `https://img.pplethai.org/unsafe/rs:fit:800:8000:1/plain/${img}`;
 };
 
 </script> 
