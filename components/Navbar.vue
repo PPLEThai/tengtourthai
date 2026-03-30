@@ -120,7 +120,7 @@
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center space-x-4">
-          <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" target="_blank"
+          <a href="https://www.facebook.com/PPLEThai" target="_blank"
             class="text-white hover:text-primary px-3 py-2 rounded-md">ติดตามเรา</a>
         </div>
 
@@ -140,7 +140,7 @@
     <!-- Mobile Menu -->
     <div v-if="isMenuOpen" class="md:hidden">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <a href="https://www.facebook.com/natthaphong.ruengpanyawut/" target="_blank"
+        <a href="https://www.facebook.com/PPLEThai" target="_blank"
           class="block text-white hover:text-primary px-3 py-2 rounded-md">ติดต่อเรา</a>
       </div>
     </div>

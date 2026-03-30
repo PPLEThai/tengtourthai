@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl p-4 md:p-6 h-[300px] md:h-[300px] col-span-1 flex flex-col">
+  <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col h-full min-h-[220px] max-h-[300px] md:min-h-[320px] md:h-[320px] md:max-h-[320px] overflow-hidden">
     <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">การประชุมกรรมาธิการ</h3>
     <!-- เนื้อหา -->
     <div v-if="loading" class="text-[#0A2940] text-sm">
@@ -9,7 +9,7 @@
       เกิดข้อผิดพลาด: {{ error }}
     </div>
     <div v-else-if="committeeMeetings && committeeMeetings.length > 0"
-      class="flex-1 flex flex-col overflow-hidden">
+      class="flex-1 flex flex-col min-h-0 overflow-hidden">
       <p class="text-[#0A2940] text-sm mb-3">พบข้อมูลการประชุม {{ committeeMeetings.length }} รายการ</p>
       <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
         <div v-for="(meeting, index) in committeeMeetings.slice(0, 10)"

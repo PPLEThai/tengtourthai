@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded-2xl p-4 md:p-6 h-[450px] md:h-[500px] col-span-1 md:col-span-2 flex flex-col">
+  <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 md:col-span-2 flex flex-col h-full min-h-[240px] md:min-h-[260px] max-h-[360px] md:max-h-[380px] overflow-hidden">
     <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">แผนที่การลงพื้นที่</h3>
-    <div class="flex-1 w-full rounded-lg overflow-hidden">
+    <div class="flex-1 w-full min-h-0 rounded-lg overflow-hidden">
       <div ref="mapContainer" class="w-full h-full bg-gray-100">
         <div v-if="!map" class="flex items-center justify-center h-full">
           <p class="text-[#0A2940] text-sm">กำลังโหลดแผนที่...</p>

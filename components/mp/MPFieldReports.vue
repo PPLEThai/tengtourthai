@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-[#FF6A13] rounded-2xl p-4 md:p-6 h-[400px] md:h-[630px] col-span-2 row-span-2 flex flex-col">
+  <!-- สูงเท่า 2×320px + gap-6 = 664px (md) ให้เสมอกับคอลัมน์กรรมาธิการ+กฎหมาย -->
+  <div class="bg-[#FF6A13] rounded-2xl p-4 md:p-6 col-span-1 row-span-2 flex flex-col h-full min-h-[280px] max-h-[616px] md:min-h-0 md:h-[664px] md:max-h-[664px] overflow-hidden">
     <h3 class="text-white font-bold text-lg md:text-2xl mb-2">การเข้าพื้นที่/กิจกรรม</h3>
 
     <!-- แสดงสถานะการโหลดข้อมูล mpReport -->
@@ -9,7 +10,7 @@
     <div v-else-if="error" class="text-white text-sm">
       เกิดข้อผิดพลาด: {{ error }}
     </div>
-    <div v-else-if="fieldReports && fieldReports.length > 0" class="text-white text-sm flex-1 overflow-hidden">
+    <div v-else-if="fieldReports && fieldReports.length > 0" class="text-white text-sm flex-1 min-h-0 overflow-hidden">
       <!-- แสดงข้อมูล mpReport เมื่อโหลดเสร็จ -->
       <div class="h-full flex flex-col">
         <p class="mb-3">พบข้อมูลการเข้าพื้นที่ {{ fieldReports.length }} รายการ</p>

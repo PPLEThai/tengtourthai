@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl p-4 md:p-6 h-[450px] md:h-[500px] col-span-1 md:col-span-2 flex flex-col">
+  <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 md:col-span-2 flex flex-col h-full min-h-[240px] md:min-h-[260px] max-h-[360px] md:max-h-[380px] overflow-hidden">
     <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2">ข่าวที่ถูกพูดถึงล่าสุด</h3>
     <!-- เนื้อหา -->
     <div v-if="loading" class="text-[#0A2940] text-sm">
@@ -9,7 +9,7 @@
       เกิดข้อผิดพลาด: {{ error }}
     </div>
     <div v-else-if="news && news.length > 0"
-      class="flex-1 flex flex-col overflow-hidden">
+      class="flex-1 flex flex-col min-h-0 overflow-hidden">
       <p class="text-[#0A2940] text-sm mb-3">พบข่าวที่ถูกพูดถึง 10 ข่าวล่าสุด จาก Social Listening</p>
       <div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
         <div v-for="(newsItem, index) in news" :key="newsItem.permalink || index" 

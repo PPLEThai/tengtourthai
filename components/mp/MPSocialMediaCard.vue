@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white rounded-2xl p-4 md:p-6 h-[500px] md:h-[500px] col-span-1 flex flex-col">
+  <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col h-full min-h-[220px] md:min-h-[240px] max-h-[300px] md:max-h-[320px] overflow-hidden">
     <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-2 flex items-center gap-2">
       <component :is="iconComponent" class="w-6 h-6" :class="iconColor" />
       {{ platformName }}
     </h3>
     
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col min-h-0">
       <div class="flex items-center justify-between mb-3">
         <a :href="url" target="_blank" rel="noopener noreferrer"
           :class="`text-sm hover:underline font-medium ${linkColor}`">

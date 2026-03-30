@@ -24,8 +24,8 @@
     <div v-else-if="mp"
       class="flex flex-col md:flex-row flex-1 w-full max-w-7xl mx-auto py-4 md:py-8 gap-4 md:gap-6 px-2 md:px-0">
       
-      <!-- Sidebar -->
-      <aside class="w-full md:max-w-xs bg-white rounded-2xl p-4 md:p-6 flex flex-col gap-4 md:gap-6 mb-4 md:mb-0 h-[100%]">
+      <!-- Sidebar: จำกัดสูงเท่าบล็อกแถวแรกของ grid (คู่กับการ์ดส้ม 2 แถว + gap) เนื้อหายาวเลื่อนในการ์ด -->
+      <aside class="w-full md:max-w-xs bg-white rounded-2xl p-4 md:p-6 flex flex-col gap-4 md:gap-6 mb-4 md:mb-0 md:max-h-[1000px] md:overflow-y-auto scrollbar-on-light">
         <!-- MP Profile -->
         <MPProfile :mp="mp" />
         
@@ -40,7 +40,7 @@
       </aside>
       
       <!-- Main Content -->
-      <main class="w-full md:flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      <main class="w-full md:flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-stretch">
         
         <!-- Disclaimer -->
         <!-- <div class="col-span-1 md:col-span-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-2">
@@ -78,7 +78,7 @@
         />
 
         <!-- กฎหมายที่เสนอ -->
-        <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col">
+        <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col h-full min-h-[220px] max-h-[300px] md:min-h-[320px] md:h-[320px] md:max-h-[320px] overflow-hidden">
           <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-4">กฎหมายที่เสนอ</h3>
           
           <div v-if="lawsLoading" class="flex-1 flex items-center justify-center">
@@ -89,8 +89,8 @@
             <div class="text-red-500 text-sm">{{ lawsError }}</div>
           </div>
           
-          <div v-else-if="mpLawsData && mpLawsData.list_laws && mpLawsData.list_laws.length > 0" class="flex-1">
-            <div class="space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
+          <div v-else-if="mpLawsData && mpLawsData.list_laws && mpLawsData.list_laws.length > 0" class="flex-1 min-h-0 flex flex-col">
+            <div class="space-y-3 flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
               <div 
                 v-for="(law, index) in mpLawsData.list_laws" 
                 :key="index"
@@ -109,7 +109,7 @@
         </div>
 
         <!-- การปรึกษาหารือ -->
-        <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col">
+        <div class="bg-white rounded-2xl p-4 md:p-6 col-span-1 flex flex-col h-full min-h-[220px] max-h-[300px] md:min-h-[320px] md:h-[320px] md:max-h-[320px] overflow-hidden">
           <h3 class="text-[#FF6A13] font-bold text-lg md:text-2xl mb-4">การปรึกษาหารือ</h3>
           
           <div v-if="lawsLoading" class="flex-1 flex items-center justify-center">
@@ -120,8 +120,8 @@
             <div class="text-red-500 text-sm">{{ lawsError }}</div>
           </div>
           
-          <div v-else-if="mpLawsData && mpLawsData.list_consultations && mpLawsData.list_consultations.length > 0" class="flex-1">
-            <div class="space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
+          <div v-else-if="mpLawsData && mpLawsData.list_consultations && mpLawsData.list_consultations.length > 0" class="flex-1 min-h-0 flex flex-col">
+            <div class="space-y-3 flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
               <div 
                 v-for="(consultation, index) in mpLawsData.list_consultations" 
                 :key="index"
@@ -618,6 +618,28 @@ const updateNewsWithMetaImages = async () => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+.scrollbar-on-light {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(10, 41, 64, 0.35) transparent;
+}
+
+.scrollbar-on-light::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-on-light::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-on-light::-webkit-scrollbar-thumb {
+  background-color: rgba(10, 41, 64, 0.28);
+  border-radius: 3px;
+}
+
+.scrollbar-on-light::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(10, 41, 64, 0.45);
 }
 
 /* Line clamp utility */
