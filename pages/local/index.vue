@@ -115,8 +115,10 @@ const handleImageError = (e: Event) => {
   // target.src = '/images/default-avatar.png'; // รูปภาพเริ่มต้นเมื่อโหลดไม่สำเร็จ
 };
 
-const provinceFromStatus = (status: string) => {
-  const t = status.trim();
+const normalizeText = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
+
+const provinceFromStatus = (status: unknown) => {
+  const t = normalizeText(status);
   if (!t) return '';
   return t.split(/\s+/)[0] ?? '';
 };
@@ -140,13 +142,18 @@ const availableProvinces = computed(() => {
 
 const filteredList = computed(() => {
   return localData.value.filter((mp: LocalMPItem) => {
+    const fullname = normalizeText(mp.fullname).toLowerCase();
+    const status = normalizeText(mp.status).toLowerCase();
+    const position = normalizeText(mp.position).toLowerCase();
+    const keyword = search.value.toLowerCase();
+
     const matchSearch =
-      mp.fullname.toLowerCase().includes(search.value.toLowerCase()) ||
-      mp.status.toLowerCase().includes(search.value.toLowerCase()) ||
-      mp.position.toLowerCase().includes(search.value.toLowerCase());
+      fullname.includes(keyword) ||
+      status.includes(keyword) ||
+      position.includes(keyword);
 
     const matchPosition =
-      !selectedPosition.value || mp.position === selectedPosition.value;
+      !selectedPosition.value || normalizeText(mp.position) === selectedPosition.value;
 
     const matchProvince =
       !selectedProvince.value ||

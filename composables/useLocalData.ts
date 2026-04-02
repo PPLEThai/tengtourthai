@@ -4,11 +4,11 @@ import type { MPItem } from '@/composables/useMPData';
 
 interface LocalJsonItem {
     Id: number;
-    firstname: string;
-    lastname: string;
-    fullname: string;
-    status: string;
-    img: string;
+    firstname: string | null;
+    lastname: string | null;
+    fullname: string | null;
+    status: string | null;
+    img: string | null;
     topic: string | null;
     fb: string | null;
     tiktok: string | null;
@@ -17,7 +17,7 @@ interface LocalJsonItem {
     edu: string | null;
     work: string | null;
     youtube: string | null;
-    position: string;
+    position: string | null;
 }
 
 export interface LocalMPItem extends MPItem {
@@ -27,11 +27,11 @@ export interface LocalMPItem extends MPItem {
 
 const mapToLocalMPItem = (item: LocalJsonItem): LocalMPItem => ({
     id: String(item.Id),
-    firstname: item.firstname,
-    lastname: item.lastname,
-    fullname: item.fullname,
-    status: item.status,
-    img: item.img,
+    firstname: item.firstname ?? '',
+    lastname: item.lastname ?? '',
+    fullname: item.fullname ?? '',
+    status: item.status ?? '',
+    img: item.img ?? '',
     topics: item.topic ? item.topic.split(',') : [],
     fb: item.fb,
     tiktok: item.tiktok,
@@ -39,7 +39,7 @@ const mapToLocalMPItem = (item: LocalJsonItem): LocalMPItem => ({
     x: item.x,
     edu: item.edu,
     work: item.work,
-    position: item.position,
+    position: item.position ?? '',
     youtube: item.youtube,
 });
 
