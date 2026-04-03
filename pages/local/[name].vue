@@ -72,21 +72,21 @@
         <!-- News -->
         <MPNews 
           :news="newsWithMetaImages"
-          :loading="kaitomLoading"
-          :error="kaitomError"
+          :loading="localFieldLoading"
+          :error="localFieldError"
         />
 
         <!-- Map -->
         <MPMap 
-          v-if="mpReport && mpReport.field_reports && mpReport.field_reports.length > 2"
-          :field-reports="mpReport.field_reports.map(report => ({
+          v-if="localKaitomReport && localKaitomReport.field_reports && localKaitomReport.field_reports.length > 2"
+          :field-reports="localKaitomReport.field_reports.map(report => ({
             ...report,
             created_at: report.created_at || undefined,
             date: report.date || undefined,
             latitude: report.latitude || undefined,
             longitude: report.longitude || undefined
           }))"
-          :loading="kaitomLoading"
+          :loading="localFieldLoading"
         />
 
         <!-- Social Media Cards -->
@@ -138,9 +138,7 @@
 import { ref, onMounted, watch, computed, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLocalData, type LocalMPItem } from '@/composables/useLocalData'
-import { useKaitomMP } from '@/composables/useKaitomMP'
 import { useKaitomLocalMP } from '@/composables/useKaitomLocalMP'
-import { useMPLaws } from '@/composables/useMPLaws'
 
 // Import components
 // ใช้ auto-import ของ Nuxt 3 แทนการ import แบบปกติ
@@ -165,79 +163,15 @@ const { localData } = useLocalData();
 const route = useRoute();
 const mpName = decodeURIComponent(route.params.name as string).replace(/_/g, ' ');
 
-const { mpReport, loading: kaitomLoading, error: kaitomError } = useKaitomMP(mpName.replace(/ /g, '_'));
 const {
   mpReport: localKaitomReport,
   loading: localFieldLoading,
   error: localFieldError
 } = useKaitomLocalMP(mpName.replace(/ /g, '_'));
-const { mpLawsData, loading: lawsLoading, error: lawsError } = useMPLaws(mpName.replace(/ /g, '_'));
 
 const mp = ref<LocalMPItem | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
-
-// ใช้ข้อมูลจาก mpReport แทน mockup
-const committeeMeetings = computed(() => {
-  if (!mpReport.value || !mpReport.value.committee_meetings) {
-    return [];
-  }
-
-  return mpReport.value.committee_meetings.map(meeting => ({
-    date: meeting.date || '',
-    committee_name: meeting.committee_name || '',
-    sub_committee_name: meeting.sub_committee_name || null,
-    description: meeting.description || '',
-    created_at: meeting.created_at || '',
-    type: 'กรรมาธิการ'
-  }));
-});
-
-// เพิ่ม field reports สำหรับปฏิทิน
-const fieldReports = computed(() => {
-  if (!mpReport.value || !mpReport.value.field_reports) {
-    return [];
-  }
-  return mpReport.value.field_reports.map(report => ({
-    date: report.date || '',
-    location_name: report.location_name || '',
-    description: report.description || '',
-    created_at: report.created_at || '',
-    type: 'ลงพื้นที่'
-  }));
-});
-
-// รวมข้อมูลทั้งหมดสำหรับปฏิทิน
-const allEvents = computed(() => {
-  const events: Array<{
-    date: string;
-    committee_name?: string;
-    sub_committee_name?: string | null;
-    location_name?: string;
-    news_name?: string;
-    source_name?: string;
-    permalink?: string;
-    description: string;
-    created_at: string;
-    type: string;
-  }> = [];
-
-  // เพิ่ม committee meetings
-  committeeMeetings.value.forEach(meeting => {
-    if (meeting.date) {
-      events.push(meeting);
-    }
-  });
-
-  // เพิ่ม field reports
-  fieldReports.value.forEach(report => {
-    if (report.date) {
-      events.push(report);
-    }
-  });
-
-  return events;
-});
 
 const facebookPageUrl = ref('');
 
@@ -425,8 +359,8 @@ onMounted(() => {
   });
 });
 
-// เพิ่ม watcher สำหรับ mpReport เพื่ออัปเดตข้อมูล
-watch(mpReport, (newValue) => {
+// เพิ่ม watcher สำหรับ localKaitomReport เพื่ออัปเดตข้อมูล
+watch(localKaitomReport, (newValue) => {
   if (newValue) {
     // อัปเดต meta images สำหรับข่าว
     updateNewsWithMetaImages();
@@ -458,13 +392,13 @@ const fetchNewsMetaImage = async (permalink: string) => {
 const newsWithMetaImages = ref<Array<News & { metaImage?: string }>>([]);
 
 const updateNewsWithMetaImages = async () => {
-  if (!mpReport.value?.news) {
+  if (!localKaitomReport.value?.news) {
     newsWithMetaImages.value = [];
     return;
   }
 
   // ดึงแค่ 10 ข่าวล่าสุด และ sort ตามวันที่ล่าสุด
-  const latestNews = mpReport.value.news
+  const latestNews = localKaitomReport.value.news
     .sort((a, b) => {
       const dateA = new Date(a.posted_at || '');
       const dateB = new Date(b.posted_at || '');
