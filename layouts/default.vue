@@ -1,9 +1,9 @@
 <template>
-  <div class="h-screen flex flex-col bg-secondary font-anakotmai">
+  <div class="min-h-screen flex flex-col bg-secondary font-anakotmai">
     <Navbar />
-    <div class="flex-1 overflow-hidden">
-      <div class="flex h-full">
-        <main class="flex-1">
+    <div class="flex-1 min-h-0 overflow-y-auto md:overflow-hidden">
+      <div class="flex min-h-full md:h-full">
+        <main class="flex-1 min-h-full">
           <slot />
         </main>
       </div>

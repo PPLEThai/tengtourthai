@@ -1,5 +1,5 @@
 <template>
-  <nav id="app-navbar" class="bg-third shadow-lg">
+  <nav id="app-navbar" class="bg-third shadow-lg relative">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16 items-center">
         <!-- Logo และ Brand -->
@@ -7,20 +7,14 @@
           <button type="button" @click="toggleWebType"
             class="flex-shrink-0 flex items-center space-x-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-md">
 
-            <img v-if="currentUrl === '/political-project'" src="@/assets/images/logo-pp.png" alt="วาระจังหวัด"
-              class="h-8" />
-            <img v-else-if="currentUrl.startsWith('/mp')" src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน"
-              class="h-8" />
-            <img v-else src="@/assets/images/som-logo.svg" alt="ส้มทั่วไทย" class="h-8" />
+            <img :src="brandLogoSrc" :alt="brandLogoAlt" class="h-8" />
 
             <div class="flex items-center">
-              <a class="text-xl font-bold text-white mr-2">{{
-                currentUrl.startsWith('/mp') ? '#ผู้แทนของฉัน' :
-                currentUrl === '/political-project' ? '#วาระจังหวัด' :
-                '#ส้มทั่วไทย'
-                }}</a>
+              <a class="text-xl font-bold text-white mr-2">{{ brandLabel }}</a>
               <img src="/images/arrow-down.svg" alt="Logo" class="h-4 cursor-pointer" />
             </div>
+            
+
           </button>
         </div>
 
@@ -54,6 +48,43 @@
               <div>
                 <div class="font-bold">ผู้แทนท้องถิ่นของฉัน</div>
                 <div class="text-sm font-light">เร่ื่องราวการทำงานของผู้แทนท้องถิ่น</div>
+              </div>
+            </a>
+            <a href="/future-mp-candidate"
+              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทน สส.ในอนาคตของฉัน Logo" class="h-8" />
+              <div>
+                <div class="font-bold">ผู้แทน สส.ในอนาคตของฉัน</div>
+                <div class="text-sm font-light">ติดตามว่าที่ผู้แทน สส.</div>
+              </div>
+            </a>
+            <a href="/future-local-candidate"
+              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนท้องถิ่นในอนาคตของฉัน Logo" class="h-8" />
+              <div>
+                <div class="font-bold">ผู้แทนท้องถิ่นในอนาคตของฉัน</div>
+                <div class="text-sm font-light">ติดตามว่าที่ผู้แทนท้องถิ่น</div>
+              </div>
+            </a>
+            <a href="/pple-donation" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/som-logo.svg" alt="การสนับสนุน/บริจาค Logo" class="h-8" />
+              <div>
+                <div class="font-bold">การสนับสนุน/บริจาค</div>
+                <div class="text-sm font-light">ข้อมูลการสนับสนุนพรรค</div>
+              </div>
+            </a>
+            <a href="/oranger" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/som-logo.svg" alt="อาสาสมัครส้ม Logo" class="h-8" />
+              <div>
+                <div class="font-bold">อาสาสมัครส้ม</div>
+                <div class="text-sm font-light">เครือข่ายอาสาสมัครพื้นที่</div>
+              </div>
+            </a>
+            <a href="/case" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/som-logo.svg" alt="จากพื้นที่สู่สภา Logo" class="h-8" />
+              <div>
+                <div class="font-bold">จากพื้นที่สู่สภา</div>
+                <div class="text-sm font-light">เคสงานจากพื้นที่สู่สภา</div>
               </div>
             </a>
           </div>
@@ -118,12 +149,6 @@
           </button>
         </div>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center space-x-4">
-          <a href="https://www.facebook.com/PPLEThai" target="_blank"
-            class="text-white hover:text-primary px-3 py-2 rounded-md">ติดตามเรา</a>
-        </div>
-
         <!-- Mobile menu button -->
         <div class="md:hidden flex items-center">
           <button @click="toggleMenu" class="text-white hover:text-primary">
@@ -153,12 +178,50 @@ import { useMockupStore } from "@/stores/mockupStore";
 import { useRoute } from 'vue-router';
 import { useKaitomStore } from "@/stores/kaitomStore";
 import { useActData } from "@/composables/useActData";
+import logoSom from "@/assets/images/som-logo.svg";
+import logoPoliticalProject from "@/assets/images/logo-pp.png";
+import logoRepresentative from "@/assets/images/kaitom-logo.png";
 
 const isMenuOpen = ref(false);
 const isWebTypeOpen = ref(false);
+const isInsightMenuOpen = ref(false);
 const route = useRoute();
-const currentUrl = route.path;
+const currentUrl = computed(() => route.path);
 const displayType = ref('visit');
+
+const representativePaths = ['/mp', '/local', '/future-mp-candidate', '/future-local-candidate'];
+const socialPaths = ['/pple-donation', '/oranger', '/case'];
+
+const isPoliticalProjectPage = computed(() => currentUrl.value === '/political-project');
+const isRepresentativePage = computed(() =>
+  representativePaths.some(path => currentUrl.value.startsWith(path))
+);
+const isSocialPage = computed(() => socialPaths.some(path => currentUrl.value.startsWith(path)));
+
+const brandLogoSrc = computed(() => {
+  if (isPoliticalProjectPage.value) return logoPoliticalProject;
+  if (isRepresentativePage.value) return logoRepresentative;
+  return logoSom;
+});
+
+const brandLogoAlt = computed(() => {
+  if (isPoliticalProjectPage.value) return 'วาระจังหวัด';
+  if (isRepresentativePage.value) return 'ผู้แทนของฉัน';
+  if (isSocialPage.value) return 'ภารกิจเครือข่ายพรรค';
+  return 'ส้มทั่วไทย';
+});
+
+const brandLabel = computed(() => {
+  if (isPoliticalProjectPage.value) return '#วาระจังหวัด';
+  if (currentUrl.value.startsWith('/future-mp-candidate')) return '#ผู้แทน สส.ในอนาคตของฉัน';
+  if (currentUrl.value.startsWith('/future-local-candidate')) return '#ผู้แทนท้องถิ่นในอนาคตของฉัน';
+  if (currentUrl.value.startsWith('/mp')) return '#ผู้แทน สส.ของฉัน';
+  if (currentUrl.value.startsWith('/local')) return '#ผู้แทนท้องถิ่นของฉัน';
+  if (currentUrl.value.startsWith('/pple-donation')) return '#ยอดการสนับสนุน (บริจาค)';
+  if (currentUrl.value.startsWith('/oranger')) return '#อาสาสมัครส้ม';
+  if (currentUrl.value.startsWith('/case')) return '#จากพื้นที่สู่สภา';
+  return '#ส้มทั่วไทย';
+});
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -166,6 +229,10 @@ const toggleMenu = () => {
 
 const toggleWebType = () => {
   isWebTypeOpen.value = !isWebTypeOpen.value;
+};
+
+const toggleInsightMenu = () => {
+  isInsightMenuOpen.value = !isInsightMenuOpen.value;
 };
 
 const toggleDisplayType = () => {
@@ -181,7 +248,7 @@ const tengVisitedProvinces = computed(() => {
 });
 
 // ตรวจสอบว่าไม่ใช่หน้า /mp ก่อนเรียกใช้ services
-const isMPPage = computed(() => currentUrl.startsWith('/mp'));
+const isMPPage = computed(() => currentUrl.value.startsWith('/mp'));
 
 // เรียกใช้ services เฉพาะเมื่อไม่ใช่หน้า /mp
 const kaitomStore = !isMPPage.value ? useKaitomStore() : null;
