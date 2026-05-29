@@ -67,7 +67,20 @@
               {{ item.status }}
             </p>
             <div class="grid grid-cols-2 gap-2">
-              <button class="text-center bg-[#ff6900] hover:bg-[#ff7c21] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200">
+              <a
+                v-if="item.socialmedia"
+                :href="item.socialmedia"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-center bg-[#ff6900] hover:bg-[#ff7c21] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200"
+              >
+                ความเคลื่อนไหว
+              </a>
+              <button
+                v-else
+                disabled
+                class="text-center bg-[#ff6900]/40 text-white/70 text-xs md:text-sm font-semibold py-2 rounded-xl cursor-not-allowed"
+              >
                 ความเคลื่อนไหว
               </button>
               <button class="text-center bg-[#1a0f62] hover:bg-[#2a1b84] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200">
@@ -78,7 +91,9 @@
         </article>
 
         <div v-if="filteredList.length === 0" class="col-span-full py-20 flex flex-col items-center gap-3">
-          <p class="text-white/50 text-base">ไม่พบข้อมูลผู้สมัครท้องถิ่นที่ค้นหา</p>
+          <p class="text-white/50 text-base">
+            {{ futureLocalData.length === 0 ? 'ยังไม่มีข้อมูลผู้สมัครท้องถิ่น' : 'ไม่พบข้อมูลผู้สมัครท้องถิ่นที่ค้นหา' }}
+          </p>
         </div>
       </div>
     </div>
@@ -87,16 +102,17 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useLocalData, type LocalMPItem } from "@/composables/useLocalData";
+import { useFutureLocalData, type FutureLocalItem } from "@/composables/useFutureLocalData";
 
 definePageMeta({ layout: "mp" });
 
-const { localData } = useLocalData();
+const { futureLocalData } = useFutureLocalData();
 const search = ref("");
 const selectedPosition = ref("");
 
 const getImageUrl = (img: string) => {
   if (!img?.trim()) return "";
+  if (img.startsWith("http")) return img.trim();
   return `https://img.pplethai.org/unsafe/rs:fit:800:8000:1/plain/${img.trim()}`;
 };
 
@@ -107,14 +123,14 @@ const handleImageError = (e: Event) => {
 
 const availablePositions = computed(() => {
   const set = new Set<string>();
-  localData.value.forEach((item: LocalMPItem) => {
+  futureLocalData.value.forEach((item: FutureLocalItem) => {
     if (item.position) set.add(item.position);
   });
   return Array.from(set).sort((a, b) => a.localeCompare(b, "th"));
 });
 
 const filteredList = computed(() => {
-  return localData.value.filter((item: LocalMPItem) => {
+  return futureLocalData.value.filter((item: FutureLocalItem) => {
     const keyword = search.value.toLowerCase();
     const matchSearch =
       item.fullname.toLowerCase().includes(keyword) ||

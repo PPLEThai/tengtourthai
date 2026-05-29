@@ -52,7 +52,7 @@
             </a>
             <a href="/future-mp-candidate"
               class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
-              <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทน สส.ในอนาคตของฉัน Logo" class="h-8" />
+              <img src="@/assets/images/kaitom-shirt.png" alt="ผู้แทน สส.ในอนาคตของฉัน Logo" class="w-8" />
               <div>
                 <div class="font-bold">ผู้แทน สส.ในอนาคตของฉัน</div>
                 <div class="text-sm font-light">ติดตามว่าที่ผู้แทน สส.</div>
@@ -60,33 +60,33 @@
             </a>
             <a href="/future-local-candidate"
               class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
-              <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนท้องถิ่นในอนาคตของฉัน Logo" class="h-8" />
+              <img src="@/assets/images/kaitom-shirt.png" alt="ผู้แทนท้องถิ่นในอนาคตของฉัน Logo" class="w-8" />
               <div>
                 <div class="font-bold">ผู้แทนท้องถิ่นในอนาคตของฉัน</div>
                 <div class="text-sm font-light">ติดตามว่าที่ผู้แทนท้องถิ่น</div>
               </div>
             </a>
             <a href="/pple-donation" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
-              <img src="@/assets/images/som-logo.svg" alt="การสนับสนุน/บริจาค Logo" class="h-8" />
+              <img src="@/assets/images/logo-pp.png" alt="การสนับสนุน/บริจาค Logo" class="h-8" />
               <div>
                 <div class="font-bold">การสนับสนุน/บริจาค</div>
                 <div class="text-sm font-light">ข้อมูลการสนับสนุนพรรค</div>
               </div>
             </a>
-            <a href="/oranger" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/volunteers" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/som-logo.svg" alt="อาสาสมัครส้ม Logo" class="h-8" />
               <div>
                 <div class="font-bold">อาสาสมัครส้ม</div>
                 <div class="text-sm font-light">เครือข่ายอาสาสมัครพื้นที่</div>
               </div>
             </a>
-            <a href="/case" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
-              <img src="@/assets/images/som-logo.svg" alt="จากพื้นที่สู่สภา Logo" class="h-8" />
+            <!-- <a href="/case" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/logo-pp.png" alt="จากพื้นที่สู่สภา Logo" class="h-8" />
               <div>
                 <div class="font-bold">จากพื้นที่สู่สภา</div>
                 <div class="text-sm font-light">เคสงานจากพื้นที่สู่สภา</div>
               </div>
-            </a>
+            </a> -->
           </div>
         </div>
 
@@ -190,7 +190,7 @@ const currentUrl = computed(() => route.path);
 const displayType = ref('visit');
 
 const representativePaths = ['/mp', '/local', '/future-mp-candidate', '/future-local-candidate'];
-const socialPaths = ['/pple-donation', '/oranger', '/case'];
+const socialPaths = ['/pple-donation', '/volunteers', '/case'];
 
 const isPoliticalProjectPage = computed(() => currentUrl.value === '/political-project');
 const isRepresentativePage = computed(() =>
@@ -218,7 +218,7 @@ const brandLabel = computed(() => {
   if (currentUrl.value.startsWith('/mp')) return '#ผู้แทน สส.ของฉัน';
   if (currentUrl.value.startsWith('/local')) return '#ผู้แทนท้องถิ่นของฉัน';
   if (currentUrl.value.startsWith('/pple-donation')) return '#ยอดการสนับสนุน (บริจาค)';
-  if (currentUrl.value.startsWith('/oranger')) return '#อาสาสมัครส้ม';
+  if (currentUrl.value.startsWith('/volunteers')) return '#อาสาสมัครส้ม';
   if (currentUrl.value.startsWith('/case')) return '#จากพื้นที่สู่สภา';
   return '#ส้มทั่วไทย';
 });

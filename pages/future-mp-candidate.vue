@@ -20,12 +20,13 @@
             />
           </div>
           <select
-            v-model="selectedType"
+            v-model="selectedProvince"
             class="bg-white/20 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6900] transition appearance-none cursor-pointer min-w-[140px]"
           >
-            <option value="" class="bg-[#1a0f62]">ทุกประเภท</option>
-            <option value="บัญชีรายชื่อ" class="bg-[#1a0f62]">บัญชีรายชื่อ</option>
-            <option value="เขต" class="bg-[#1a0f62]">สส. เขต</option>
+            <option value="" class="bg-[#1a0f62]">ทุกจังหวัด</option>
+            <option v-for="province in availableProvinces" :key="province" :value="province" class="bg-[#1a0f62]">
+              {{ province }}
+            </option>
           </select>
         </div>
       </div>
@@ -63,10 +64,27 @@
               {{ mp.status }}
             </p>
             <div class="grid grid-cols-2 gap-2">
-              <button class="text-center bg-[#ff6900] hover:bg-[#ff7c21] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200">
+              <a
+                v-if="mp.socialmedia"
+                :href="mp.socialmedia"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-center bg-[#ff6900] hover:bg-[#ff7c21] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200"
+              >
+                ความเคลื่อนไหว
+              </a>
+              <button
+                v-else
+                disabled
+                class="text-center bg-[#ff6900]/40 text-white/70 text-xs md:text-sm font-semibold py-2 rounded-xl cursor-not-allowed"
+              >
                 ความเคลื่อนไหว
               </button>
-              <button class="text-center bg-[#1a0f62] hover:bg-[#2a1b84] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200">
+              <button
+                type="button"
+                class="text-center bg-[#1a0f62] hover:bg-[#2a1b84] text-white text-xs md:text-sm font-semibold py-2 rounded-xl transition-colors duration-200"
+                @click="openComplaintModal(mp)"
+              >
                 ร้องเรียน
               </button>
             </div>
@@ -78,39 +96,77 @@
         </div>
       </div>
     </div>
+
+    <FutureCandidateComplaintModal
+      :show="complaintModal.show"
+      :candidate-id="complaintModal.candidate?.id ?? ''"
+      :candidate-name="complaintModal.candidate?.fullname ?? ''"
+      :candidate-area="complaintModal.candidate?.status ?? ''"
+      @close="closeComplaintModal"
+      @submit="handleComplaintSubmit"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useMPData, type MPItem } from "@/composables/useMPData";
+import { useFutureMPData, type FutureMPItem } from "@/composables/useFutureMPData";
+import FutureCandidateComplaintModal, { type ComplaintFormPayload } from "@/components/mp/FutureCandidateComplaintModal.vue";
 
 definePageMeta({ layout: "mp" });
 
-const { mpData } = useMPData();
+const { futureMPData } = useFutureMPData();
 const search = ref("");
-const selectedType = ref("");
+const selectedProvince = ref("");
 
-const getImageUrl = (img: string) => `https://img.pplethai.org/unsafe/rs:fit:800:8000:1/plain/${img}`;
+const complaintModal = ref<{ show: boolean; candidate: FutureMPItem | null }>({
+  show: false,
+  candidate: null,
+});
+
+const openComplaintModal = (mp: FutureMPItem) => {
+  complaintModal.value = { show: true, candidate: mp };
+};
+
+const closeComplaintModal = () => {
+  complaintModal.value = { show: false, candidate: null };
+};
+
+const handleComplaintSubmit = (payload: ComplaintFormPayload) => {
+  // TODO: เชื่อมต่อ backend แจ้งปัญหาเกี่ยวกับผู้สมัครถึงพรรคประชาชน
+  console.log('[candidate-report]', payload);
+};
+
+const getImageUrl = (img: string) => {
+  if (!img?.trim()) return "";
+  if (img.startsWith("http")) return img.trim();
+  return `https://img.pplethai.org/unsafe/rs:fit:800:8000:1/plain/${img.trim()}`;
+};
 
 const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement;
   target.style.opacity = "0.35";
 };
 
+const availableProvinces = computed(() => {
+  const set = new Set<string>();
+  futureMPData.value.forEach((item: FutureMPItem) => {
+    if (item.province) set.add(item.province);
+  });
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "th"));
+});
+
 const filteredList = computed(() => {
-  return mpData.value.filter((mp: MPItem) => {
+  return futureMPData.value.filter((mp: FutureMPItem) => {
     const keyword = search.value.toLowerCase();
     const matchSearch =
       mp.fullname.toLowerCase().includes(keyword) ||
-      mp.status.toLowerCase().includes(keyword);
+      mp.status.toLowerCase().includes(keyword) ||
+      mp.province.toLowerCase().includes(keyword);
 
-    const matchType =
-      !selectedType.value ||
-      (selectedType.value === "เขต" && mp.status !== "บัญชีรายชื่อ") ||
-      (selectedType.value === "บัญชีรายชื่อ" && mp.status === "บัญชีรายชื่อ");
+    const matchProvince = !selectedProvince.value || mp.province === selectedProvince.value;
 
-    return matchSearch && matchType;
+    return matchSearch && matchProvince;
   });
 });
 </script>
