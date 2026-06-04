@@ -66,6 +66,14 @@
                 <div class="text-sm font-light">ติดตามว่าที่ผู้แทนท้องถิ่น</div>
               </div>
             </a>
+            <a href="/candidate-funnel"
+              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              <img src="@/assets/images/kaitom-shirt.png" alt="Funnel Future Candidate Logo" class="w-8" />
+              <div>
+                <div class="font-bold">Funnel Future Candidate</div>
+                <div class="text-sm font-light">เส้นทางบ่มเพาะว่าที่ผู้สมัคร</div>
+              </div>
+            </a>
             <a href="/pple-donation" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/logo-pp.png" alt="การสนับสนุน/บริจาค Logo" class="h-8" />
               <div>
@@ -74,9 +82,9 @@
               </div>
             </a>
             <a href="/volunteers" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
-              <img src="@/assets/images/som-logo.svg" alt="อาสาสมัครส้ม Logo" class="h-8" />
+              <img src="@/assets/images/som-logo.svg" alt="อาสาส้ม Logo" class="h-8" />
               <div>
-                <div class="font-bold">อาสาสมัครส้ม</div>
+                <div class="font-bold">อาสาส้ม</div>
                 <div class="text-sm font-light">เครือข่ายอาสาสมัครพื้นที่</div>
               </div>
             </a>
@@ -189,7 +197,7 @@ const route = useRoute();
 const currentUrl = computed(() => route.path);
 const displayType = ref('visit');
 
-const representativePaths = ['/mp', '/local', '/future-mp-candidate', '/future-local-candidate'];
+const representativePaths = ['/mp', '/local', '/future-mp-candidate', '/future-local-candidate', '/candidate-funnel'];
 const socialPaths = ['/pple-donation', '/volunteers', '/case'];
 
 const isPoliticalProjectPage = computed(() => currentUrl.value === '/political-project');
@@ -215,10 +223,11 @@ const brandLabel = computed(() => {
   if (isPoliticalProjectPage.value) return '#วาระจังหวัด';
   if (currentUrl.value.startsWith('/future-mp-candidate')) return '#ผู้แทน สส.ในอนาคตของฉัน';
   if (currentUrl.value.startsWith('/future-local-candidate')) return '#ผู้แทนท้องถิ่นในอนาคตของฉัน';
+  if (currentUrl.value.startsWith('/candidate-funnel')) return '#Funnel Future Candidate';
   if (currentUrl.value.startsWith('/mp')) return '#ผู้แทน สส.ของฉัน';
   if (currentUrl.value.startsWith('/local')) return '#ผู้แทนท้องถิ่นของฉัน';
   if (currentUrl.value.startsWith('/pple-donation')) return '#ยอดการสนับสนุน (บริจาค)';
-  if (currentUrl.value.startsWith('/volunteers')) return '#อาสาสมัครส้ม';
+  if (currentUrl.value.startsWith('/volunteers')) return '#อาสาส้ม';
   if (currentUrl.value.startsWith('/case')) return '#จากพื้นที่สู่สภา';
   return '#ส้มทั่วไทย';
 });

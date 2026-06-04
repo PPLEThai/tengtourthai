@@ -51,14 +51,17 @@
         <div class="xl:col-span-2 rounded-3xl bg-white/5 border border-white/10 p-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-lg md:text-xl font-semibold">การลงทะเบียนอาสาส้ม 30 วันล่าสุด</h2>
-            <span v-if="updatedAt" class="text-xs text-white/60">อัปเดตล่าสุด: {{ updatedAt }}</span>
+            <div class="flex flex-wrap items-center gap-3 text-xs text-white/60">
+              <span>รวม {{ formatCount(registrationsLast30Days) }} คน</span>
+              <span v-if="updatedAt">อัปเดตล่าสุด: {{ updatedAt }}</span>
+            </div>
           </div>
-          <div class="mt-6 h-72">
-            <div class="grid h-full grid-cols-[60px_1fr] gap-3">
+          <div class="mt-6 h-72 overflow-visible">
+            <div class="grid h-full grid-cols-[60px_1fr] gap-3 overflow-visible">
               <div class="h-full pb-8 flex flex-col justify-between text-[11px] text-white/60">
                 <span v-for="tick in yAxisTicks" :key="tick">{{ formatVolunteerCountShort(tick) }}</span>
               </div>
-              <div class="relative h-full">
+              <div class="relative h-full overflow-visible">
                 <div class="absolute inset-0 pb-8 flex flex-col justify-between">
                   <div v-for="tick in yAxisTicks" :key="`grid-${tick}`" class="border-t border-white/10" />
                 </div>
@@ -67,11 +70,23 @@
                   <div
                     v-for="item in registrationTrend"
                     :key="item.date"
-                    class="flex-1 h-full flex items-end justify-center"
-                    :title="`${formatDateLabel(item.date)}: ${formatCount(item.count)} คน`"
+                    class="flex-1 h-full flex items-end justify-center relative cursor-pointer group"
+                    @mouseenter="hoveredDate = item.date"
+                    @mouseleave="hoveredDate = null"
+                    @click="hoveredDate = hoveredDate === item.date ? null : item.date"
                   >
                     <div
-                      class="w-full rounded-t-sm md:rounded-t-lg bg-gradient-to-t from-[#1a0f62] to-[#ff6900]"
+                      v-if="hoveredDate === item.date"
+                      class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-20 w-max max-w-[200px] rounded-xl border border-white/20 bg-[#1a0f62] px-3 py-2.5 text-xs shadow-xl pointer-events-none"
+                    >
+                      <p class="font-semibold text-white">{{ formatFullDate(item.date) }}</p>
+                      <p class="mt-1.5 text-white/90">
+                        ลงทะเบียน <span class="font-semibold text-[#ff6900]">{{ formatCount(item.count) }}</span> คน
+                      </p>
+                    </div>
+                    <div
+                      class="w-full rounded-t-sm md:rounded-t-lg bg-gradient-to-t from-[#1a0f62] to-[#ff6900] transition-all duration-150"
+                      :class="hoveredDate === item.date ? 'ring-2 ring-white/60 brightness-110' : 'brightness-100'"
                       :style="{ height: `${getBarHeightPercent(item.count)}%` }"
                     />
                   </div>
@@ -219,6 +234,8 @@ const updatedAt = computed(() => {
   }).format(new Date(response.value.timestamp));
 });
 
+const hoveredDate = ref<string | null>(null);
+
 const registrationTrend = computed(() => stats.value?.registration_trend_30d ?? []);
 
 const registrationsLast30Days = computed(() =>
@@ -279,5 +296,12 @@ const formatDateLabel = (date: string) => {
   const [, month, day] = date.split('-');
   const monthIndex = Number(month) - 1;
   return `${Number(day)} ${THAI_MONTHS_SHORT[monthIndex] ?? month}`;
+};
+
+const formatFullDate = (date: string) => {
+  const [year, month, day] = date.split('-');
+  const monthIndex = Number(month) - 1;
+  const buddhistYear = Number(year) + 543;
+  return `${Number(day)} ${THAI_MONTHS_SHORT[monthIndex] ?? month} ${buddhistYear}`;
 };
 </script>
