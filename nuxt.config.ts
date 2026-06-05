@@ -50,7 +50,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiTengData: process.env.API_TENG_DATA || ''
+      apiTengData: process.env.API_TENG_DATA || '',
+      gaId: process.env.GA_ID || ''
     }
   },
 });
