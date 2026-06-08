@@ -1,13 +1,13 @@
 <template>
-  <section class="max-w-7xl mx-auto px-4 py-8 md:py-10 text-white">
-    <div class="rounded-3xl border border-white/15 bg-gradient-to-r from-[#ff6900]/30 via-[#1a0f62]/30 to-transparent p-6 md:p-8">
-      <h1 class="text-2xl md:text-4xl font-bold">Funnel Future Candidate</h1>
-      <p class="mt-3 text-white/80 max-w-3xl">
+  <section class="max-w-7xl mx-auto px-4 py-8 md:py-10 text-secondary">
+    <div class="rounded-3xl bg-gradient-primary text-white shadow-md p-6 md:p-8">
+      <h1 class="text-2xl md:text-4xl font-heading font-medium">Funnel Future Candidate</h1>
+      <p class="mt-3 text-white/90 max-w-3xl">
         เส้นทางการบ่มเพาะว่าที่ผู้สมัคร
       </p>
     </div>
 
-    <div v-if="pending" class="mt-6 text-white/70">กำลังโหลดข้อมูล...</div>
+    <div v-if="pending" class="mt-6 text-muted-foreground">กำลังโหลดข้อมูล...</div>
     <div v-else-if="error" class="mt-6 rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-red-200">
       ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง
     </div>
@@ -15,30 +15,30 @@
     <template v-else-if="pp101 && pc101">
       <!-- Summary cards -->
       <div class="mt-6 grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">PP101 · ผู้เข้าอบรม</p>
-          <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(pp101.total_count) }}</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">PP101 · ผู้เข้าอบรม</p>
+          <p class="text-2xl md:text-3xl font-bold mt-2 text-primary">{{ formatCount(pp101.total_count) }}</p>
           <p class="text-xs text-[#ff6900] mt-1">ผ่าน {{ passRate(pp101) }}%</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">PP101 · ผ่านอบรม</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">PP101 · ผ่านอบรม</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(pp101.passed.total) }}</p>
-          <p class="text-xs text-white/70 mt-1">ไม่ผ่าน {{ formatCount(pp101.not_passed.total) }} คน</p>
+          <p class="text-xs text-muted-foreground mt-1">ไม่ผ่าน {{ formatCount(pp101.not_passed.total) }} คน</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">PC101 · ผู้เข้าอบรม</p>
-          <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(pc101.total_count) }}</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">PC101 · ผู้เข้าอบรม</p>
+          <p class="text-2xl md:text-3xl font-bold mt-2 text-primary">{{ formatCount(pc101.total_count) }}</p>
           <p class="text-xs text-[#ff6900] mt-1">ผ่าน {{ passRate(pc101) }}%</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">PC101 · ผ่านอบรม</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">PC101 · ผ่านอบรม</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(pc101.passed.total) }}</p>
-          <p class="text-xs text-white/70 mt-1">ไม่ผ่าน {{ formatCount(pc101.not_passed.total) }} คน</p>
+          <p class="text-xs text-muted-foreground mt-1">ไม่ผ่าน {{ formatCount(pc101.not_passed.total) }} คน</p>
         </div>
       </div>
 
       <!-- Sankey diagram -->
-      <div class="mt-6 rounded-3xl bg-white/5 border border-white/10 p-5 md:p-8">
+      <div class="mt-6 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5 md:p-8">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h2 class="text-lg md:text-xl font-semibold">เส้นทางการบ่มเพาะว่าที่ผู้สมัคร พรรคประชาชน</h2>
           <div class="flex flex-wrap items-center gap-4 text-xs text-white/70">
@@ -118,7 +118,7 @@
 
       <!-- Per-course pass/fail + gender breakdown -->
       <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div v-for="course in courses" :key="course.course" class="rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div v-for="course in courses" :key="course.course" class="rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold">{{ course.course }}</h3>
             <span class="text-sm text-white/70">ผู้เข้าอบรม {{ formatCount(course.total_count) }} คน</span>
@@ -178,7 +178,7 @@
     </template>
 
     <!-- Age & Province dashboard -->
-    <div v-if="ageProvincePending" class="mt-6 text-white/70">กำลังโหลดข้อมูลอายุ/จังหวัด...</div>
+    <div v-if="ageProvincePending" class="mt-6 text-muted-foreground">กำลังโหลดข้อมูลอายุ/จังหวัด...</div>
     <div v-else-if="ageProvinceError" class="mt-6 rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-red-200">
       ไม่สามารถโหลดข้อมูลการกระจายตัวได้ กรุณาลองใหม่อีกครั้ง
     </div>
@@ -186,16 +186,16 @@
     <template v-else-if="currentAgeProvince">
       <div class="mt-8 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 class="text-xl md:text-2xl font-bold">การกระจายตัวผู้เข้าอบรม</h2>
-          <p class="text-sm text-white/70 mt-1">ช่วงอายุ และพื้นที่จังหวัดของผู้เข้าอบรมแต่ละหลักสูตร</p>
+          <h2 class="text-xl md:text-2xl font-heading font-medium">การกระจายตัวผู้เข้าอบรม</h2>
+          <p class="text-sm text-muted-foreground mt-1">ช่วงอายุ และพื้นที่จังหวัดของผู้เข้าอบรมแต่ละหลักสูตร</p>
         </div>
-        <div class="inline-flex rounded-xl bg-white/10 p-1">
+        <div class="inline-flex rounded-xl bg-secondary/10 p-1">
           <button
             v-for="course in availableCourses"
             :key="course"
             type="button"
             class="px-4 py-1.5 text-sm rounded-lg transition-colors"
-            :class="selectedCourse === course ? 'bg-[#ff6900] text-white font-semibold' : 'text-white/70 hover:text-white'"
+            :class="selectedCourse === course ? 'bg-[#ff6900] text-white font-semibold' : 'text-secondary/70 hover:text-secondary'"
             @click="setCourse(course)"
           >
             {{ course }}
@@ -205,7 +205,7 @@
 
       <div class="mt-4 grid grid-cols-1 xl:grid-cols-5 gap-5">
         <!-- Age distribution -->
-        <div class="xl:col-span-2 rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div class="xl:col-span-2 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold">ช่วงอายุ ({{ selectedCourse }})</h3>
             <span class="text-xs text-white/60">รวม {{ formatCount(ageTotal) }} คน</span>
@@ -231,7 +231,7 @@
         </div>
 
         <!-- Province map -->
-        <div class="xl:col-span-3 rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div class="xl:col-span-3 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h3 class="text-lg font-semibold">ตามจังหวัดที่อบรม ({{ selectedCourse }})</h3>
             <div class="flex items-center gap-3 text-xs text-white/60">
@@ -255,7 +255,7 @@
       </div>
 
       <!-- Top provinces -->
-      <div class="mt-5 rounded-3xl bg-white/5 border border-white/10 p-5">
+      <div class="mt-5 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
         <h3 class="text-lg font-semibold">จังหวัดที่มีผู้เข้าอบรมมากที่สุด (Top 10 · {{ selectedCourse }})</h3>
         <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
           <div v-for="(item, index) in topProvinceItems" :key="item.province" class="flex items-center gap-3">

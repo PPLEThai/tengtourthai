@@ -3,28 +3,28 @@
     <div class="max-w-4xl mx-auto">
       <!-- หัวข้อ -->
       <div class="text-center">
-        <h1 class="text-3xl md:text-4xl font-bold text-white">สารบัญ</h1>
-        <p class="mt-2 mb-6 text-base md:text-lg text-white/70">เลือกหัวข้อที่ต้องการเข้าชม</p>
+        <h1 class="text-3xl md:text-4xl font-heading font-medium text-secondary">สารบัญ</h1>
+        <p class="mt-2 mb-6 text-base md:text-lg text-muted-foreground">เลือกหัวข้อที่ต้องการเข้าชม</p>
       </div>
 
       <!-- การ์ดเมนู -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
         <NuxtLink v-for="item in menuItems" :key="item.to" :to="item.to"
-          class="menu-card group flex items-center gap-4 rounded-2xl bg-third/80 hover:bg-third border border-white/10 hover:border-primary p-5 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          class="menu-card group flex items-center gap-4 rounded-2xl bg-white hover:bg-white border border-black/5 hover:border-primary p-5 shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
 
           <!-- ไอคอน -->
           <div
-            class="menu-icon shrink-0 grid place-items-center h-14 w-14 rounded-xl bg-primary/15 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200"
+            class="menu-icon shrink-0 grid place-items-center h-14 w-14 rounded-xl bg-primary/10 text-primary group-hover:bg-gradient-primary-button group-hover:text-primary-foreground transition-colors duration-200"
             v-html="item.icon" />
 
           <!-- ข้อความ -->
           <div class="flex-1 min-w-0">
-            <div class="text-base md:text-lg font-bold text-white leading-snug">{{ item.label }}</div>
-            <div class="text-sm text-white/60 mt-0.5 leading-snug">{{ item.description }}</div>
+            <div class="text-base md:text-lg font-heading font-medium text-secondary leading-snug">{{ item.label }}</div>
+            <div class="text-sm text-muted-foreground mt-0.5 leading-snug">{{ item.description }}</div>
           </div>
 
           <!-- ลูกศร -->
-          <svg class="shrink-0 h-5 w-5 text-white/40 group-hover:text-primary transition-colors duration-200" fill="none"
+          <svg class="shrink-0 h-5 w-5 text-black/30 group-hover:text-primary transition-colors duration-200" fill="none"
             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
           </svg>

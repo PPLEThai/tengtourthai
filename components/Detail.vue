@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-base-100 md:h-full w-full shadow-xl rounded-md px-4 py-6 overflow-y-auto"
+    <div class="bg-card text-card-foreground md:h-full w-full shadow-xl rounded-md px-4 py-6 overflow-y-auto"
         @click.self="showDropdown = false">
         <!-- header -->
         <div class="flex flex-row gap-2">
@@ -66,14 +66,14 @@
 
         <!-- btn group -->
         <div>
-            <div class="join w-full mt-4 border border-gray-300 rounded-lg">
-                <button class="join-item btn w-1/2"
-                    :class="activeTab === 'fieldwork' ? 'bg-orange-500 text-white hover:bg-orange-500' : 'btn-ghost'"
+            <div class="flex w-full mt-4 border border-border rounded-lg overflow-hidden">
+                <button class="w-1/2 inline-flex items-center justify-center h-10 px-4 text-sm font-medium font-heading transition-colors"
+                    :class="activeTab === 'fieldwork' ? 'bg-gradient-primary-button text-primary-foreground' : 'text-foreground hover:bg-secondary/10'"
                     @click="setActiveTab('fieldwork')">
                     การเข้าพื้นที่
                 </button>
-                <button class="join-item btn w-1/2"
-                    :class="activeTab === 'schedule' ? 'bg-orange-500 text-white hover:bg-orange-500' : 'btn-ghost'"
+                <button class="w-1/2 inline-flex items-center justify-center h-10 px-4 text-sm font-medium font-heading transition-colors border-l border-border"
+                    :class="activeTab === 'schedule' ? 'bg-gradient-primary-button text-primary-foreground' : 'text-foreground hover:bg-secondary/10'"
                     @click="setActiveTab('schedule')">
                     กำหนดการ
                 </button>

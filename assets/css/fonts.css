@@ -24,3 +24,10 @@
     font-weight: 700;
     font-style: normal;
 }
+
+/* PPLE Design System font tokens
+   Headings: Anakotmai (party CI). Body: IBM Plex Sans Thai Looped (loaded via Google Fonts). */
+:root {
+    --font-heading: 'Anakotmai', system-ui, sans-serif;
+    --font-body: 'IBM Plex Sans Thai Looped', system-ui, sans-serif;
+}

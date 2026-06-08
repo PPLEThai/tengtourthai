@@ -14,7 +14,7 @@
       </section>
       <footer class="modal-footer">
         <slot name="footer">
-          <button class="btn" @click="close">Close</button>
+          <PButton variant="outline" @click="close">Close</PButton>
         </slot>
       </footer>
     </div>
