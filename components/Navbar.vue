@@ -50,22 +50,22 @@
                 <div class="text-sm font-light">เร่ื่องราวการทำงานของผู้แทนท้องถิ่น</div>
               </div>
             </a>
-            <a href="/future-mp-candidate"
+            <!-- <a href="/future-mp-candidate"
               class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-shirt.png" alt="ผู้แทน สส.ในอนาคตของฉัน Logo" class="w-8" />
               <div>
                 <div class="font-bold">ผู้แทน สส.ในอนาคตของฉัน</div>
                 <div class="text-sm font-light">ติดตามว่าที่ผู้แทน สส.</div>
               </div>
-            </a>
-            <a href="/future-local-candidate"
+            </a> -->
+            <!-- <a href="/future-local-candidate"
               class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-shirt.png" alt="ผู้แทนท้องถิ่นในอนาคตของฉัน Logo" class="w-8" />
               <div>
                 <div class="font-bold">ผู้แทนท้องถิ่นในอนาคตของฉัน</div>
                 <div class="text-sm font-light">ติดตามว่าที่ผู้แทนท้องถิ่น</div>
               </div>
-            </a>
+            </a> -->
             <a href="/candidate-funnel"
               class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-shirt.png" alt="Funnel Future Candidate Logo" class="w-8" />
