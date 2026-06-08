@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto">
       <!-- หัวข้อ -->
       <div class="text-center">
-        <h1 class="text-3xl md:text-4xl font-heading font-medium text-secondary">สารบัญ</h1>
+        <h1 class="text-3xl md:text-4xl font-heading font-medium text-secondary">สุขภาพพรรค</h1>
         <p class="mt-2 mb-6 text-base md:text-lg text-muted-foreground">เลือกหัวข้อที่ต้องการเข้าชม</p>
       </div>
 
