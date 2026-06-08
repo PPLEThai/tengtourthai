@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-base-100 md:h-full w-full shadow-xl rounded-none px-4 py-6 overflow-y-auto">
+    <div class="bg-card text-card-foreground md:h-full w-full shadow-xl rounded-none px-4 py-6 overflow-y-auto">
         <div class="flex flex-row gap-2">
             <div class="flex flex-col gap-2">
                 <img src="@/assets/images/som-logo.png" alt="logo" class="w-6">
@@ -51,7 +51,7 @@
             <div class="divider text-primary">การเข้าพื้นที่ที่ผ่านมา</div>
             <div class="">
                 <div v-for="(item, index) in displayedItems" :key="index"
-                    class="card bg-white shadow-md rounded-md p-4 mb-4 flex flex-row">
+                    class="bg-card border border-border shadow-md rounded-md p-4 mb-4 flex flex-row">
                     <div v-if="item.images && item.images.length > 0" class="w-1/4">
                         <img :src="'https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/' + encodeURIComponent(item.images[0])"
                             alt="activity image" class="w-full h-auto rounded-md">
@@ -66,7 +66,7 @@
                 </div>
 
                 <div v-if="hasMoreItems" class="flex justify-center mt-4 mb-4">
-                    <button @click="loadMore" class="btn btn-primary text-white w-full">ดูเพิ่มเติม</button>
+                    <PButton @click="loadMore" class="w-full">ดูเพิ่มเติม</PButton>
                 </div>
             </div>
         </div>
@@ -284,6 +284,24 @@ const formatThaiDate = (dateString: string): string => {
 </script>
 
 <style scoped>
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1 1 0%;
+    height: 1px;
+    background-color: hsl(var(--border));
+}
+
 .tab {
     cursor: pointer;
     padding: 0.75rem 1.5rem;

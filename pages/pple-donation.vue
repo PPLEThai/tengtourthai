@@ -1,45 +1,45 @@
 <template>
-  <section class="max-w-7xl mx-auto px-4 py-8 md:py-10 text-white">
-    <div class="rounded-3xl border border-white/15 bg-gradient-to-r from-[#ff6900]/30 via-[#1a0f62]/30 to-transparent p-6 md:p-8">
-      <h1 class="text-2xl md:text-4xl font-bold">แดชบอร์ดการสนับสนุนพรรคประชาชน</h1>
-      <p class="mt-3 text-white/80 max-w-3xl">
+  <section class="max-w-7xl mx-auto px-4 py-8 md:py-10 text-secondary">
+    <div class="rounded-3xl bg-gradient-primary text-white shadow-md p-6 md:p-8">
+      <h1 class="text-2xl md:text-4xl font-heading font-medium">แดชบอร์ดการสนับสนุนพรรคประชาชน</h1>
+      <p class="mt-3 text-white/90 max-w-3xl">
         ภาพรวมยอดบริจาค จำนวนผู้บริจาค และแนวโน้มรายเดือน เพื่อช่วยให้เห็นพลังการสนับสนุนของประชาชนอย่างโปร่งใส
       </p>
     </div>
 
-    <div v-if="pending" class="mt-6 text-white/70">กำลังโหลดข้อมูล...</div>
+    <div v-if="pending" class="mt-6 text-muted-foreground">กำลังโหลดข้อมูล...</div>
     <div v-else-if="error" class="mt-6 rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-red-200">
       ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง
     </div>
 
     <template v-else-if="stats">
       <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">ยอดบริจาครวม</p>
-          <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCurrency(stats.total_donation_amount) }}</p>
-          <p v-if="monthOverMonthChange !== null" class="text-xs text-[#ff6900] mt-1">
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">ยอดบริจาครวม</p>
+          <p class="text-2xl md:text-3xl font-bold mt-2 text-primary">{{ formatCurrency(stats.total_donation_amount) }}</p>
+          <p v-if="monthOverMonthChange !== null" class="text-xs text-muted-foreground mt-1">
             นับรวมตั้งแต่ก่อตั้งพรรคประชาชน
           </p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">จำนวนผู้บริจาค</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">จำนวนผู้บริจาค</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(stats.total_donor_count) }} คน</p>
-          <p class="text-xs text-white/70 mt-1">รวมผู้บริจาคทั้งหมด</p>
+          <p class="text-xs text-muted-foreground mt-1">รวมผู้บริจาคทั้งหมด</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">ยอดเฉลี่ยต่อคน</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">ยอดเฉลี่ยต่อคน</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCurrency(averagePerDonor) }}</p>
-          <!-- <p class="text-xs text-white/70 mt-1"></p> -->
+          <!-- <p class="text-xs text-muted-foreground mt-1"></p> -->
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">ผู้บริจาคประจำ</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">ผู้บริจาคประจำ</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(stats.recurring_donor_last_30_days) }} คน</p>
           <p class="text-xs text-[#ff6900] mt-1">บริจาครายเดือนใน 30 วันล่าสุด</p>
         </div>
       </div>
 
       <div class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
-        <div class="xl:col-span-2 rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div class="xl:col-span-2 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-lg md:text-xl font-semibold">แนวโน้มยอดบริจาครายเดือน</h2>
             <div class="flex flex-wrap items-center gap-4 text-xs text-white/70">
@@ -132,7 +132,7 @@
           </div>
         </div>
 
-        <div class="rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div class="rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <h2 class="text-lg md:text-xl font-semibold">สัดส่วนการบริจาค (6 เดือนล่าสุด)</h2>
           <div class="mt-4 space-y-3">
             <div v-for="channel in donationChannels" :key="channel.name" class="rounded-xl bg-[#1a0f62]/40 p-3">

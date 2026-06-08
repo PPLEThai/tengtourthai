@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-secondary font-anakotmai min-h-screen">
+  <div class="flex flex-col bg-secondary font-body text-foreground min-h-screen">
     <Navbar />
     <div class="flex-1">
       <div class="flex">
@@ -33,9 +33,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-body {
-  font-family: 'Anakotmai', sans-serif !important;
-}
 .loading-overlay {
   position: fixed;
   top: 0;

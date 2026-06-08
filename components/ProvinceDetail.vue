@@ -15,16 +15,15 @@
 
         <div v-if="province.actions && province.actions.length" class="flex flex-wrap space-x-2 mt-2">
           <span v-for="action in province.actions" :key="action" :class="getActionClass(action)"
-            class="badge text-sm font-light">
+            class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-light text-foreground">
             {{ action }}
           </span>
         </div>
       </div>
       <div class="flex flex-col ml-auto mt-2 md:mt-0">
-        <button class="btn btn-sm btn-outline btn-primary flex items-center" @click="showModal = true">
+        <PButton variant="outline" size="sm" class="flex items-center" @click="showModal = true">
           ดูรายละเอียด
-          <!-- <span class="text-primary">></span> -->
-        </button>
+        </PButton>
 
         <Modal v-if="showModal" @close="showModal = false">
           <template v-slot:header>
@@ -38,9 +37,9 @@
             </div>
           </template>
           <template v-slot:footer>
-            <button class="btn btn-sm btn-outline btn-primary" @click="showModal = false">
+            <PButton variant="outline" size="sm" @click="showModal = false">
               ปิด
-            </button>
+            </PButton>
           </template>
         </Modal>
       </div>
@@ -84,18 +83,17 @@
           </div>
           <div v-if="details.actions && details.actions.length" class="flex flex-wrap space-x-2 mt-2">
             <span v-for="action in details.actions" :key="action" :class="getActionClass(action)"
-              class="badge text-sm font-light">
+              class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-light text-foreground">
               {{ action }}
             </span>
           </div>
         </div>
 
         <div class="flex flex-col ml-auto mt-2 md:mt-0">
-          <button class="btn btn-sm btn-outline btn-primary hover:text-white flex items-center"
+          <PButton variant="outline" size="sm" class="flex items-center"
             @click="showModalAll = name">
             ดูรายละเอียด
-            <!-- <span class="text-primary"></span> -->
-          </button>
+          </PButton>
 
           <Modal v-if="showModalAll === name" @close="showModalAll = ''">
             <template v-slot:header>
@@ -109,9 +107,9 @@
             </div>
           </template>
             <template v-slot:footer>
-              <button class="btn btn-sm btn-outline btn-primary" @click="showModalAll = ''">
+              <PButton variant="outline" size="sm" @click="showModalAll = ''">
                 ปิด
-              </button>
+              </PButton>
             </template>
           </Modal>
         </div>
@@ -177,8 +175,3 @@ function formatDate(date: string): string {
 }
 </script>
 
-<style scoped>
-.btn-primary:hover {
-  color: #ffffff;
-}
-</style>

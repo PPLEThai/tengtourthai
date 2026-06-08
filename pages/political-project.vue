@@ -18,7 +18,7 @@
     <div class="w-full md:w-1/2 h-[50%] md:h-full overflow-y-auto p-2 md:p-4">
       <div class="container mx-auto p-2 md:p-4">
         <div class="flex justify-between items-center mb-4">
-          <h1 class="text-white text-xl md:text-2xl font-bold">
+          <h1 class="text-secondary text-xl md:text-2xl font-heading font-medium">
             วาระจังหวัด{{ selectedProvince ? `: ${selectedProvince}` : '' }}
           </h1>
           <button 

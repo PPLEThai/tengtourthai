@@ -1,0 +1,166 @@
+/* PPLE Design System tokens — ported from @pplethai/components globals.css */
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 13%;
+  --primary: 22 100% 54%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 204 100% 14%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 27%;
+  --destructive: 16 100% 38%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 22 100% 54%;
+  --radius: 0.5rem;
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(28 100% 62%) 0%,
+    hsl(22 100% 54%) 42%,
+    hsl(16 100% 36%) 100%
+  );
+  --gradient-primary-button: linear-gradient(
+    135deg,
+    hsl(32 100% 72%) 0%,
+    hsl(22 100% 54%) 40%,
+    hsl(14 100% 24%) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    hsl(204 100% 6%) 0%,
+    hsl(204 100% 14%) 45%,
+    hsl(204 90% 28%) 100%
+  );
+  --gradient-secondary-button: linear-gradient(
+    135deg,
+    hsl(204 100% 10%) 0%,
+    hsl(204 100% 20%) 38%,
+    hsl(204 95% 44%) 100%
+  );
+  --gradient-brand: linear-gradient(135deg, hsl(204 100% 14%) 0%, hsl(22 100% 54%) 100%);
+  --gradient-destructive: linear-gradient(
+    135deg,
+    hsl(12 100% 46%) 0%,
+    hsl(16 100% 38%) 48%,
+    hsl(16 100% 30%) 100%
+  );
+}
+
+.dark {
+  --background: 204 100% 14%;
+  --foreground: 0 0% 98%;
+  --card: 204 80% 18%;
+  --card-foreground: 0 0% 98%;
+  --popover: 204 80% 18%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 22 100% 54%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 204 60% 25%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 204 40% 22%;
+  --muted-foreground: 0 0% 70%;
+  --destructive: 16 100% 38%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 204 40% 28%;
+  --input: 204 40% 28%;
+  --ring: 22 100% 54%;
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(28 100% 58%) 0%,
+    hsl(22 100% 54%) 42%,
+    hsl(16 100% 34%) 100%
+  );
+  --gradient-primary-button: linear-gradient(
+    135deg,
+    hsl(32 100% 70%) 0%,
+    hsl(22 100% 54%) 40%,
+    hsl(14 100% 22%) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    hsl(204 100% 6%) 0%,
+    hsl(204 80% 20%) 45%,
+    hsl(204 75% 32%) 100%
+  );
+  --gradient-secondary-button: linear-gradient(
+    135deg,
+    hsl(204 100% 8%) 0%,
+    hsl(204 85% 26%) 38%,
+    hsl(204 80% 46%) 100%
+  );
+  --gradient-brand: linear-gradient(135deg, hsl(204 60% 25%) 0%, hsl(22 100% 54%) 100%);
+  --gradient-destructive: linear-gradient(
+    135deg,
+    hsl(12 100% 44%) 0%,
+    hsl(16 100% 38%) 48%,
+    hsl(16 100% 28%) 100%
+  );
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-body);
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+.bg-gradient-primary {
+  background-image: var(--gradient-primary);
+}
+
+.bg-gradient-primary-button {
+  background-image: var(--gradient-primary-button);
+}
+
+.bg-gradient-secondary {
+  background-image: var(--gradient-secondary);
+}
+
+.bg-gradient-secondary-button {
+  background-image: var(--gradient-secondary-button);
+}
+
+.bg-gradient-brand {
+  background-image: var(--gradient-brand);
+}
+
+.bg-gradient-destructive {
+  background-image: var(--gradient-destructive);
+}
+
+.gradient-hover-animate {
+  background-size: 200% 200%;
+  background-position: -1px center;
+  background-repeat: no-repeat;
+  transition: background-position 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gradient-hover-animate:hover:not(:disabled) {
+  background-position: calc(100% + 1px) center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-hover-animate {
+    transition: none;
+  }
+
+  .gradient-hover-animate:hover:not(:disabled) {
+    background-position: -1px center;
+  }
+}

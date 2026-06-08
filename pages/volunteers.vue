@@ -1,11 +1,11 @@
 <template>
-  <section class="max-w-7xl mx-auto px-4 py-8 md:py-10 text-white">
-    <div class="rounded-3xl border border-white/15 bg-gradient-to-r from-[#ff6900]/30 via-[#1a0f62]/30 to-transparent p-6 md:p-8">
-      <h1 class="text-2xl md:text-4xl font-bold">เครือข่ายอาสาส้ม</h1>
-      <p class="mt-3 text-white/80 max-w-3xl">
+  <section class="max-w-7xl mx-auto px-4 py-8 md:py-10 text-secondary">
+    <div class="rounded-3xl bg-gradient-primary text-white shadow-md p-6 md:p-8">
+      <h1 class="text-2xl md:text-4xl font-heading font-medium">เครือข่ายอาสาส้ม</h1>
+      <p class="mt-3 text-white/90 max-w-3xl">
         ติดตามพลังของอาสาสมัครทั่วประเทศ ทั้งจำนวนผู้ลงทะเบียนใหม่ อัตราการเติบโต และความเคลื่อนไหวของสมาชิกในแต่ละเดือน
       </p>
-      <div class="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-white/10 border border-white/15 px-4 py-3">
+      <div class="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-white/15 border border-white/25 px-4 py-3">
         <p class="text-sm md:text-base font-semibold">อยากเป็นอาสาส้ม ? มาเข้าร่วมกันได้ที่</p>
         <a
           href="https://line.me/R/ti/p/@ppleoranger"
@@ -18,37 +18,37 @@
       </div>
     </div>
 
-    <div v-if="pending" class="mt-6 text-white/70">กำลังโหลดข้อมูล...</div>
+    <div v-if="pending" class="mt-6 text-muted-foreground">กำลังโหลดข้อมูล...</div>
     <div v-else-if="error" class="mt-6 rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-red-200">
       ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง
     </div>
 
     <template v-else-if="stats">
       <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">อาสาส้มที่ลงทะเบียน</p>
-          <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(stats.total_volunteer_count) }}</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">อาสาส้มที่ลงทะเบียน</p>
+          <p class="text-2xl md:text-3xl font-bold mt-2 text-primary">{{ formatCount(stats.total_volunteer_count) }}</p>
           <p class="text-xs text-[#ff6900] mt-1">รวมทั้งหมดในระบบ</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">ลงทะเบียนใหม่ 30 วัน</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">ลงทะเบียนใหม่ 30 วัน</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ formatCount(registrationsLast30Days) }}</p>
           <p class="text-xs text-[#ff6900] mt-1">จากแนวโน้มรายวันล่าสุด</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">จังหวัดที่มีเครือข่าย</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">จังหวัดที่มีเครือข่าย</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ provincesWithVolunteers }}/77</p>
-          <p class="text-xs text-white/70 mt-1">จังหวัดที่มีอาสาส้มลงทะเบียน</p>
+          <p class="text-xs text-muted-foreground mt-1">จังหวัดที่มีอาสาส้มลงทะเบียน</p>
         </div>
-        <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
-          <p class="text-sm text-white/70">จังหวัดที่มีอาสามากที่สุด</p>
+        <div class="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+          <p class="text-sm text-muted-foreground">จังหวัดที่มีอาสามากที่สุด</p>
           <p class="text-2xl md:text-3xl font-bold mt-2">{{ topProvince?.province ?? '—' }}</p>
           <p v-if="topProvince" class="text-xs text-[#ff6900] mt-1">{{ formatCount(topProvince.count) }} คน</p>
         </div>
       </div>
 
       <div class="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
-        <div class="xl:col-span-2 rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div class="xl:col-span-2 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-lg md:text-xl font-semibold">การลงทะเบียนอาสาส้ม 30 วันล่าสุด</h2>
             <div class="flex flex-wrap items-center gap-3 text-xs text-white/60">
@@ -106,7 +106,7 @@
           </div>
         </div>
 
-        <div class="rounded-3xl bg-white/5 border border-white/10 p-5">
+        <div class="rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
           <h2 class="text-lg md:text-xl font-semibold">อาสาส้มตามจังหวัด (Top 5)</h2>
           <div class="mt-4 space-y-3">
             <div v-for="province in topProvinces" :key="province.province" class="rounded-xl bg-[#1a0f62]/40 p-3">
@@ -125,7 +125,7 @@
         </div>
       </div>
 
-      <div class="mt-6 rounded-3xl bg-white/5 border border-white/10 p-5">
+      <div class="mt-6 rounded-3xl bg-secondary text-white border border-white/10 shadow-md p-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h2 class="text-lg md:text-xl font-semibold">อาสาส้มตามจังหวัด</h2>
           <div class="inline-flex rounded-xl bg-white/10 p-1">

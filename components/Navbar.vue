@@ -1,5 +1,5 @@
 <template>
-  <nav id="app-navbar" class="bg-third shadow-lg relative">
+  <nav id="app-navbar" class="bg-gradient-secondary shadow-lg relative font-body">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16 items-center">
         <!-- Logo และ Brand -->
@@ -10,7 +10,7 @@
             <img :src="brandLogoSrc" :alt="brandLogoAlt" class="h-8" />
 
             <div class="flex items-center">
-              <a class="text-xl font-bold text-white mr-2">{{ brandLabel }}</a>
+              <a class="text-xl font-heading font-medium text-white mr-2">{{ brandLabel }}</a>
               <img src="/images/arrow-down.svg" alt="Logo" class="h-4 cursor-pointer" />
             </div>
             
@@ -19,9 +19,9 @@
         </div>
 
         <!-- Dropdown Menu -->
-        <div v-show="isWebTypeOpen" class="absolute bg-third shadow-lg rounded-md mt-2 top-16 z-30">
+        <div v-show="isWebTypeOpen" class="absolute bg-secondary border border-white/10 shadow-xl rounded-lg mt-2 top-16 z-30">
           <div class="px-4 py-4">
-            <a href="/" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/" class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/som-logo.svg" alt="ส้มทั่วไทย Logo" class="h-8" />
               <div>
                 <div class="font-bold">ส้มทั่วไทย</div>
@@ -29,21 +29,21 @@
               </div>
             </a>
             <a href="/political-project"
-              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/logo-pp.png" alt="วาระจังหวัด Logo" class="h-8" />
               <div>
                 <div class="font-bold">วาระจังหวัด</div>
                 <div class="text-sm font-light">เป้าหมายการขับเคลื่อนจังหวัด</div>
               </div>
             </a>
-            <a href="/mp" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/mp" class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน Logo" class="h-8" />
               <div>
                 <div class="font-bold">ผู้แทน สส.ของฉัน</div>
                 <div class="text-sm font-light">เรื่องราวการทำงานของ สส.</div>
               </div>
             </a>
-            <a href="/local" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/local" class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-logo.png" alt="ผู้แทนของฉัน Logo" class="h-8" />
               <div>
                 <div class="font-bold">ผู้แทนท้องถิ่นของฉัน</div>
@@ -51,7 +51,7 @@
               </div>
             </a>
             <!-- <a href="/future-mp-candidate"
-              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-shirt.png" alt="ผู้แทน สส.ในอนาคตของฉัน Logo" class="w-8" />
               <div>
                 <div class="font-bold">ผู้แทน สส.ในอนาคตของฉัน</div>
@@ -59,7 +59,7 @@
               </div>
             </a> -->
             <!-- <a href="/future-local-candidate"
-              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-shirt.png" alt="ผู้แทนท้องถิ่นในอนาคตของฉัน Logo" class="w-8" />
               <div>
                 <div class="font-bold">ผู้แทนท้องถิ่นในอนาคตของฉัน</div>
@@ -67,28 +67,28 @@
               </div>
             </a> -->
             <a href="/candidate-funnel"
-              class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+              class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/kaitom-shirt.png" alt="Funnel Future Candidate Logo" class="w-8" />
               <div>
                 <div class="font-bold">Funnel Future Candidate</div>
                 <div class="text-sm font-light">เส้นทางบ่มเพาะว่าที่ผู้สมัคร</div>
               </div>
             </a>
-            <a href="/pple-donation" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/pple-donation" class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/logo-pp.png" alt="การสนับสนุน/บริจาค Logo" class="h-8" />
               <div>
                 <div class="font-bold">การสนับสนุน/บริจาค</div>
                 <div class="text-sm font-light">ข้อมูลการสนับสนุนพรรค</div>
               </div>
             </a>
-            <a href="/volunteers" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <a href="/volunteers" class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/som-logo.svg" alt="อาสาส้ม Logo" class="h-8" />
               <div>
                 <div class="font-bold">อาสาส้ม</div>
                 <div class="text-sm font-light">เครือข่ายอาสาสมัครพื้นที่</div>
               </div>
             </a>
-            <!-- <a href="/case" class="text-white hover:bg-secondary px-3 py-2 flex items-center space-x-2 rounded-md">
+            <!-- <a href="/case" class="text-white hover:bg-white/10 px-3 py-2 flex items-center space-x-2 rounded-md">
               <img src="@/assets/images/logo-pp.png" alt="จากพื้นที่สู่สภา Logo" class="h-8" />
               <div>
                 <div class="font-bold">จากพื้นที่สู่สภา</div>
@@ -103,7 +103,7 @@
           <span class="text-white hidden md:block md:text-lg">ไปมาแล้ว</span>
           <div class="flex space-x-1">
             <span v-for="digit in tengVisitedDigits" :key="digit"
-              class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+              class="bg-gradient-primary-button text-primary-foreground font-heading font-medium px-2 py-1 rounded-md shadow-md">
               {{ digit }}
             </span>
           </div>
@@ -116,7 +116,7 @@
             <span class="text-white text-lg">เข้าพื้นที่</span>
             <div class="flex space-x-1">
               <span v-for="digit in visitedDigits" :key="digit"
-                class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+                class="bg-gradient-primary-button text-primary-foreground font-heading font-medium px-2 py-1 rounded-md shadow-md">
                 {{ digit }}
               </span>
             </div>
@@ -126,7 +126,7 @@
             <span class="text-white text-lg">กิจกรรม</span>
             <div class="flex space-x-1">
               <span v-for="digit in activityDigits" :key="digit"
-                class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-2 py-1 rounded-md shadow-md">
+                class="bg-gradient-primary-button text-primary-foreground font-heading font-medium px-2 py-1 rounded-md shadow-md">
                 {{ digit }}
               </span>
             </div>
@@ -143,7 +143,7 @@
           </div>
           <div class="flex space-x-1">
             <span v-for="digit in displayType === 'visit' ? visitedDigits : activityDigits" :key="digit"
-              class="bg-gradient-to-b from-orange-500 to-orange-800 text-white font-bold px-1.5 py-0.5 rounded-md shadow-md text-sm">
+              class="bg-gradient-primary-button text-primary-foreground font-heading font-medium px-1.5 py-0.5 rounded-md shadow-md text-sm">
               {{ digit }}
             </span>
           </div>

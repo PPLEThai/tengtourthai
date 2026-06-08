@@ -10,7 +10,7 @@
             <button @click="zoomIn" class="text-primary">+</button>
             <button @click="zoomOut" class="text-primary">-</button>
             <button @click="resetZoom" class="text-primary">รีเซ็ต</button>
-            <select v-model="selectedMonth" class="select select-bordered select-sm" @change="drawActDataLayer">
+            <select v-model="selectedMonth" class="map-select h-8 rounded-md px-2 text-sm" @change="drawActDataLayer">
                 <option v-for="month in availableMonths" :key="month" :value="month">
                     {{ formatMonthThai(month) }}
                 </option>
@@ -485,7 +485,7 @@ onMounted(() => {
     }
 }
 
-.map-controls .select {
+.map-controls .map-select {
     background-color: white;
     border: none;
     font-size: 14px;
@@ -494,7 +494,7 @@ onMounted(() => {
     min-width: 120px;
 }
 
-.map-controls .select:focus {
+.map-controls .map-select:focus {
     outline: none;
     border-color: #FF6A13;
 }

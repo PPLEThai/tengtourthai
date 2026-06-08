@@ -1,10 +1,13 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-secondary font-anakotmai">
+  <div class="min-h-screen flex flex-col bg-[#FFF7F1] font-body text-foreground">
     <Navbar />
     <div class="flex-1 min-h-0 overflow-y-auto md:overflow-hidden">
-      <div class="flex min-h-full md:h-full">
-        <main class="flex-1 min-h-full">
-          <slot />
+      <div class="flex min-h-full md:h-full flex-col">
+        <main class="flex-1 min-h-0 flex flex-col">
+          <MenuBackLink />
+          <div class="flex-1 min-h-0">
+            <slot />
+          </div>
         </main>
       </div>
     </div>
@@ -38,10 +41,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-body {
-  font-family: 'Anakotmai', sans-serif !important;
-}
-
 .loading-overlay {
   position: fixed;
   top: 0;

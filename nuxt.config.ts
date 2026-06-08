@@ -12,18 +12,15 @@ export default defineNuxtConfig({
   ],
   components: {
     dirs: [
-      '~/components',
-      '~/components/mp'
+      { path: '~/components/ui', pathPrefix: false },
+      { path: '~/components/mp', pathPrefix: false },
+      '~/components'
     ]
-  },
-  tailwindcss: {
-    config: {
-      plugins: [require('daisyui')]
-    }
   },
   compatibilityDate: '2025-02-26',
   css: [
     '@/assets/css/fonts.css',
+    '@/assets/css/tokens.css',
     "maplibre-gl/dist/maplibre-gl.css",
     '@/assets/css/styles.css'
   ],
@@ -45,6 +42,9 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600&display=swap' },
       ],
     },
   },
