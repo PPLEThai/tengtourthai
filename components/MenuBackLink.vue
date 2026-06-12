@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
 
 const route = useRoute()
 
-const allowedPaths = ['/pple-donation', '/volunteers', '/candidate-funnel']
+const allowedPaths = ['/volunteers']
 const showLink = computed(() => allowedPaths.includes(route.path))
 
 const linkClass = computed(() => {
