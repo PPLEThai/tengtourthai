@@ -305,6 +305,12 @@ onMounted(() => {
         });
 
         map.on("load", async () => {
+            // กันแผนที่จอดำตอนโหลดใน flex/Suspense layout: MapLibre บางครั้งไม่ present เฟรมแรก
+            // จนกว่าจะมี window resize — kick repaint หลังเรนเดอร์เฟรมแรกเสร็จ (idle) + สำรองด้วย timeout
+            const kickRepaint = () => window.dispatchEvent(new Event("resize"));
+            map.once("idle", kickRepaint);
+            setTimeout(kickRepaint, 800);
+
             const response = await fetch("/data/province.geojson");
             const geojsonData = await response.json();
 

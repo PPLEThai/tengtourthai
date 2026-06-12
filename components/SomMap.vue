@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, computed, type PropType } from "vue";
+import { onMounted, onBeforeUnmount, ref, watch, computed, type PropType } from "vue";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { KaitomItem } from "@/composables/useKaitomData";
@@ -55,6 +55,7 @@ const isDataReady = ref(false);
 const isMapReady = ref(false);
 
 let map: maplibregl.Map;
+let mapResizeObserver: ResizeObserver | null = null;
 const markers: maplibregl.Marker[] = [];
 let interval: ReturnType<typeof setInterval> | null = null;
 const isPlaying = ref(false);
@@ -241,7 +242,17 @@ onMounted(() => {
             // maxBounds: [[93.0, 3.0], [108.0, 22.0]]
         });
 
+        // ให้แผนที่ปรับขนาดตาม container เมื่อมีการเปลี่ยนแปลง (เช่น สลับ breakpoint มือถือ/เดสก์ท็อป
+        // ที่ map-container เปลี่ยนจาก h-1/2 เป็น h-full) MapLibre จะ re-fit ให้พอดี
+        mapResizeObserver = new ResizeObserver(() => map?.resize());
+        mapResizeObserver.observe(mapContainer.value);
+
         map.on("load", async () => {
+            // กันแผนที่จอดำตอนโหลดใน flex/Suspense layout: MapLibre บางครั้งไม่ present เฟรมแรก
+            // จนกว่าจะมี window resize — kick repaint หลังเรนเดอร์เฟรมแรกเสร็จ (idle) + สำรองด้วย timeout
+            const kickRepaint = () => window.dispatchEvent(new Event("resize"));
+            map.once("idle", kickRepaint);
+            setTimeout(kickRepaint, 800);
 
             isLoading.value = true;
             try {
@@ -428,6 +439,12 @@ onMounted(() => {
         }, { immediate: true, deep: true });
 
     }
+});
+
+onBeforeUnmount(() => {
+    mapResizeObserver?.disconnect();
+    if (interval) clearInterval(interval);
+    map?.remove();
 });
 </script>
 
